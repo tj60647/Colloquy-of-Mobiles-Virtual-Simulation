@@ -1,0 +1,64 @@
+<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="400" y="50" font-family="Arial" font-size="24" text-anchor="middle">Evaluate Drive States: Engagement Sought</text>
+  
+  <!-- Axes and Labels -->
+  <line x1="100" y1="100" x2="100" y2="700" stroke="black"/>
+  <line x1="100" y1="700" x2="700" y2="700" stroke="black"/>
+  
+  <text x="50" y="400" font-family="Arial" font-size="18" text-anchor="middle" transform="rotate(-90, 50, 400)">P Drive State</text>
+  <text x="400" y="750" font-family="Arial" font-size="18" text-anchor="middle">O Drive State</text>
+  
+  <!-- Min and Max Labels -->
+  <text x="30" y="700" font-family="Arial" font-size="12" text-anchor="middle">min</text>
+  <text x="30" y="100" font-family="Arial" font-size="12" text-anchor="middle">max</text>
+  <text x="100" y="730" font-family="Arial" font-size="12" text-anchor="middle">min</text>
+  <text x="700" y="730" font-family="Arial" font-size="12" text-anchor="middle">max</text>
+  
+  <!-- Grid and Labels -->
+  <line x1="100" y1="400" x2="700" y2="400" stroke="black"/>
+  <line x1="400" y1="100" x2="400" y2="700" stroke="black"/>
+  
+  <circle cx="100" cy="100" r="40" fill="black"/>
+  <text x="100" y="110" font-family="Arial" font-size="18" text-anchor="middle" fill="white">UL</text>
+  <circle cx="100" cy="700" r="40" fill="black"/>
+  <text x="100" y="710" font-family="Arial" font-size="18" text-anchor="middle" fill="white">LL</text>
+  <circle cx="700" cy="100" r="40" fill="black"/>
+  <text x="700" y="110" font-family="Arial" font-size="18" text-anchor="middle" fill="white">UL</text>
+  <circle cx="700" cy="700" r="40" fill="black"/>
+  <text x="700" y="710" font-family="Arial" font-size="18" text-anchor="middle" fill="white">LL</text>
+  
+  <!-- Dotted diagonal line -->
+  <line x1="100" y1="700" x2="700" y2="100" stroke="black" stroke-dasharray="5,5"/>
+  
+  <!-- Circles and Labels inside the grid -->
+  <circle cx="250" cy="250" r="30" fill="#ccff66"/>
+  <text x="250" y="255" font-family="Arial" font-size="18" text-anchor="middle">P</text>
+  
+  <circle cx="400" cy="250" r="30" fill="#ccff66"/>
+  <text x="400" y="255" font-family="Arial" font-size="18" text-anchor="middle">P</text>
+  
+  <circle cx="250" cy="400" r="30" fill="#ccff66"/>
+  <text x="250" y="405" font-family="Arial" font-size="18" text-anchor="middle">P</text>
+  
+  <circle cx="550" cy="250" r="30" fill="#ccff66"/>
+  <text x="550" y="255" font-family="Arial" font-size="18" text-anchor="middle">P</text>
+  
+  <circle cx="400" cy="400" r="30" fill="#99ff99"/>
+  <text x="400" y="405" font-family="Arial" font-size="18" text-anchor="middle">none</text>
+  
+  <circle cx="400" cy="550" r="30" fill="#ff9966"/>
+  <text x="400" y="555" font-family="Arial" font-size="18" text-anchor="middle">O</text>
+  
+  <circle cx="550" cy="400" r="30" fill="#ff9966"/>
+  <text x="550" y="405" font-family="Arial" font-size="18" text-anchor="middle">O</text>
+  
+  <circle cx="550" cy="550" r="30" fill="#ff9966"/>
+  <text x="550" y="555" font-family="Arial" font-size="18" text-anchor="middle">O</text>
+  
+  <circle cx="700" cy="550" r="30" fill="#ff9966"/>
+  <text x="700" y="555" font-family="Arial" font-size="18" text-anchor="middle">O</text>
+  
+  <circle cx="700" cy="250" r="30" fill="#ff6666"/>
+  <text x="700" y="255" font-family="Arial" font-size="18" text-anchor="middle">any</text>
+</svg>

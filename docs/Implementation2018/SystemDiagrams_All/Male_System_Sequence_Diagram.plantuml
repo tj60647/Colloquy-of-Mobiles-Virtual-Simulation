@@ -1,0 +1,86 @@
+@startuml
+
+box "Male Mobile" #e4fcfa
+    participant "Horizontal Sub-system" as MaleHorizontalSubsystem
+    participant "Drive Sub-system" as MaleDriveSubsystem
+    participant "Main System" as MaleSystem
+end box
+
+' The system from which the male hangs, it rotates and oscillates
+' It will stop when the Male with the greatest drive requests it
+box "Beam" #e6fcc1
+    participant "Beam Main System" as Beam
+end box
+
+box "Environment" #fcf6c1
+    participant "Environment" as Environment
+end box
+
+box #f9c6e8
+    Actor "Female or Human" as Actor
+end box
+
+' Agent's behavior based on state managed by Male System
+loop System Running
+
+    MaleSystem -> MaleDriveSubsystem : Get Drive State 
+    MaleDriveSubsystem -> MaleSystem : Drive State 
+    MaleSystem -> MaleDriveSubsystem : Get Drive Values
+    MaleDriveSubsystem -> MaleSystem : Drive Values
+
+    MaleSystem -> MaleSystem : Display Drive State
+    MaleSystem -> MaleSystem : Display Drives
+
+    alt Male System State = Satisfaction Search
+        MaleSystem -> MaleHorizontalSubsystem : Search [Release]
+        MaleSystem -> Beam : Search [Release]
+        MaleSystem -> Environment : Intermittent Signal This Satisfaction Search and ID
+        Environment -> Actor : Intermittent Signal This Satisfaction Search and ID
+        MaleSystem -> MaleSystem : Listen for Response
+        Actor --> Environment : Identifying Signal
+        Environment --> MaleSystem : Identifying Signal
+
+        alt Response = This Satisfaction Search
+            MaleSystem -> MaleSystem : State = Engaging a Partner
+            MaleSystem -> MaleHorizontalSubsystem : Stop
+            MaleSystem -> Beam : Stop
+            loop Engaging Partner
+                MaleSystem -> Environment : Energetic Beam
+                Environment -> Actor : Energetic Beam
+                Actor --> Environment : Light
+                Environment --> MaleSystem : Light
+                MaleSystem -> MaleSystem : Sense Light
+                alt Light Sensed > Threshold
+                    MaleSystem -> Environment : Reinforcement Signal
+                    Environment -> Actor : Reinforcement Signal
+                    MaleSystem -> MaleDriveSubsystem : Decrement Drive
+                    MaleSystem -> MaleDriveSubsystem : Get Drive State 
+                    MaleDriveSubsystem -> MaleSystem : Drive State 
+                    MaleSystem -> MaleDriveSubsystem : Get Drive Values
+                    MaleDriveSubsystem -> MaleSystem : Drive Values
+                    MaleSystem -> MaleSystem : Display Drive State
+                    MaleSystem -> MaleSystem : Display Drives
+                    alt Drive State = Satisfied and Indifferent
+                        MaleSystem -> MaleSystem : Satisfaction Display
+                        MaleSystem -> MaleSystem : State = Satisfied and Indifferent
+                    else Drive State = This Satisfaction Search
+                        MaleSystem -> MaleSystem : Continue Engaging Partner
+                    else Drive State = Either O or P Satisfaction Search
+                        MaleSystem -> MaleSystem : Continue Engaging Partner
+                    else Drive State = Other Satisfaction Search
+                        MaleSystem -> MaleSystem : State = Satisfaction Search
+                    end
+                else Timeout
+                    MaleSystem -> MaleSystem : State = Satisfaction Search
+                end
+            end
+        else Response Timeout
+            MaleSystem -> MaleSystem : State = Satisfaction Search
+        end
+    else Male System State = Satisfied and Indifferent
+        MaleSystem -> MaleHorizontalSubsystem : Stop
+        MaleSystem -> Beam : Satisfied and Indifferent [Release]
+    end
+end
+
+@enduml

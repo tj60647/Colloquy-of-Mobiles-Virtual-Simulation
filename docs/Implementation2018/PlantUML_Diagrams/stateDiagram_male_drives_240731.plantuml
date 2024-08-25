@@ -1,0 +1,16 @@
+@startuml
+state "Increment Drive" as IncrementDrive
+state "Determine Drive State" as DetermineDriveState
+state "Satisfied" as Satisfied
+state "Unsatisfied" as Unsatisfied
+
+[*] --> IncrementDrive : Start
+IncrementDrive --> DetermineDriveState
+
+DetermineDriveState --> Satisfied
+DetermineDriveState --> Unsatisfied
+
+Satisfied --> IncrementDrive
+Unsatisfied --> IncrementDrive
+
+@enduml

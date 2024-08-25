@@ -1,0 +1,338 @@
+{
+  "SystemVersion": {
+    "id": "1.0.0",
+    "name": "Initial Release",
+    "description": "This version simulates environments based on historical and future models, including 1968 Dowson, 2018, and 2024 scenarios.",
+    "environments": {
+      "1968Dowson": {
+        "name": "1968Dowson",
+        "description": "Simulation based on Dowson's 1968 model.",
+        "agents": [
+          {
+            "id": "agent1",
+            "type": "typeA",
+            "O_drive": {
+              "initialValue": 500,
+              "floor": 0,
+              "lowerLimit": 100,
+              "upperLimit": 1000,
+              "max": 1500
+            },
+            "P_drive": {
+              "initialValue": 600,
+              "floor": 0,
+              "lowerLimit": 200,
+              "upperLimit": 1200,
+              "max": 1600
+            },
+            "increment": 10,
+            "decrement": 5
+          },
+          {
+            "id": "agent2",
+            "type": "typeB",
+            "O_drive": {
+              "initialValue": 520,
+              "floor": 0,
+              "lowerLimit": 110,
+              "upperLimit": 1020,
+              "max": 1520
+            },
+            "P_drive": {
+              "initialValue": 620,
+              "floor": 0,
+              "lowerLimit": 210,
+              "upperLimit": 1220,
+              "max": 1620
+            },
+            "increment": 11,
+            "decrement": 6
+          },
+          {
+            "id": "agent3",
+            "type": "typeC",
+            "O_drive": {
+              "initialValue": 530,
+              "floor": 0,
+              "lowerLimit": 120,
+              "upperLimit": 1030,
+              "max": 1530
+            },
+            "P_drive": {
+              "initialValue": 630,
+              "floor": 0,
+              "lowerLimit": 220,
+              "upperLimit": 1230,
+              "max": 1630
+            },
+            "increment": 12,
+            "decrement": 7
+          },
+          {
+            "id": "agent4",
+            "type": "typeD",
+            "O_drive": {
+              "initialValue": 540,
+              "floor": 0,
+              "lowerLimit": 130,
+              "upperLimit": 1040,
+              "max": 1540
+            },
+            "P_drive": {
+              "initialValue": 640,
+              "floor": 0,
+              "lowerLimit": 230,
+              "upperLimit": 1240,
+              "max": 1640
+            },
+            "increment": 13,
+            "decrement": 8
+          },
+          {
+            "id": "agent5",
+            "type": "typeE",
+            "O_drive": {
+              "initialValue": 550,
+              "floor": 0,
+              "lowerLimit": 140,
+              "upperLimit": 1050,
+              "max": 1550
+            },
+            "P_drive": {
+              "initialValue": 650,
+              "floor": 0,
+              "lowerLimit": 240,
+              "upperLimit": 1250,
+              "max": 1650
+            },
+            "increment": 14,
+            "decrement": 9
+          }
+        ]
+      },
+      "2018": {
+        "name": "2018",
+        "description": "Modern simulation with updated parameters.",
+        "agents": [
+          {
+            "id": "agent6",
+            "type": "typeA",
+            "O_drive": {
+              "initialValue": 400,
+              "floor": 0,
+              "lowerLimit": 90,
+              "upperLimit": 900,
+              "max": 1400
+            },
+            "P_drive": {
+              "initialValue": 500,
+              "floor": 0,
+              "lowerLimit": 150,
+              "upperLimit": 1000,
+              "max": 1500
+            },
+            "increment": 8,
+            "decrement": 4
+          },
+          {
+            "id": "agent7",
+            "type": "typeB",
+            "O_drive": {
+              "initialValue": 410,
+              "floor": 0,
+              "lowerLimit": 95,
+              "upperLimit": 910,
+              "max": 1410
+            },
+            "P_drive": {
+              "initialValue": 510,
+              "floor": 0,
+              "lowerLimit": 155,
+              "upperLimit": 1010,
+              "max": 1510
+            },
+            "increment": 9,
+            "decrement": 5
+          },
+          {
+            "id": "agent8",
+            "type": "typeC",
+            "O_drive": {
+              "initialValue": 420,
+              "floor": 0,
+              "lowerLimit": 100,
+              "upperLimit": 920,
+              "max": 1420
+            },
+            "P_drive": {
+              "initialValue": 520,
+              "floor": 0,
+              "lowerLimit": 160,
+              "upperLimit": 1020,
+              "max": 1520
+            },
+            "increment": 10,
+            "decrement": 6
+          },
+          {
+            "id": "agent9",
+            "type": "typeD",
+            "O_drive": {
+              "initialValue": 430,
+              "floor": 0,
+              "lowerLimit": 110,
+              "upperLimit": 930,
+              "max": 1430
+            },
+            "P_drive": {
+              "initialValue": 530,
+              "floor": 0,
+              "lowerLimit": 170,
+              "upperLimit": 1030,
+              "max": 1530
+            },
+            "increment": 11,
+            "decrement": 7
+          },
+          {
+            "id": "agent10",
+            "type": "typeE",
+            "O_drive": {
+              "initialValue": 440,
+              "floor": 0,
+              "lowerLimit": 120,
+              "upperLimit": 940,
+              "max": 1440
+            },
+            "P_drive": {
+              "initialValue": 540,
+              "floor": 0,
+              "lowerLimit": 180,
+              "upperLimit": 1040,
+              "max": 1540
+            },
+            "increment": 12,
+            "decrement": 8
+          }
+        ]
+      },
+      "2024": {
+        "name": "2024",
+        "description": "Future-oriented simulation.",
+        "agents": [
+          {
+            "id": "agent11",
+            "type": "typeA",
+            "O_drive": {
+              "initialValue": 550,
+              "floor": 0,
+              "lowerLimit": 120,
+              "upperLimit": 1100,
+              "max": 1550
+            },
+            "P_drive": {
+              "initialValue": 650,
+              "floor": 0,
+              "lowerLimit": 180,
+              "upperLimit": 1250,
+              "max": 1650
+            },
+            "increment": 12,
+            "decrement": 6
+          },
+          {
+            "id": "agent12",
+            "type": "typeB",
+            "O_drive": {
+              "initialValue": 560,
+              "floor": 0,
+              "lowerLimit": 130,
+              "upperLimit": 1120,
+              "max": 1570
+            },
+            "P_drive": {
+              "initialValue": 660,
+              "floor": 0,
+              "lowerLimit": 190,
+              "upperLimit": 1270,
+              "max": 1670
+            },
+            "increment": 13,
+            "decrement": 7
+          },
+          {
+            "id": "agent13",
+            "type": "typeC",
+            "O_drive": {
+              "initialValue": 570,
+              "floor": 0,
+              "lowerLimit": 140,
+              "upperLimit": 1140,
+              "max": 1580
+            },
+            "P_drive": {
+              "initialValue": 670,
+              "floor": 0,
+              "lowerLimit": 200,
+              "upperLimit": 1290,
+              "max": 1680
+            },
+            "increment": 14,
+            "decrement": 8
+          },
+          {
+            "id": "agent14",
+            "type": "typeD",
+            "O_drive": {
+              "initialValue": 580,
+              "floor": 0,
+              "lowerLimit": 150,
+              "upperLimit": 1160,
+              "max": 1590
+            },
+            "P_drive": {
+              "initialValue": 680,
+              "floor": 0,
+              "lowerLimit": 210,
+              "upperLimit": 1310,
+              "max": 1690
+            },
+            "increment": 15,
+            "decrement": 9
+          },
+          {
+            "id": "agent15",
+            "type": "typeE",
+            "O_drive": {
+              "initialValue": 590,
+              "floor": 0,
+              "lowerLimit": 160,
+              "upperLimit": 1180,
+              "max": 1600
+            },
+            "P_drive": {
+              "initialValue": 690,
+              "floor": 0,
+              "lowerLimit": 220,
+              "upperLimit": 1330,
+              "max": 1700
+            },
+            "increment": 16,
+            "decrement": 10
+          }
+        ]
+      }
+    },
+    "global_settings": {
+      "UI_configuration": {
+        "theme": "dark",
+        "showGridLines": true,
+        "gridLineColor": "#808080"
+      },
+      "code_options": {
+        "loggingEnabled": true,
+        "visualizationType": "2D"
+      }
+    }
+  }
+}
