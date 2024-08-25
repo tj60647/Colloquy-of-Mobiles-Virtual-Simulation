@@ -1,0 +1,49 @@
+@startuml
+' Filename: Female_VerticalReflectorSubsystem_StateDiagram.plantuml
+' Diagram Type: State Diagram
+
+[*] --> Initializing
+
+state Initializing {
+    [*] --> SetMotionRequestStop
+    SetMotionRequestStop --> ProcessMotionRequest : Initialization Complete
+}
+
+state ProcessMotionRequest {
+    [*] --> ReceiveMotionRequest
+    ReceiveMotionRequest --> ProcessMotion : Motion Request Received
+    ReceiveMotionRequest --> MaintainCurrentMotionRequest : No Motion Request Received
+    MaintainCurrentMotionRequest --> ProcessMotion : No Motion Request Received
+}
+
+state ProcessMotion {
+    [*] --> MotionRequestStop
+    MotionRequestStop --> Reinforcing
+
+    [*] --> MotionRequestRelease
+    MotionRequestRelease --> Oscillating
+    
+}
+
+state Reinforcing {
+    [*] --> CheckReinforcementGoal
+    CheckReinforcementGoal --> SetReinforcementGoal : Goal is not reinforcement position
+    CheckReinforcementGoal --> MoveToReinforcementGoal : Goal is reinforcement position
+    SetReinforcementGoal --> MoveToReinforcementGoal
+
+    MoveToReinforcementGoal --> AtReinforcementGoal : At goal reinforcement position
+    MoveToReinforcementGoal --> MoveToReinforcementGoal : Not at goal reinforcement position
+    AtReinforcementGoal --> Stop : Stop
+}
+
+state Oscillating {
+    [*] --> CheckOscillationGoal
+    CheckOscillationGoal --> SetLowerOscillationGoal : At oscillation goal upper limit
+    CheckOscillationGoal --> SetUpperOscillationGoal : At oscillation goal lower limit
+    CheckOscillationGoal --> MoveToOscillationGoal : Not oscillation goal
+    SetLowerOscillationGoal --> MoveToOscillationGoal
+    SetUpperOscillationGoal --> MoveToOscillationGoal
+    MoveToOscillationGoal --> MoveToOscillationGoal : Moving to oscillation goal
+}
+
+@enduml

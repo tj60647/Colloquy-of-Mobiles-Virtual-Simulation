@@ -1,0 +1,27 @@
+@startuml
+[*] --> Alive
+
+state Alive {
+    [*] --> Satisfied
+
+    Satisfied --> Unsatisfied : Drive_O > Threshold
+    Satisfied --> Unsatisfied : Drive_P > Threshold
+
+    state Unsatisfied {
+        [*] --> Searching
+
+        Searching --> Engaging : Partner Found
+        Engaging --> Searching : Unsuccessful Exchange
+        Engaging --> Engaging : Successful Exchange, Drive_O >= Threshold
+        Engaging --> Satisfied : Successful Exchange, Drive_O < Threshold
+        Engaging --> Engaging : Successful Exchange, Drive_P >= Threshold
+        Engaging --> Satisfied : Successful Exchange, Drive_P < Threshold
+
+        Engaging : Drive_O decrements on successful exchange
+        Engaging : Drive_P decrements on successful exchange
+    }
+}
+
+Alive : Drive_O increments continuously
+Alive : Drive_P increments continuously
+@enduml

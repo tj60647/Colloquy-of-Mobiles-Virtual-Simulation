@@ -1,0 +1,24 @@
+@startuml
+title Male Horizontal Sub-system
+top to bottom direction
+
+state "Stopped" as Stopped
+state "Move Left" as MoveLeft
+state "Move Right" as MoveRight
+state "Move to Reinforcement Position" as MoveToReinforcement
+
+[*] --> MoveToReinforcement : Boot with Stop Instruction
+MoveToReinforcement --> Stopped : In Reinforcement Position
+MoveToReinforcement --> MoveToReinforcement : Not in Reinforcement Position
+
+Stopped --> MoveLeft : No Stop Instruction
+
+MoveLeft --> MoveLeft : No Stop Instruction
+MoveLeft --> MoveRight : Left Limit Reached
+
+MoveRight --> MoveRight : No Stop Instruction
+MoveRight --> MoveLeft : Right Limit Reached
+
+MoveLeft --> MoveToReinforcement : Stop Instruction
+MoveRight --> MoveToReinforcement : Stop Instruction
+@enduml

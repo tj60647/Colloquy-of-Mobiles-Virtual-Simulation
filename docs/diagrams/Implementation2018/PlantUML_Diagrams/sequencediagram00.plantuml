@@ -1,0 +1,31 @@
+@startuml
+actor Agent
+participant DriveManagement
+
+Agent -> DriveManagement : Drive increments continuously
+Agent -> Agent : Drive > Threshold?
+alt Drive > Threshold
+    Agent -> DriveManagement : Start Searching
+    loop Searching
+        Agent -> DriveManagement : Partner Found?
+        alt Partner Found
+            Agent -> DriveManagement : Engage Partner
+            alt Successful Exchange
+                Agent -> DriveManagement : Drive decrements
+                Agent -> Agent : Drive < Threshold?
+                alt Drive < Threshold
+                    Agent -> DriveManagement : Satisfied
+                else
+                    Agent -> DriveManagement : Continue Engaging
+                end
+            else
+                Agent -> DriveManagement : Resume Searching
+            end
+        else
+            Agent -> DriveManagement : Continue Searching
+        end
+    end
+else
+    Agent -> DriveManagement : Remain Satisfied
+end
+@enduml

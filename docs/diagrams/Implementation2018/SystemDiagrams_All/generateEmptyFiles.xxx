@@ -1,0 +1,86 @@
+@echo off
+REM Create PlantUML files for each system and sub-system with initial content
+
+REM Create files with initial content
+REM Drive System
+echo @startuml > Drive_System_Activity_Diagram.plantuml
+echo @enduml >> Drive_System_Activity_Diagram.plantuml
+
+echo @startuml > Drive_System_Sequence_Diagram.plantuml
+echo @enduml >> Drive_System_Sequence_Diagram.plantuml
+
+echo @startuml > Drive_System_State_Diagram.plantuml
+echo @enduml >> Drive_System_State_Diagram.plantuml
+
+REM Male System
+echo @startuml > Male_System_Activity_Diagram.plantuml
+echo @enduml >> Male_System_Activity_Diagram.plantuml
+
+echo @startuml > Male_System_Sequence_Diagram.plantuml
+echo @enduml >> Male_System_Sequence_Diagram.plantuml
+
+echo @startuml > Male_System_State_Diagram.plantuml
+echo @enduml >> Male_System_State_Diagram.plantuml
+
+REM Female System
+echo @startuml > Female_System_Activity_Diagram.plantuml
+echo @enduml >> Female_System_Activity_Diagram.plantuml
+
+echo @startuml > Female_System_Sequence_Diagram.plantuml
+echo @enduml >> Female_System_Sequence_Diagram.plantuml
+
+echo @startuml > Female_System_State_Diagram.plantuml
+echo @enduml >> Female_System_State_Diagram.plantuml
+
+REM Beam System
+echo @startuml > Beam_System_Activity_Diagram.plantuml
+echo @enduml >> Beam_System_Activity_Diagram.plantuml
+
+echo @startuml > Beam_System_Sequence_Diagram.plantuml
+echo @enduml >> Beam_System_Sequence_Diagram.plantuml
+
+echo @startuml > Beam_System_State_Diagram.plantuml
+echo @enduml >> Beam_System_State_Diagram.plantuml
+
+REM Female Vertical Reflector Sub-System
+echo @startuml > Female_Vertical_Reflector_Activity_Diagram.plantuml
+echo @enduml >> Female_Vertical_Reflector_Activity_Diagram.plantuml
+
+echo @startuml > Female_Vertical_Reflector_Sequence_Diagram.plantuml
+echo @enduml >> Female_Vertical_Reflector_Sequence_Diagram.plantuml
+
+echo @startuml > Female_Vertical_Reflector_State_Diagram.plantuml
+echo @enduml >> Female_Vertical_Reflector_State_Diagram.plantuml
+
+REM Female Horizontal Control Sub-System
+echo @startuml > Female_Horizontal_Control_Activity_Diagram.plantuml
+echo @enduml >> Female_Horizontal_Control_Activity_Diagram.plantuml
+
+echo @startuml > Female_Horizontal_Control_Sequence_Diagram.plantuml
+echo @enduml >> Female_Horizontal_Control_Sequence_Diagram.plantuml
+
+echo @startuml > Female_Horizontal_Control_State_Diagram.plantuml
+echo @enduml >> Female_Horizontal_Control_State_Diagram.plantuml
+
+REM Male Horizontal Sub-System
+echo @startuml > Male_Horizontal_Sub_System_Activity_Diagram.plantuml
+echo @enduml >> Male_Horizontal_Sub_System_Activity_Diagram.plantuml
+
+echo @startuml > Male_Horizontal_Sub_System_Sequence_Diagram.plantuml
+echo @enduml >> Male_Horizontal_Sub_System_Sequence_Diagram.plantuml
+
+echo @startuml > Male_Horizontal_Sub_System_State_Diagram.plantuml
+echo @enduml >> Male_Horizontal_Sub_System_State_Diagram.plantuml
+
+REM Beam Motor Sub-System
+echo @startuml > Beam_Motor_Sub_System_Activity_Diagram.plantuml
+echo @enduml >> Beam_Motor_Sub_System_Activity_Diagram.plantuml
+
+echo @startuml > Beam_Motor_Sub_System_Sequence_Diagram.plantuml
+echo @enduml >> Beam_Motor_Sub_System_Sequence_Diagram.plantuml
+
+echo @startuml > Beam_Motor_Sub_System_State_Diagram.plantuml
+echo @enduml >> Beam_Motor_Sub_System_State_Diagram.plantuml
+
+ECHO All files have been created in the current directory.
+pause
