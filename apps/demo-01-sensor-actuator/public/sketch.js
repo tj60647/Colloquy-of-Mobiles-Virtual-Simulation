@@ -6,11 +6,13 @@ let testPoints = [];
 // Preload the font
 function preload() {
   easyFont = loadFont("roboto-regular-webfont.ttf");
+  console.log("Font loaded:", !!easyFont); // Log true if the font is loaded successfully
 }
 
 // Setup function
 function setup() {
   createCanvas(600, 600, WEBGL);
+  console.log("typeof createEasyCam: " + typeof createEasyCam); // Should print "function"
   easycam = createEasyCam();
   document.oncontextmenu = () => false;
   textFont(easyFont);

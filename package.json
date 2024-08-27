@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "express": "^4.19.2",
     "p5": "^1.10.0",
     "p5.easycam": "^1.0.1"
   }
