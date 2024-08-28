@@ -1,0 +1,14 @@
+{
+  "name": "P5-demo",
+  "version": "1.0.0",
+  "description": "A demonstration using p5.js and EasyCam.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "author": "Your Name",
+  "license": "MIT"
+}

@@ -1,18 +1,35 @@
+import { LightActuator } from "../lib/LightActuator.js";
+import { Sensor } from "../../lib/Sensor.js";
+import { Transform } from "../../lib/Transform.js";
+import { Render3Dp5 } from "../../lib/Render3Dp5.js";
+
+//console.log("Sketch starting..."); // Should appear in the console immediately
+
 let easyFont;
 let easycam;
 let rootTransform, actuator, sensor;
 let testPoints = [];
+let hud;
+
+// Attach the functions to the window object
+window.preload = preload;
+window.setup = setup;
+window.draw = draw;
+let loading = true;
 
 // Preload the font
 function preload() {
-  easyFont = loadFont("roboto-regular-webfont.ttf");
-  console.log("Font loaded:", !!easyFont); // Log true if the font is loaded successfully
+  //console.log("Preloading...");
+  easyFont = loadFont("/roboto-regular-webfont.ttf");
+  //console.log("Font loaded:", !!easyFont); // Log true if the font is loaded successfully
 }
 
 // Setup function
 function setup() {
+  //console.log("Setup started");
   createCanvas(600, 600, WEBGL);
-  console.log("typeof createEasyCam: " + typeof createEasyCam); // Should print "function"
+  frameRate(30);
+  //console.log("typeof createEasyCam: " + typeof createEasyCam); // Should print "function"
   easycam = createEasyCam();
   document.oncontextmenu = () => false;
   textFont(easyFont);
@@ -57,31 +74,42 @@ function setup() {
   hud = createGraphics(600, 600);
   hud.textSize(16);
   hud.fill(0);
+
+  // Set up is done
+  loading = false;
 }
 
 // Draw function
 function draw() {
-  background(220);
-  lights();
+  if (loading) {
+    // Display a loading screen
+    background(220);
+    textAlign(CENTER, CENTER);
+    textSize(32);
+    text("Loading...", width / 2, height / 2);
+  } else {
+    background(220);
+    lights();
 
-  Render3Dp5.drawLineToTransform(rootTransform);
-  Render3Dp5.drawLineToTransform(actuator);
-  Render3Dp5.drawLineToTransform(sensor);
+    Render3Dp5.drawLineToTransform(rootTransform);
+    Render3Dp5.drawLineToTransform(actuator);
+    Render3Dp5.drawLineToTransform(sensor);
 
-  Render3Dp5.drawTransform(rootTransform);
-  Render3Dp5.drawTransform(actuator);
-  Render3Dp5.drawTransform(sensor);
+    Render3Dp5.drawTransform(rootTransform);
+    Render3Dp5.drawTransform(actuator);
+    Render3Dp5.drawTransform(sensor);
 
-  Render3Dp5.drawActuatorFOV(actuator);
-  Render3Dp5.drawSensorFOV(sensor);
+    Render3Dp5.drawActuatorFOV(actuator);
+    Render3Dp5.drawSensorFOV(sensor);
 
-  for (let point of testPoints) {
-    Render3Dp5.drawTestPoint(point, sensor.isInFieldOfView(point));
+    for (let point of testPoints) {
+      Render3Dp5.drawTestPoint(point, sensor.isInFieldOfView(point));
+    }
+
+    //easycam.beginHUD();
+    //drawHUD();
+    //easycam.endHUD();
   }
-
-  easycam.beginHUD();
-  drawHUD();
-  easycam.endHUD();
 }
 
 // Draw HUD
