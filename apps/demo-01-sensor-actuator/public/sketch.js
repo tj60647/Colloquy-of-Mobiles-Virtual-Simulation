@@ -20,7 +20,7 @@ let loading = true;
 // Preload the font
 function preload() {
   //console.log("Preloading...");
-  easyFont = loadFont("/roboto-regular-webfont.ttf");
+  easyFont = loadFont("roboto-regular-webfont.ttf");
   //console.log("Font loaded:", !!easyFont); // Log true if the font is loaded successfully
 }
 
