@@ -24,6 +24,14 @@ app.use(
   "/demo-01-sensor-actuator",
   express.static(path.join(__dirname, "apps/demo-01-sensor-actuator/public"))
 );
+app.use(
+  "/demo-02-oscillator",
+  express.static(path.join(__dirname, "apps/demo-02-oscillator/public"))
+);
+app.use(
+  "/demo-03-transform",
+  express.static(path.join(__dirname, "apps/demo-03-transform/public"))
+);
 
 // Serve JavaScript modules from the 'lib' directory
 app.use("/lib", express.static(path.join(__dirname, "lib")));
