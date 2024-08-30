@@ -43,9 +43,12 @@ app.use("/lib", express.static(path.join(__dirname, "lib")));
 // Serve additional static assets from the 'assets' directory
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 
-// Redirect root to a default demo (optional)
+// Serve the 'public' directory for the home page
+app.use(express.static(path.join(__dirname, "apps/public")));
+
+// Serve the home page
 app.get("/", (req, res) => {
-  res.redirect("/demo-00-P5"); // Default to demo-00-P5 or a landing page
+  res.sendFile(path.join(__dirname, "apps/public/index.html")); // Adjust the path as needed
 });
 
 // Fallback to handle 404 errors
