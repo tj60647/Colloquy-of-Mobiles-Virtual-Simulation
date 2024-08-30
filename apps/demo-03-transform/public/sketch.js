@@ -1,4 +1,4 @@
-import { Transform } from "../../lib/Transform.js";
+import { Transform } from "../lib/Transform.js";
 
 //console.log("Sketch starting..."); // Should appear in the console immediately
 
