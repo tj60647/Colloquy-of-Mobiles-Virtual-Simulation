@@ -4,6 +4,7 @@ const demos = [
   { name: "Demo 02: Oscillator", path: "/demo-02-oscillator" },
   { name: "Demo 03: Transform", path: "/demo-03-transform" },
   { name: "Demo 04: Drives", path: "/demo-04-drives" },
+  { name: "Demo 05: Transceivers", path: "/demo-05-transceiversV2" },
   // Add additional anticipated demos here
 ];
 
