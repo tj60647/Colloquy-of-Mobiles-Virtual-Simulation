@@ -40,6 +40,10 @@ app.use(
   "/demo-05-transceiversV2",
   express.static(path.join(__dirname, "apps/demo-05-transceiversV2/public"))
 );
+app.use(
+  "/demo-07-sensor",
+  express.static(path.join(__dirname, "apps/demo-07-sensor/public"))
+);
 
 // Serve JavaScript modules from the 'lib' directory
 app.use("/lib", express.static(path.join(__dirname, "lib")));

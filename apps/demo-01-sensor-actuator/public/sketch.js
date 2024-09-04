@@ -106,9 +106,9 @@ function draw() {
       Render3Dp5.drawTestPoint(point, sensor.isInFieldOfView(point));
     }
 
-    //easycam.beginHUD();
-    //drawHUD();
-    //easycam.endHUD();
+    easycam.beginHUD();
+    drawHUD();
+    easycam.endHUD();
   }
 }
 
@@ -129,9 +129,9 @@ function drawHUD() {
     20
   );
   text(
-    `Root Local Position: (${rootTransform.localPosition.x.toFixed(2)}, ` +
-      `${rootTransform.localPosition.y.toFixed(2)}, ` +
-      `${rootTransform.localPosition.z.toFixed(2)})`,
+    `Root Local Position: (${rootTransform.x.toFixed(2)}, ` +
+      `${rootTransform.y.toFixed(2)}, ` +
+      `${rootTransform.z.toFixed(2)})`,
     20,
     40
   );
@@ -145,11 +145,9 @@ function drawHUD() {
     60
   );
   text(
-    `Root Local Orientation: (Yaw: ${rootTransform.localOrientation.yaw.toFixed(
-      2
-    )}, ` +
-      `Pitch: ${rootTransform.localOrientation.pitch.toFixed(2)}, ` +
-      `Roll: ${rootTransform.localOrientation.roll.toFixed(2)})`,
+    `Root Local Orientation: (Yaw: ${rootTransform.yaw.toFixed(2)}, ` +
+      `Pitch: ${rootTransform.pitch.toFixed(2)}, ` +
+      `Roll: ${rootTransform.roll.toFixed(2)})`,
     20,
     80
   );
@@ -165,9 +163,9 @@ function drawHUD() {
     120
   );
   text(
-    `Actuator Local Position: (${actuator.localPosition.x.toFixed(2)}, ` +
-      `${actuator.localPosition.y.toFixed(2)}, ` +
-      `${actuator.localPosition.z.toFixed(2)})`,
+    `Actuator Local Position: (${actuator.x.toFixed(2)}, ` +
+      `${actuator.y.toFixed(2)}, ` +
+      `${actuator.z.toFixed(2)})`,
     20,
     140
   );
@@ -181,11 +179,9 @@ function drawHUD() {
     160
   );
   text(
-    `Actuator Local Orientation: (Yaw: ${actuator.localOrientation.yaw.toFixed(
-      2
-    )}, ` +
-      `Pitch: ${actuator.localOrientation.pitch.toFixed(2)}, ` +
-      `Roll: ${actuator.localOrientation.roll.toFixed(2)})`,
+    `Actuator Local Orientation: (Yaw: ${actuator.yaw.toFixed(2)}, ` +
+      `Pitch: ${actuator.pitch.toFixed(2)}, ` +
+      `Roll: ${actuator.roll.toFixed(2)})`,
     20,
     180
   );
@@ -199,9 +195,9 @@ function drawHUD() {
     220
   );
   text(
-    `Sensor Local Position: (${sensor.localPosition.x.toFixed(2)}, ` +
-      `${sensor.localPosition.y.toFixed(2)}, ` +
-      `${sensor.localPosition.z.toFixed(2)})`,
+    `Sensor Local Position: (${sensor.x.toFixed(2)}, ` +
+      `${sensor.y.toFixed(2)}, ` +
+      `${sensor.z.toFixed(2)})`,
     20,
     240
   );
@@ -215,11 +211,9 @@ function drawHUD() {
     260
   );
   text(
-    `Sensor Local Orientation: (Yaw: ${sensor.localOrientation.yaw.toFixed(
-      2
-    )}, ` +
-      `Pitch: ${sensor.localOrientation.pitch.toFixed(2)}, ` +
-      `Roll: ${sensor.localOrientation.roll.toFixed(2)})`,
+    `Sensor Local Orientation: (Yaw: ${sensor.yaw.toFixed(2)}, ` +
+      `Pitch: ${sensor.pitch.toFixed(2)}, ` +
+      `Roll: ${sensor.roll.toFixed(2)})`,
     20,
     280
   );

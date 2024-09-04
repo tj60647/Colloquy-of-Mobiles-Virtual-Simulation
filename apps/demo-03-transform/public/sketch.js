@@ -1,7 +1,5 @@
 import { Transform } from "../lib/Transform.js";
 
-//console.log("Sketch starting..."); // Should appear in the console immediately
-
 // Attach the functions to the window object
 window.preload = preload;
 window.setup = setup;
@@ -14,15 +12,15 @@ let rootTransform,
   grandChildTransform,
   greatGrandChildTransform;
 let hud;
+const rotationSpeed = 0.5; // Speed of rotation in degrees per frame
 
 /**
  * Setup function for p5.js sketch.
  * Initializes a hierarchy of Transform objects, sets up the canvas in WEBGL mode, and initializes EasyCam for interactive 3D navigation.
  * Also sets up a HUD for displaying statistics about the transforms.
  */
-
 function preload() {
-  easyFont = loadFont("roboto-regular-webfont.ttf"); // on openprocessing, this file is in the "files" tab of the web ide.
+  easyFont = loadFont("roboto-regular-webfont.ttf"); // Load font for text rendering
 }
 
 function setup() {
@@ -30,9 +28,7 @@ function setup() {
   easycam = createEasyCam(); // Initialize EasyCam for interactive 3D view control
   document.oncontextmenu = () => false; // Disable right-click context menu to prevent interference with EasyCam
 
-  // use the loaded font
-  // called after create canvas
-  textFont(easyFont);
+  textFont(easyFont); // Use the loaded font after creating canvas
 
   // Initialize transforms with hierarchical relationships
   rootTransform = new Transform(
@@ -44,7 +40,7 @@ function setup() {
   );
   childTransform = new Transform(
     rootTransform,
-    { x: 0, y: 0, z: 50 },
+    { x: 0, y: 50, z: 0 },
     { yaw: 0, pitch: 90, roll: 0 },
     "Child",
     2
@@ -79,17 +75,17 @@ function draw() {
   background(220);
   lights(); // Add default lighting to enhance 3D visibility
 
-  // Draw lines connecting transforms in the hierarchy
-  drawLineToTransform(rootTransform);
-  drawLineToTransform(childTransform);
-  drawLineToTransform(grandChildTransform);
-  drawLineToTransform(greatGrandChildTransform);
+  // Increment the roll of each transform to rotate around the Z-axis
+  //rotateTransform(rootTransform);
+  rotateTransform(childTransform);
+  // rotateTransform(grandChildTransform);
+  // rotateTransform(greatGrandChildTransform);
 
-  // Draw transforms and their local coordinate axes
+  // Draw transforms in hierarchical order
   drawTransform(rootTransform);
   drawTransform(childTransform);
   drawTransform(grandChildTransform);
-  drawTransform(greatGrandChildTransform);
+  //drawTransform(greatGrandChildTransform);
 
   // Draw HUD with statistics
   easycam.beginHUD();
@@ -98,39 +94,41 @@ function draw() {
 }
 
 /**
- * Draws a line from the parent transform to the specified transform.
- * If the transform has no parent, the line is drawn from the origin.
- * @param {Transform} transform - The Transform object to which the line is drawn.
+ * Rotates a transform around its local Z-axis by incrementing its roll.
+ * @param {Transform} transform - The Transform object to rotate.
  */
-function drawLineToTransform(transform) {
-  const pos = transform.getGlobalPosition();
-  const parentPos = transform.parent
-    ? transform.parent.getGlobalPosition()
-    : { x: 0, y: 0, z: 0 };
-  stroke(0, 128, 0); // Set line color to green for visibility
-  line(parentPos.x, parentPos.y, parentPos.z, pos.x, pos.y, pos.z); // Draw line from parent to transform position
+function rotateTransform(transform) {
+  transform.roll += rotationSpeed; // Increment the roll angle by a small amount
+  // Reset the roll angle to 0 if it exceeds 360 degrees
+  if (transform.roll >= 360) {
+    transform.roll = transform.roll - 360;
+  }
 }
 
 /**
- * Draws a transform and its local coordinate axes in 3D space.
+ * Draws a transform and its children in 3D space.
  * The transform is visualized as a sphere, and the axes are colored lines.
+ * This function is recursive to handle hierarchical drawing.
  * @param {Transform} transform - The Transform object to draw.
  */
 function drawTransform(transform) {
+  push(); // Save the current transformation state
+
+  // Get global position and orientation
   const pos = transform.getGlobalPosition();
   const ori = transform.getGlobalOrientation();
 
-  push(); // Start a new drawing state
-  translate(pos.x, pos.y, pos.z); // Move to the global position of the transform
-
-  // Draw the transform as a small sphere
-  fill(128, 0, 0); // Red color for the sphere
-  sphere(2); // Sphere size
+  // Move to the transform's global position
+  translate(pos.x, pos.y, pos.z);
 
   // Apply orientation to the local axes
   rotateZ(radians(ori.roll));
   rotateX(radians(ori.pitch));
   rotateY(radians(-ori.yaw));
+
+  // Draw the transform as a small sphere
+  fill(128, 0, 0); // Red color for the sphere
+  sphere(2); // Sphere size
 
   // Draw local coordinate axes
   strokeWeight(1);
@@ -150,7 +148,18 @@ function drawTransform(transform) {
   fill(0, 0, 255);
   text("Z", 0, 0, 22);
 
-  pop(); // Restore original drawing state
+  // // Recursively draw child transforms
+  // for (let child of [
+  //   childTransform,
+  //   grandChildTransform,
+  //   greatGrandChildTransform,
+  // ]) {
+  //   if (child.parent === transform) {
+  //     drawTransform(child); // Recursively draw the child transform
+  //   }
+  // }
+
+  pop(); // Restore the previous transformation state
 }
 
 /**
@@ -162,165 +171,62 @@ function drawHUD() {
   textSize(10);
   textAlign(LEFT, TOP);
 
-  // Root Transform
-  text(
-    `Root Global Position: (${rootTransform
-      .getGlobalPosition()
-      .x.toFixed(2)}, ${rootTransform
-      .getGlobalPosition()
-      .y.toFixed(2)}, ${rootTransform.getGlobalPosition().z.toFixed(2)})`,
-    20,
-    20
-  );
-  text(
-    `Root Local Position: (${rootTransform.localPosition.x.toFixed(
-      2
-    )}, ${rootTransform.localPosition.y.toFixed(
-      2
-    )}, ${rootTransform.localPosition.z.toFixed(2)})`,
-    20,
-    40
-  );
-  text(
-    `Root Global Orientation: (Yaw: ${rootTransform
-      .getGlobalOrientation()
-      .yaw.toFixed(2)}, Pitch: ${rootTransform
-      .getGlobalOrientation()
-      .pitch.toFixed(2)}, Roll: ${rootTransform
-      .getGlobalOrientation()
-      .roll.toFixed(2)})`,
-    20,
-    60
-  );
-  text(
-    `Root Local Orientation: (Yaw: ${rootTransform.localOrientation.yaw.toFixed(
-      2
-    )}, Pitch: ${rootTransform.localOrientation.pitch.toFixed(
-      2
-    )}, Roll: ${rootTransform.localOrientation.roll.toFixed(2)})`,
-    20,
-    80
-  );
+  // Helper function to get formatted position and orientation data
+  function formatPositionAndOrientation(transform) {
+    const globalPos = transform.getGlobalPosition();
+    const globalOri = transform.getGlobalOrientation();
+    return {
+      globalPos: `(${globalPos.x.toFixed(2)}, ${globalPos.y.toFixed(
+        2
+      )}, ${globalPos.z.toFixed(2)})`,
+      localPos: `(${transform.x.toFixed(2)}, ${transform.y.toFixed(
+        2
+      )}, ${transform.z.toFixed(2)})`,
+      globalOri: `(Yaw: ${globalOri.yaw.toFixed(
+        2
+      )}, Pitch: ${globalOri.pitch.toFixed(2)}, Roll: ${globalOri.roll.toFixed(
+        2
+      )})`,
+      localOri: `(Yaw: ${transform.yaw.toFixed(
+        2
+      )}, Pitch: ${transform.pitch.toFixed(2)}, Roll: ${transform.roll.toFixed(
+        2
+      )})`,
+    };
+  }
 
-  // Child Transform
-  text(
-    `Child Global Position: (${childTransform
-      .getGlobalPosition()
-      .x.toFixed(2)}, ${childTransform
-      .getGlobalPosition()
-      .y.toFixed(2)}, ${childTransform.getGlobalPosition().z.toFixed(2)})`,
-    20,
-    120
-  );
-  text(
-    `Child Local Position: (${childTransform.localPosition.x.toFixed(
-      2
-    )}, ${childTransform.localPosition.y.toFixed(
-      2
-    )}, ${childTransform.localPosition.z.toFixed(2)})`,
-    20,
-    140
-  );
-  text(
-    `Child Global Orientation: (Yaw: ${childTransform
-      .getGlobalOrientation()
-      .yaw.toFixed(2)}, Pitch: ${childTransform
-      .getGlobalOrientation()
-      .pitch.toFixed(2)}, Roll: ${childTransform
-      .getGlobalOrientation()
-      .roll.toFixed(2)})`,
-    20,
-    160
-  );
-  text(
-    `Child Local Orientation: (Yaw: ${childTransform.localOrientation.yaw.toFixed(
-      2
-    )}, Pitch: ${childTransform.localOrientation.pitch.toFixed(
-      2
-    )}, Roll: ${childTransform.localOrientation.roll.toFixed(2)})`,
-    20,
-    180
-  );
+  // Draw information for each transform
+  const transforms = [
+    {
+      name: "Root",
+      data: formatPositionAndOrientation(rootTransform),
+      yOffset: 20,
+    },
+    {
+      name: "Child",
+      data: formatPositionAndOrientation(childTransform),
+      yOffset: 120,
+    },
+    {
+      name: "GrandChild",
+      data: formatPositionAndOrientation(grandChildTransform),
+      yOffset: 220,
+    },
+    {
+      name: "GreatGrandChild",
+      data: formatPositionAndOrientation(greatGrandChildTransform),
+      yOffset: 320,
+    },
+  ];
 
-  // GrandChild Transform
-  text(
-    `GrandChild Global Position: (${grandChildTransform
-      .getGlobalPosition()
-      .x.toFixed(2)}, ${grandChildTransform
-      .getGlobalPosition()
-      .y.toFixed(2)}, ${grandChildTransform.getGlobalPosition().z.toFixed(2)})`,
-    20,
-    220
-  );
-  text(
-    `GrandChild Local Position: (${grandChildTransform.localPosition.x.toFixed(
-      2
-    )}, ${grandChildTransform.localPosition.y.toFixed(
-      2
-    )}, ${grandChildTransform.localPosition.z.toFixed(2)})`,
-    20,
-    240
-  );
-  text(
-    `GrandChild Global Orientation: (Yaw: ${grandChildTransform
-      .getGlobalOrientation()
-      .yaw.toFixed(2)}, Pitch: ${grandChildTransform
-      .getGlobalOrientation()
-      .pitch.toFixed(2)}, Roll: ${grandChildTransform
-      .getGlobalOrientation()
-      .roll.toFixed(2)})`,
-    20,
-    260
-  );
-  text(
-    `GrandChild Local Orientation: (Yaw: ${grandChildTransform.localOrientation.yaw.toFixed(
-      2
-    )}, Pitch: ${grandChildTransform.localOrientation.pitch.toFixed(
-      2
-    )}, Roll: ${grandChildTransform.localOrientation.roll.toFixed(2)})`,
-    20,
-    280
-  );
-
-  // GreatGrandChild Transform
-  text(
-    `GreatGrandChild Global Position: (${greatGrandChildTransform
-      .getGlobalPosition()
-      .x.toFixed(2)}, ${greatGrandChildTransform
-      .getGlobalPosition()
-      .y.toFixed(2)}, ${greatGrandChildTransform
-      .getGlobalPosition()
-      .z.toFixed(2)})`,
-    20,
-    320
-  );
-  text(
-    `GreatGrandChild Local Position: (${greatGrandChildTransform.localPosition.x.toFixed(
-      2
-    )}, ${greatGrandChildTransform.localPosition.y.toFixed(
-      2
-    )}, ${greatGrandChildTransform.localPosition.z.toFixed(2)})`,
-    20,
-    340
-  );
-  text(
-    `GreatGrandChild Global Orientation: (Yaw: ${greatGrandChildTransform
-      .getGlobalOrientation()
-      .yaw.toFixed(2)}, Pitch: ${greatGrandChildTransform
-      .getGlobalOrientation()
-      .pitch.toFixed(2)}, Roll: ${greatGrandChildTransform
-      .getGlobalOrientation()
-      .roll.toFixed(2)})`,
-    20,
-    360
-  );
-  text(
-    `GreatGrandChild Local Orientation: (Yaw: ${greatGrandChildTransform.localOrientation.yaw.toFixed(
-      2
-    )}, Pitch: ${greatGrandChildTransform.localOrientation.pitch.toFixed(
-      2
-    )}, Roll: ${greatGrandChildTransform.localOrientation.roll.toFixed(2)})`,
-    20,
-    380
-  );
+  transforms.forEach((t) => {
+    text(`${t.name} Global Position: ${t.data.globalPos}`, 20, t.yOffset);
+    text(`${t.name} Local Position: ${t.data.localPos}`, 20, t.yOffset + 20);
+    text(
+      `${t.name} Global Orientation: ${t.data.globalOri}`,
+      20,
+      t.yOffset + 40
+    );
+    text(`${t.name} Local Orientation: ${t.data.localOri}`, 20, t.yOffset + 60);
+  });
 }
