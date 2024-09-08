@@ -41,8 +41,16 @@ app.use(
   express.static(path.join(__dirname, "apps/demo-05-transceiversV2/public"))
 );
 app.use(
+  "/demo-06-assets-test",
+  express.static(path.join(__dirname, "apps/demo-06-assets-test/public"))
+);
+app.use(
   "/demo-07-sensor",
   express.static(path.join(__dirname, "apps/demo-07-sensor/public"))
+);
+app.use(
+  "/demo-08-sensor-THREE",
+  express.static(path.join(__dirname, "apps/demo-08-sensor-THREE/public"))
 );
 
 // Serve JavaScript modules from the 'lib' directory

@@ -12,6 +12,11 @@ let worldTransform,
   grandChildTransform,
   greatGrandChildTransform;
 const rotationSpeed = 0.5; // Speed of rotation in degrees per frame
+const axisLength = 20;
+
+// Pre-create geometries and materials for the axes
+let xAxisGeometry, yAxisGeometry, zAxisGeometry;
+let xAxisMaterial, yAxisMaterial, zAxisMaterial;
 
 /**
  * Initializes the Three.js scene, camera, renderer, and controls.
@@ -41,24 +46,23 @@ function init() {
   controls.update();
 
   // Create transforms with hierarchical relationships
-  worldTransform = new THREE.Object3D();
+  worldTransform = new THREE.Group();
   scene.add(worldTransform); // Add root to the scene
 
-  // Create transforms with hierarchical relationships
-  rootTransform = new THREE.Object3D();
+  rootTransform = new THREE.Group();
   scene.add(rootTransform); // Add root to the scene
 
-  childTransform = new THREE.Object3D();
+  childTransform = new THREE.Group();
   rootTransform.add(childTransform); // Child is added to root
   childTransform.position.set(0, 50, 0); // Position child relative to root
   childTransform.rotation.z = Math.PI / 2; // Rotate child around its Y-axis
 
-  grandChildTransform = new THREE.Object3D();
+  grandChildTransform = new THREE.Group();
   childTransform.add(grandChildTransform); // Grandchild is added to child
   grandChildTransform.position.set(0, 50, 0); // Position grandchild relative to child
   grandChildTransform.rotation.z = Math.PI / 2; // Rotate grandchild around its Y-axis
 
-  greatGrandChildTransform = new THREE.Object3D();
+  greatGrandChildTransform = new THREE.Group();
   grandChildTransform.add(greatGrandChildTransform); // Great-grandchild is added to grandchild
   greatGrandChildTransform.position.set(0, 50, 0); // Position great-grandchild relative to grandchild
   greatGrandChildTransform.rotation.z = Math.PI / 2; // Rotate great-grandchild around its Y-axis
@@ -84,6 +88,9 @@ function init() {
   const greatGrandChildMesh = new THREE.Mesh(cubeGeometry, material);
   greatGrandChildTransform.add(greatGrandChildMesh); // Visualize great-grandchild
 
+  // Pre-create axis geometries and materials
+  createAxisGeometriesAndMaterials();
+
   // Draw axes for each transform
   drawAxes(rootTransform);
   drawAxes(childTransform);
@@ -94,41 +101,48 @@ function init() {
 }
 
 /**
- * Draws the local coordinate axes (X, Y, Z) for a given transform.
- * @param {THREE.Object3D} transform - The transform object for which the axes are drawn.
+ * Creates geometries and materials for the axes once.
  */
-function drawAxes(transform) {
-  const axisLength = 20;
-
+function createAxisGeometriesAndMaterials() {
   // X-axis: Red
   const xAxisPoints = [
     new THREE.Vector3(0, 0, 0),
     new THREE.Vector3(axisLength, 0, 0),
   ];
-  const xAxisGeometry = new THREE.BufferGeometry().setFromPoints(xAxisPoints);
-  const xAxisMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
-  const xAxisLine = new THREE.Line(xAxisGeometry, xAxisMaterial);
-  transform.add(xAxisLine);
-  createTextLabel("X", axisLength / 2, 0, 0, transform); // Position label at midpoint of X-axis
+  xAxisGeometry = new THREE.BufferGeometry().setFromPoints(xAxisPoints);
+  xAxisMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
 
   // Y-axis: Green
   const yAxisPoints = [
     new THREE.Vector3(0, 0, 0),
     new THREE.Vector3(0, axisLength, 0),
   ];
-  const yAxisGeometry = new THREE.BufferGeometry().setFromPoints(yAxisPoints);
-  const yAxisMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 });
-  const yAxisLine = new THREE.Line(yAxisGeometry, yAxisMaterial);
-  transform.add(yAxisLine);
-  createTextLabel("Y", 0, axisLength / 2, 0, transform); // Position label at midpoint of Y-axis
+  yAxisGeometry = new THREE.BufferGeometry().setFromPoints(yAxisPoints);
+  yAxisMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 });
 
   // Z-axis: Blue
   const zAxisPoints = [
     new THREE.Vector3(0, 0, 0),
     new THREE.Vector3(0, 0, axisLength),
   ];
-  const zAxisGeometry = new THREE.BufferGeometry().setFromPoints(zAxisPoints);
-  const zAxisMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
+  zAxisGeometry = new THREE.BufferGeometry().setFromPoints(zAxisPoints);
+  zAxisMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
+}
+
+/**
+ * Draws the local coordinate axes (X, Y, Z) for a given transform.
+ * @param {THREE.Object3D} transform - The transform object for which the axes are drawn.
+ */
+function drawAxes(transform) {
+  // Reuse pre-created geometries and materials for axes
+  const xAxisLine = new THREE.Line(xAxisGeometry, xAxisMaterial);
+  transform.add(xAxisLine);
+  createTextLabel("X", axisLength / 2, 0, 0, transform); // Position label at midpoint of X-axis
+
+  const yAxisLine = new THREE.Line(yAxisGeometry, yAxisMaterial);
+  transform.add(yAxisLine);
+  createTextLabel("Y", 0, axisLength / 2, 0, transform); // Position label at midpoint of Y-axis
+
   const zAxisLine = new THREE.Line(zAxisGeometry, zAxisMaterial);
   transform.add(zAxisLine);
   createTextLabel("Z", 0, 0, axisLength / 2, transform); // Position label at midpoint of Z-axis
