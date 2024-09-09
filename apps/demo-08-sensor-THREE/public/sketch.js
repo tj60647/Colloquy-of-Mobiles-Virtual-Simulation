@@ -51,10 +51,10 @@ for (let i = 0; i < 16; i++) {
 
   const distance = Math.random() * 38 + 4;
   const angle = Math.random() * Math.PI * 2;
-
+  const deltaY = Math.random() * 10 - 5;
   target.position.set(
     distance * Math.cos(angle),
-    0,
+    deltaY,
     distance * Math.sin(angle)
   );
   scene.add(target);

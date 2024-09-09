@@ -29,8 +29,8 @@ app.use(
   express.static(path.join(__dirname, "apps/demo-02-oscillator/public"))
 );
 app.use(
-  "/demo-03-transform",
-  express.static(path.join(__dirname, "apps/demo-03-transform/public"))
+  "/demo-03-transform-THREE",
+  express.static(path.join(__dirname, "apps/demo-03-transform-THREE/public"))
 );
 app.use(
   "/demo-04-drives",

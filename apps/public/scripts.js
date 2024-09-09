@@ -2,7 +2,7 @@
 const demos = [
   { name: "Demo 01: Sensor Actuator", path: "/demo-01-sensor-actuator" },
   { name: "Demo 02: Oscillator", path: "/demo-02-oscillator" },
-  { name: "Demo 03: Transform", path: "/demo-03-transform" },
+  { name: "Demo 03: Transform THREE", path: "/demo-03-transform-THREE" },
   { name: "Demo 04: Drives", path: "/demo-04-drives" },
   { name: "Demo 05: Transceivers", path: "/demo-05-transceiversV2" },
   { name: "Demo 06: Assets", path: "/demo-06-assets-test" },

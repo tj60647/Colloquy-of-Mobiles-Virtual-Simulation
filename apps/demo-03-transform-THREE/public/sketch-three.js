@@ -18,6 +18,8 @@ const axisLength = 20;
 let xAxisGeometry, yAxisGeometry, zAxisGeometry;
 let xAxisMaterial, yAxisMaterial, zAxisMaterial;
 
+let lightSource;
+
 /**
  * Initializes the Three.js scene, camera, renderer, and controls.
  * Creates a hierarchy of objects representing the transforms.
@@ -39,6 +41,10 @@ function init() {
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
+
+  lightSource = new THREE.DirectionalLight(0xffffff, 1);
+  lightSource.position.set(10, 10, 10);
+  scene.add(lightSource);
 
   // Set up OrbitControls to allow camera orbiting around the origin
   controls = new OrbitControls(camera, renderer.domElement);
@@ -73,7 +79,7 @@ function init() {
 
   // Create geometries to visualize the transforms as cubes
   const cubeGeometry = new THREE.BoxGeometry(4, 4, 4); // Use cubes instead of spheres
-  const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  const material = new THREE.MeshLambertMaterial({ color: 0xff0000 });
 
   // Create and add meshes to visualize each transform
   const rootMesh = new THREE.Mesh(cubeGeometry, material);
