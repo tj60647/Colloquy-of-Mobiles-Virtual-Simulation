@@ -25,6 +25,10 @@ app.use(
   express.static(path.join(__dirname, "apps/demo-01-sensor-actuator/public"))
 );
 app.use(
+  "/demo-01-actuator-THREE",
+  express.static(path.join(__dirname, "apps/demo-01-actuator-THREE/public"))
+);
+app.use(
   "/demo-02-oscillator",
   express.static(path.join(__dirname, "apps/demo-02-oscillator/public"))
 );

@@ -1,21 +1,17 @@
 // filename: sketch.js
-// file location: apps/demo-08-sensor-THREE/public/sketch.js
-// this demo illustrates the use of the Sensor_THREE class
-// to detect targets within its field of view
-// and visualize the detection status in a Three.js scene.
-// The sensor is represented by a cone-shaped field of effect
-// that can detect targets within its range based on their intensity.
-// The targets are represented by cubes with varying power levels.
-// the UI allows for adjusting the sensor's field of view and sensitivity.
+// location: apps/demo-01-actuator-THREE/public/sketch.js
+
+// demonstration of the Actuator_THREE class
+// that can emit energy within its field of effect
+// the UI allows for controlling the actuator's properties
+// and displays the detection status of targets
 
 // Import the Three.js library and OrbitControls from a CDN
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/OrbitControls.js";
 
-// Import the custom Sensor_THREE class
-import { Sensor_THREE } from "../../lib/Sensor_THREE.js";
-import { Transducer_THREE } from "../../lib/Transducer_THREE.js";
-import { formatValue } from "../../lib/UI_Utilities.js";
+// Import the custom Actuator_THREE class
+import { Actuator_THREE } from "../../lib/Actuator_THREE.js";
 
 // Create the main scene
 const scene = new THREE.Scene();
@@ -45,8 +41,6 @@ light.position.set(70, 200, 100).normalize();
 scene.add(light);
 
 // Add a grid helper to the scene
-//const gridHelper = new THREE.GridHelper(84, 84, 0xcccccc, 0xdddddd);
-
 const gridHelper = new THREE.PolarGridHelper(
   42,
   8,
@@ -57,15 +51,17 @@ const gridHelper = new THREE.PolarGridHelper(
 );
 scene.add(gridHelper);
 
-//PolarGridHelper
-
 // Add an array of targets to the scene inside a 100 unit circle
 const targetCount = 100;
-
 const targets = [];
 for (let i = 0; i < targetCount; i++) {
-  const power = Math.floor(Math.random() * 100) * 20; // Assign a random power level to the target
-  const dimension = power / 1000; // Scale the dimension based on the power level
+  // Assign a random minimum sensitivity level to the target, mapped between 0.001 and 1
+  const minIntensitySensitivity = Math.random() * (1 - 0.001) + 0.001;
+
+  // Calculate the dimension using logarithmic scaling to make the size changes more visually intuitive
+  const scaledSensitivity = Math.log10(1 / minIntensitySensitivity + 1);
+  const dimension = scaledSensitivity; // Scaling factor for better visibility
+
   const target = new THREE.Mesh(
     new THREE.BoxGeometry(dimension, dimension, dimension), // input: width, height, depth
     new THREE.MeshLambertMaterial({ color: 0xff0000 })
@@ -79,28 +75,29 @@ for (let i = 0; i < targetCount; i++) {
     deltaY,
     distance * Math.sin(angle)
   );
-  target.power = power;
+
+  target.minIntensitySensitivity = minIntensitySensitivity;
   scene.add(target);
   targets.push(target);
 }
 
-// Create a sensor instance
-const sensor = new Sensor_THREE(
-  "Front Sensor",
-  Math.PI / 2, // FOV in radians
-  0.05, // Minimum intensity sensitivity
+// Create an actuator instance
+const actuator = new Actuator_THREE(
+  "Central Actuator",
+  Math.PI / 2, // Field of effect angle in radians
+  1000, // Power of the actuator
   true, // Show direction helper
   true, // Show axes helper
   true // Show field of effect helper
 );
-sensor.position.set(0, 0, 0); // Position the sensor at the origin
-sensor.rotation.set(0, Math.PI / 4, 0); // Rotate the sensor 45 degrees around the Y-axis
-scene.add(sensor); // Add the sensor to the scene
+actuator.position.set(0, 0, 0); // Position the actuator at the origin
+actuator.rotation.set(0, Math.PI / 4, 0); // Rotate the actuator 45 degrees around the Y-axis
+scene.add(actuator); // Add the actuator to the scene
 
-// Create a secondary camera for the sensor's view
-const sensorCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); // Aspect ratio set to 1 for a square view
-sensorCamera.fov = sensor.fieldOfEffect_AngleFull * (180 / Math.PI); // Update sensor camera FOV
-sensorCamera.updateProjectionMatrix();
+// Create a secondary camera for the actuator's view
+const actuatorCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); // Aspect ratio set to 1 for a square view
+actuatorCamera.fov = actuator.fieldOfEffect_AngleFull * (180 / Math.PI); // Update actuator camera FOV
+actuatorCamera.updateProjectionMatrix();
 
 // Variable for rotation rate
 let rotationRate = 0.003; // Default rotation rate
@@ -108,28 +105,11 @@ let rotationRate = 0.003; // Default rotation rate
 //********************************************************************************
 // UI Creation and Interaction
 
-// Function to create and set up the UI
-function createUI(transducer) {
-  const isSensor =
-    transducer.transducerType === Transducer_THREE.TRANSDUCER_TYPE.SENSOR;
-  const isActuator =
-    transducer.transducerType === Transducer_THREE.TRANSDUCER_TYPE.ACTUATOR;
-
-  //get the background color based on the field of effect color
-  // Get the hexadecimal color value
-  const hexColor = transducer.fieldOfEffect_HelperColor;
-
-  // Extract RGB components from the hexadecimal color
-  let red = (hexColor >> 16) & 0xff;
-  let green = (hexColor >> 8) & 0xff;
-  let blue = hexColor & 0xff;
-
-  // Set the transparency value (0.0 to 1.0, where 0 is fully transparent and 1 is fully opaque)
-  const alpha = 0.8; // Example: 80% opacity
-
-  // Create the rgba color string
-  const backgroundColor = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
-
+/**
+ * Creates the UI for controlling the actuator's properties.
+ * @returns {{statusDisplay: HTMLElement}} - Returns an object containing a reference to the status display element.
+ */
+function createUI() {
   // Create a UI container
   const uiContainer = document.createElement("div");
   uiContainer.style.position = "absolute";
@@ -138,7 +118,7 @@ function createUI(transducer) {
   uiContainer.style.color = "white";
   uiContainer.style.fontFamily = "Arial, sans-serif";
   uiContainer.style.zIndex = "100";
-  uiContainer.style.backgroundColor = backgroundColor;
+  uiContainer.style.backgroundColor = "rgba(128, 128, 128, 0.5)";
   uiContainer.style.padding = "10px";
   uiContainer.style.borderRadius = "5px";
   uiContainer.style.display = "flex";
@@ -149,22 +129,26 @@ function createUI(transducer) {
 
   // Create a title label
   const titleLabel = document.createElement("div");
-  titleLabel.textContent = "Sensor Controls";
+  titleLabel.textContent = "Actuator Controls";
   titleLabel.style.fontWeight = "bold";
   titleLabel.style.textAlign = "center";
   uiContainer.appendChild(titleLabel);
 
-  // Create a button to toggle the sensor visibility
+  // Create a button to toggle the actuator visibility
   const toggleButton = document.createElement("button");
-  toggleButton.textContent = sensor.visible ? "Hide Sensor" : "Show Sensor";
+  toggleButton.textContent = actuator.visible
+    ? "Hide Actuator"
+    : "Show Actuator";
   toggleButton.style.width = "100%"; // Fixed width for the button
   toggleButton.onclick = () => {
-    sensor.visible = !sensor.visible;
-    toggleButton.textContent = sensor.visible ? "Hide Sensor" : "Show Sensor";
+    actuator.visible = !actuator.visible;
+    toggleButton.textContent = actuator.visible
+      ? "Hide Actuator"
+      : "Show Actuator";
   };
   uiContainer.appendChild(toggleButton);
 
-  // Create a label and slider for the sensor's field of view
+  // Create a label and slider for the actuator's field of view
   const fovLabel = document.createElement("label");
   fovLabel.textContent = "Field of View:";
   uiContainer.appendChild(fovLabel);
@@ -177,54 +161,54 @@ function createUI(transducer) {
   fovSlider.min = "1";
   fovSlider.max = "180";
   fovSlider.value = (
-    sensor.fieldOfEffect_AngleFull *
+    actuator.fieldOfEffect_AngleFull *
     (180 / Math.PI)
   ).toString();
   const fovValueDisplay = document.createElement("span");
   fovValueDisplay.style.marginLeft = "10px";
-  fovValueDisplay.textContent = formatValue(fovSlider.value, 1, 3, true);
+  fovValueDisplay.textContent = `${fovSlider.value}°`;
 
   fovSlider.oninput = (event) => {
-    sensor.fieldOfEffect_AngleFull =
+    actuator.fieldOfEffect_AngleFull =
       (parseInt(event.target.value) * Math.PI) / 180;
-    sensorCamera.fov = sensor.fieldOfEffect_AngleFull * (180 / Math.PI); // Update sensor camera FOV
-    sensorCamera.updateProjectionMatrix();
-    fovValueDisplay.textContent = formatValue(event.target.value, 1, 3, true);
+    actuatorCamera.fov = actuator.fieldOfEffect_AngleFull * (180 / Math.PI); // Update actuator camera FOV
+    actuatorCamera.updateProjectionMatrix();
+    fovValueDisplay.textContent = `${event.target.value}°`;
   };
 
   fovSliderContainer.appendChild(fovSlider);
   fovSliderContainer.appendChild(fovValueDisplay);
   uiContainer.appendChild(fovSliderContainer);
 
-  // Create a label and slider for the sensor's sensitivity
-  const sensitivityLabel = document.createElement("label");
-  sensitivityLabel.textContent = "Minimum Intesity Sense:";
-  uiContainer.appendChild(sensitivityLabel);
+  // Create a label and slider for the actuator's power
+  const powerLabel = document.createElement("label");
+  powerLabel.textContent = "Actuator Power:";
+  uiContainer.appendChild(powerLabel);
 
-  const sensitivitySliderContainer = document.createElement("div");
-  sensitivitySliderContainer.style.display = "flex";
-  sensitivitySliderContainer.style.alignItems = "center";
-  const sensitivitySlider = document.createElement("input");
-  sensitivitySlider.type = "range";
-  sensitivitySlider.min = "0.001";
-  sensitivitySlider.max = "1.000";
-  sensitivitySlider.step = "0.001"; // Adding step for better precision
-  sensitivitySlider.value = sensor.minIntensitySensitivity.toString();
+  const powerSliderContainer = document.createElement("div");
+  powerSliderContainer.style.display = "flex";
+  powerSliderContainer.style.alignItems = "center";
+  const powerSlider = document.createElement("input");
+  powerSlider.type = "range";
+  powerSlider.min = "0";
+  powerSlider.max = "1000";
+  powerSlider.step = "10"; // Adding step for better precision
+  powerSlider.value = actuator.power.toString();
 
-  const sensitivityValueDisplay = document.createElement("span");
-  sensitivityValueDisplay.style.marginLeft = "10px";
-  sensitivityValueDisplay.textContent = formatValue(sensitivitySlider.value);
+  const powerValueDisplay = document.createElement("span");
+  powerValueDisplay.style.marginLeft = "10px";
+  powerValueDisplay.textContent = `${powerSlider.value}`;
 
-  sensitivitySlider.oninput = (event) => {
-    sensor.minIntensitySensitivity = parseFloat(event.target.value);
-    sensitivityValueDisplay.textContent = formatValue(event.target.value);
+  powerSlider.oninput = (event) => {
+    actuator.power = parseInt(event.target.value);
+    powerValueDisplay.textContent = `${event.target.value}`;
   };
 
-  sensitivitySliderContainer.appendChild(sensitivitySlider);
-  sensitivitySliderContainer.appendChild(sensitivityValueDisplay);
-  uiContainer.appendChild(sensitivitySliderContainer);
+  powerSliderContainer.appendChild(powerSlider);
+  powerSliderContainer.appendChild(powerValueDisplay);
+  uiContainer.appendChild(powerSliderContainer);
 
-  // Create a label and slider for the sensor's rotation rate
+  // Create a label and slider for the actuator's rotation rate
   const rotationRateLabel = document.createElement("label");
   rotationRateLabel.textContent = "Rotation Rate:";
   uiContainer.appendChild(rotationRateLabel);
@@ -240,12 +224,11 @@ function createUI(transducer) {
   rotationRateSlider.value = rotationRate.toString(); // Default rotation rate
   const rotationRateValueDisplay = document.createElement("span");
   rotationRateValueDisplay.style.marginLeft = "10px";
-  // Set initial value display, add a + or - to the string, use 3 digits for value
-  rotationRateValueDisplay.textContent = formatValue(rotationRateSlider.value);
+  rotationRateValueDisplay.textContent = `${rotationRateSlider.value}`;
 
   rotationRateSlider.oninput = (event) => {
     rotationRate = parseFloat(event.target.value);
-    rotationRateValueDisplay.textContent = formatValue(event.target.value);
+    rotationRateValueDisplay.textContent = `${event.target.value}`;
   };
 
   rotationRateSliderContainer.appendChild(rotationRateSlider);
@@ -254,12 +237,12 @@ function createUI(transducer) {
 
   // Create a label for status display
   const statusDisplayLabel = document.createElement("label");
-  statusDisplayLabel.textContent = "Sensor Status:";
+  statusDisplayLabel.textContent = "Actuator Status:";
   uiContainer.appendChild(statusDisplayLabel);
 
-  // Create a status display at the bottom for sensor data
+  // Create a status display at the bottom for actuator data
   const statusDisplay = document.createElement("div");
-  statusDisplay.textContent = "Sensor Status: Initializing...";
+  statusDisplay.textContent = "Actuator Status: Initializing...";
   statusDisplay.style.fontSize = "12px";
   statusDisplay.style.fontWeight = "lighter";
   statusDisplay.style.marginTop = "5px"; // Add some spacing above the status
@@ -270,56 +253,33 @@ function createUI(transducer) {
 
 //********************************************************************************
 
-// Create a border overlay for the sensor camera view
-const borderOverlay = document.createElement("div");
-borderOverlay.style.position = "absolute";
-borderOverlay.style.border = "2px solid white"; // White border
-borderOverlay.style.boxSizing = "border-box"; // Include the border in the size calculations
-borderOverlay.style.zIndex = "99"; // Make sure it appears above other elements
-document.body.appendChild(borderOverlay);
-
-// Function to position and resize the border overlay
-function updateBorderOverlay() {
-  const insetSize = Math.min(window.innerWidth, window.innerHeight) / 4; // Make the viewport a square
-  borderOverlay.style.width = `${insetSize}px`;
-  borderOverlay.style.height = `${insetSize}px`;
-  borderOverlay.style.top = `${10}px`;
-  borderOverlay.style.left = `${window.innerWidth - insetSize - 10}px`;
-}
-
 // Initialize UI and get references to dynamically updated elements
-const { statusDisplay } = createUI(sensor);
+const { statusDisplay } = createUI();
 
 /**
- * Function to update the scene on each animation frame
+ * Function to update the scene on each animation frame.
  */
 function animate() {
-  // verify the scene is ready for animation
-  if (!scene) {
-    console.log("Scene not ready yet...");
-    return;
-  }
-
   requestAnimationFrame(animate);
 
-  // Rotate the sensor around the Y-axis based on the rotation rate
-  sensor.rotation.y += rotationRate;
-  // Reset sensor rotation if it exceeds 2*PI
-  if (sensor.rotation.y > Math.PI * 2) {
-    sensor.rotation.y = 0;
+  // Rotate the actuator around the Y-axis based on the rotation rate
+  actuator.rotation.y += rotationRate;
+  // Reset actuator rotation if it exceeds 2*PI
+  if (actuator.rotation.y > Math.PI * 2) {
+    actuator.rotation.y = 0;
   }
 
-  // Update the sensor camera to match the sensor's position and orientation
-  sensorCamera.position.copy(sensor.position);
+  // Update the actuator camera to match the actuator's position and orientation
+  actuatorCamera.position.copy(actuator.position);
 
-  // Compute the direction the sensor is facing
-  const sensorDirection = new THREE.Vector3();
-  sensor.getWorldDirection(sensorDirection);
+  // Compute the direction the actuator is facing
+  const actuatorDirection = new THREE.Vector3();
+  actuator.getWorldDirection(actuatorDirection);
 
-  // Point the camera in the same direction as the sensor
-  sensorCamera.lookAt(sensor.position.clone().add(sensorDirection));
+  // Point the camera in the same direction as the actuator
+  actuatorCamera.lookAt(actuator.position.clone().add(actuatorDirection));
 
-  // Check if any targets are within the sensor's field of view and update UI
+  // Check if any targets are within the actuator's field of effect and update UI
   updateTargetDetectionStatus();
 
   // Update the OrbitControls for smoother camera movement
@@ -330,7 +290,7 @@ function animate() {
   renderer.clear(); // Clear the previous frame
   renderer.render(scene, camera);
 
-  // Render the sensor's view in a square window in the top-right corner
+  // Render the actuator's view in a square window in the top-right corner
   const insetSize = Math.min(window.innerWidth, window.innerHeight) / 4; // Make the viewport a square
   renderer.setScissorTest(true); // Enable scissor test to limit rendering to the viewport
   renderer.setScissor(
@@ -345,11 +305,8 @@ function animate() {
     insetSize,
     insetSize
   );
-  renderer.render(scene, sensorCamera);
+  renderer.render(scene, actuatorCamera);
   renderer.setScissorTest(false); // Disable scissor test after rendering
-
-  // Update the position and size of the border overlay for the sensor camera view
-  updateBorderOverlay();
 }
 
 /**
@@ -369,20 +326,15 @@ function updateTargetDetectionStatus() {
   statusHeader.style.fontWeight = "bold";
   statusDisplay.appendChild(statusHeader);
 
-  // Iterate over each target and check if it is detectable
+  // Iterate over each target and check if it is within the actuator's field of effect
   for (let i = 0; i < targets.length; i++) {
     const target = targets[i];
+    const result = actuator.isTargetInFieldOfEffect(target);
 
-    //if the target does not have a power property, skip it
-    if (typeof target.power !== "number") {
-      // Log a message to the console that incldues the target index
-      console.log(`Target ${i} does not have a power property.`);
-      continue;
-    }
-
-    const result = sensor.isTargetDetectable(target);
-
-    if (result.inRange) {
+    if (
+      result.inFieldOfEffect &&
+      result.transmittedIntensity >= target.minIntensitySensitivity
+    ) {
       targetIsDetectable = true;
 
       // Create a new row for each detectable target
@@ -393,24 +345,24 @@ function updateTargetDetectionStatus() {
       targetRow.innerHTML = `
         <strong>Target ${i + 1}:</strong> <br>
         Distance: ${result.distance.toFixed(2)} <br>
-        Source Power: ${result.sourcePower} <br>
-        Sensed Intensity: ${result.receivedIntensity.toFixed(3)}
+        Target Sensitivity: ${target.minIntensitySensitivity.toFixed(3)} <br>
+        Transmitted Intensity: ${result.transmittedIntensity.toFixed(3)}
       `;
-      //        In Range: ${result.inRange} <br>
 
       // Append the target row to the status display
       statusDisplay.appendChild(targetRow);
 
-      // Adjust the color of the target based on the received intensity
-      // Assuming intensity ranges from 0 (min) to 1 (max)
-      let intensityFactor = result.receivedIntensity; // 0 to 1 scale
+      // Adjust the color of the target based on the transmitted intensity
+      // the transmitted intensity is always greater than the target's minIntensitySensitivity
+      // so we subtract the minIntensitySensitivity to get a value between 0 and 1
+      let intensityFactor =
+        (result.transmittedIntensity - target.minIntensitySensitivity) /
+        (1 - target.minIntensitySensitivity);
 
       // Clamp intensityFactor between 0 and 1
       intensityFactor = Math.max(0, Math.min(intensityFactor, 1));
 
       // Use the intensityFactor to calculate the color:
-      // 1. High intensity should be more green.
-      // 2. Low intensity should fade towards red.
       const redValue = Math.floor((1 - intensityFactor) * 255);
       const greenValue = Math.floor(intensityFactor * 255);
 
@@ -427,7 +379,7 @@ function updateTargetDetectionStatus() {
   // If no targets are detectable, display a corresponding message
   if (!targetIsDetectable) {
     let noTargetMessage = document.createElement("div");
-    noTargetMessage.textContent = "No targets are in the field of view.";
+    noTargetMessage.textContent = "No targets are in the field of effect.";
     statusDisplay.appendChild(noTargetMessage);
   }
 }
@@ -440,5 +392,4 @@ window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-  updateBorderOverlay();
 });

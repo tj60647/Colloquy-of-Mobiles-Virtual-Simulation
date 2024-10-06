@@ -36,3 +36,5 @@ Thumbs.db
 
 # Other
 coverage/
+
+apps/php-unserialize.js
