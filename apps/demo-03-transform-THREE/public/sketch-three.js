@@ -5,7 +5,9 @@ import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.124/examples
 // Import Text from Troika Text library loaded via CDN
 import { Text } from "https://unpkg.com/troika-three-text?module";
 
-let scene, camera, renderer, controls;
+import { createCameraControl } from "../../../lib/cameraUtilities.js";
+
+let scene, renderer, cameraControl;
 let worldTransform,
   rootTransform,
   childTransform,
@@ -28,28 +30,17 @@ function init() {
   // Create the scene
   scene = new THREE.Scene();
 
-  // Set up the camera
-  camera = new THREE.PerspectiveCamera(
-    45,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
-  camera.position.set(0, 25, 200);
-
   // Set up the renderer
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
+  // Create a container for the camera control
+  cameraControl = createCameraControl(renderer);
+
   lightSource = new THREE.DirectionalLight(0xffffff, 1);
   lightSource.position.set(10, 10, 10);
   scene.add(lightSource);
-
-  // Set up OrbitControls to allow camera orbiting around the origin
-  controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 0, 0); // Set the target of the orbit controls to the origin
-  controls.update();
 
   // Create transforms with hierarchical relationships
   worldTransform = new THREE.Group();
@@ -216,11 +207,8 @@ function animate() {
   greatGrandChildTransform.rotation.y +=
     THREE.MathUtils.degToRad(rotationSpeed);
 
-  // Update the controls to enable smooth orbiting
-  controls.update();
-
   // Render the scene from the perspective of the camera
-  renderer.render(scene, camera);
+  renderer.render(scene, cameraControl.camera);
 }
 
 /**

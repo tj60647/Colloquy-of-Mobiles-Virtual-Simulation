@@ -1,34 +1,30 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js";
-import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/OrbitControls.js";
 import { Actuator_THREE } from "../../lib/Actuator_THREE.js";
 import { Sensor_THREE } from "../../lib/Sensor_THREE.js";
 import { Transducer_THREE } from "../../lib/Transducer_THREE.js";
 import { formatValue } from "../../lib/UI_Utilities.js";
+import { hexToRgba } from "../../lib/UI_Utilities.js";
+import { createCameraControl } from "../../../lib/cameraUtilities.js";
 
-const sensorCount = 3;
-const actuatorCount = 3;
+const sensorCount = 2;
+const actuatorCount = 2;
 
 // Create the main scene
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xeeeeee);
 
-// Set up the main camera
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
-camera.position.set(-5, 11, -21);
+// a helper conatainer for the lines illustrating the detected targets
+const lineContainer = new THREE.Object3D();
+scene.add(lineContainer);
 
+///////////////////////////
 // Set up the WebGL renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Set up OrbitControls
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
+///////////////////////////
+// set up the scene
 
 // Add a directional light to the scene
 const light = new THREE.DirectionalLight(0xffffff, 3);
@@ -113,60 +109,96 @@ for (let i = 0; i < sensorCount; i++) {
   sensors.push(sensor);
 }
 
+///////////////////////////
+// scene analysis and ui updates
+
 // A function to update the target detection status
-function updateTargetDetectionStatus(sensor, statusDisplay) {
+function updateTargetDetectionStatus(sensor, transducer_status) {
+  //console.log("transducer_status", transducer_status);
   let targetIsDetectable = false;
-  statusDisplay.innerHTML = "";
+  transducer_status.innerHTML = "";
+  //clear the line container
+  lineContainer.children = [];
 
   const statusHeader = document.createElement("div");
-  statusHeader.textContent = `Actuator Detection Summary for ${sensor.name}:`;
+  statusHeader.textContent = `Detection Summary:`;
   statusHeader.style.fontWeight = "bold";
-  statusDisplay.appendChild(statusHeader);
+  transducer_status.appendChild(statusHeader);
 
   for (let actuator of actuators) {
     // for each actuator, check if it is detectable by the sensor
     // for an actuator to be detectable, it must be within the sensor's field of view and range
-    if (sensor.isTargetDetectable(actuator).inRange) {
+    // the result includes: inFieldOfView, inRange, distance, sourcePower, receivedIntensity
+    const sensor_result = sensor.isTargetDetectable(actuator);
+
+    if (sensor_result.inRange) {
+      //the actuator is detectable
       targetIsDetectable = true;
       //is sensor visible to actuator
       //for this demo we will just check if the actuator is facing the sensor
-      const result = actuator.isTargetInFieldOfEffect(sensor);
-      const isSensorVisible = result.inFieldOfEffect;
+      // the result includes: power, inFieldOfEffect, distance, transmittedIntensity
+      const actuator_result = actuator.isTargetInFieldOfEffect(sensor);
+      const isSensorVisible = actuator_result.inFieldOfEffect;
+
+      // Create a new row for each detectable target
+      let targetRow = document.createElement("div");
+      targetRow.style.marginTop = "5px"; // Add some spacing between rows
 
       if (isSensorVisible) {
-        const targetRow = document.createElement("div");
-        targetRow.style.marginTop = "5px";
-        targetRow.innerHTML = `<strong>Actuator:</strong> Pos: (${actuator.position.x.toFixed(
-          1
-        )}, ${actuator.position.y.toFixed(1)}, ${actuator.position.z.toFixed(
-          1
-        )}) <span style="color: green;">(Facing sensor)</span>`;
-        statusDisplay.appendChild(targetRow);
-      } else {
-        const targetRow = document.createElement("div");
-        targetRow.style.marginTop = "5px";
-        targetRow.innerHTML = `<strong>Actuator:</strong> Pos: (${actuator.position.x.toFixed(
-          1
-        )}, ${actuator.position.y.toFixed(1)}, ${actuator.position.z.toFixed(
-          1
-        )}) <span style="color: red;">(Not facing sensor)</span>`;
-        statusDisplay.appendChild(targetRow);
-      }
+        // Set the entire targetRow text to green
+        targetRow.innerHTML = `
+          <strong>Target ${actuator.name}:</strong> <br>
+          Detected <br>
+          Distance: ${sensor_result.distance.toFixed(2)} <br>
+          Source Power: ${sensor_result.sourcePower} <br>
+          Sensed Intensity: ${sensor_result.receivedIntensity.toFixed(3)}
+        `;
+        targetRow.style.color = "green"; // Set all text to green
 
-      // target.material.color.setRGB(0, 1, 0); // Detected targets turn green
-      // target.material.emissive.setRGB(0, 1, 0);
-    } else {
-      // target.material.color.set(0xff0000);
-      // target.material.emissive.set(0x000000);
+        // Create a line between the sensor and the actuator
+        // add the line to the line container
+        const lineMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 });
+        const points = [];
+        points.push(sensor.position);
+        points.push(actuator.position);
+        const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+        const line = new THREE.Line(lineGeometry, lineMaterial);
+        lineContainer.add(line);
+      } else {
+        // the actuator is not visible to the sensor
+        // either too far or not in the field of view
+        //if to far, the signal is too faint
+        // Set the entire targetRow text to red
+        targetRow.innerHTML = `
+          <strong>Target ${actuator.name}:</strong> <br>
+          Not Detected: Actuator not facing Sensor. <br>
+          Distance: ${sensor_result.distance.toFixed(2)} <br>
+          Source Power: ${sensor_result.sourcePower} <br>
+          Sensed Intensity: ${sensor_result.receivedIntensity.toFixed(3)}
+        `;
+        targetRow.style.color = "red"; // Set all text to red
+      }
+      // set the font size and weight for the target row
+      targetRow.style.fontSize = "10px";
+      // Append the target row to the status display
+      transducer_status.appendChild(targetRow);
     }
   }
 
   if (!targetIsDetectable) {
-    const noTargetMessage = document.createElement("div");
-    noTargetMessage.textContent = `No Actuators detected by ${sensor.name}.`;
-    statusDisplay.appendChild(noTargetMessage);
+    let targetRow = document.createElement("div");
+    targetRow.style.marginTop = "5px"; // Add some spacing between rows
+    targetRow.innerHTML = `<strong>No Targets Detected</strong>`;
+    targetRow.style.fontSize = "10px";
+    transducer_status.appendChild(targetRow);
   }
 }
+
+///////////////////////////
+// UI Controls
+
+// Create a container for the camera control
+const cameraControl = createCameraControl(renderer);
 
 // Create a parent container for the control panels
 const controlsContainer = document.createElement("div");
@@ -175,12 +207,13 @@ controlsContainer.style.top = "10px";
 controlsContainer.style.left = "10px";
 controlsContainer.style.display = "flex";
 controlsContainer.style.flexDirection = "row";
+controlsContainer.style.alignItems = "flex-start";
 controlsContainer.style.gap = "10px";
 controlsContainer.style.zIndex = "100";
 document.body.appendChild(controlsContainer);
 
-// UI Creation
-function createUI(transducer) {
+// Transducer Control UI Creation
+function createTransducerControlUI(transducer) {
   const isSensor =
     transducer.transducerType === Transducer_THREE.TRANSDUCER_TYPE.SENSOR;
   const isActuator =
@@ -188,35 +221,44 @@ function createUI(transducer) {
 
   //get the background color based on the field of effect color
   // Get the hexadecimal color value
-  const hexColor = transducer.fieldOfEffect_HelperColor;
-
-  // Extract RGB components from the hexadecimal color
-  let red = (hexColor >> 16) & 0xff;
-  let green = (hexColor >> 8) & 0xff;
-  let blue = hexColor & 0xff;
-
-  // Set the transparency value (0.0 to 1.0, where 0 is fully transparent and 1 is fully opaque)
-  const alpha = 0.8; // Example: 80% opacity
+  const rgbaColor = hexToRgba(transducer.fieldOfEffect_HelperColor, 0.8);
+  const rgbaColor_button = hexToRgba(transducer.fieldOfEffect_HelperColor, 1.0);
 
   // Create the rgba color string
-  const backgroundColor = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+  const backgroundColor = rgbaColor;
   // Create the container for the UI controls
-  const uiContainer = document.createElement("div");
-  uiContainer.style.color = "white";
-  uiContainer.style.fontFamily = "Arial, sans-serif";
-  uiContainer.style.backgroundColor = backgroundColor;
-  uiContainer.style.padding = "10px";
-  uiContainer.style.borderRadius = "5px";
-  uiContainer.style.width = "200px";
-  uiContainer.style.marginBottom = "10px";
-  controlsContainer.appendChild(uiContainer);
+  const panelContainer = document.createElement("div");
+  panelContainer.style.color = "white";
+  panelContainer.style.fontFamily = "Arial, sans-serif";
+  panelContainer.style.backgroundColor = backgroundColor;
+  panelContainer.style.padding = "10px";
+  panelContainer.style.borderRadius = "5px";
+  panelContainer.style.width = "200px";
+  panelContainer.style.marginBottom = "10px";
+  panelContainer.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.2)";
+  panelContainer.style.boxSizing = "border-box";
+  panelContainer.style.flexGrow = "0";
+  panelContainer.style.flexShrink = "1";
 
-  // Title Label
-  const titleLabel = document.createElement("div");
-  titleLabel.textContent = `${transducer.name} Controls`;
-  titleLabel.style.fontWeight = "bold";
-  titleLabel.style.textAlign = "center";
-  uiContainer.appendChild(titleLabel);
+  // Title Button for the control panel
+  const titleButton = document.createElement("button");
+  titleButton.textContent = `${transducer.name} Controls`;
+  titleButton.style.width = "100%";
+  titleButton.style.backgroundColor = rgbaColor_button;
+  titleButton.style.fontWeight = "bold";
+  titleButton.style.textAlign = "center";
+  titleButton.style.fontSize = "16px";
+  titleButton.style.color = "white";
+  titleButton.style.border = "1px solid white";
+  titleButton.style.borderRadius = "5px";
+  titleButton.style.cursor = "pointer";
+  panelContainer.appendChild(titleButton);
+
+  const controlContainer = document.createElement("div");
+  controlContainer.style.display = "flex";
+  controlContainer.style.flexDirection = "column";
+  controlContainer.style.gap = "5px";
+  panelContainer.appendChild(controlContainer);
 
   // Field of Effect (FoE) Angle Control
   const fovLabel = document.createElement("div");
@@ -225,8 +267,9 @@ function createUI(transducer) {
     0
   )}°`;
   fovLabel.style.marginTop = "5px";
-  uiContainer.appendChild(fovLabel);
+  controlContainer.appendChild(fovLabel);
 
+  // Create the input element for the field of effect angle
   const fovInput = document.createElement("input");
   fovInput.type = "range";
   fovInput.min = "0";
@@ -240,14 +283,14 @@ function createUI(transducer) {
     transducer.fieldOfEffect_AngleFull = (fovValue * Math.PI) / 180;
     fovLabel.textContent = `Field of Effect: ${formatValue(fovValue, 0)}°`;
   });
-  uiContainer.appendChild(fovInput);
+  controlContainer.appendChild(fovInput);
 
   // Power Control (only for Actuators, to determine range)
   if (isActuator) {
     const powerLabel = document.createElement("div");
     powerLabel.textContent = `Power: ${formatValue(transducer.power || 50)}`;
     powerLabel.style.marginTop = "5px";
-    uiContainer.appendChild(powerLabel);
+    controlContainer.appendChild(powerLabel);
 
     const powerInput = document.createElement("input");
     powerInput.type = "range";
@@ -259,7 +302,7 @@ function createUI(transducer) {
       transducer.power = powerValue;
       powerLabel.textContent = `Power: ${formatValue(transducer.power)}`;
     });
-    uiContainer.appendChild(powerInput);
+    controlContainer.appendChild(powerInput);
   }
 
   // Sensitivity Control (only for Sensors)
@@ -270,7 +313,7 @@ function createUI(transducer) {
       2
     )}`;
     sensitivityLabel.style.marginTop = "5px";
-    uiContainer.appendChild(sensitivityLabel);
+    controlContainer.appendChild(sensitivityLabel);
 
     const sensitivityInput = document.createElement("input");
     sensitivityInput.type = "range";
@@ -285,7 +328,7 @@ function createUI(transducer) {
         2
       )}`;
     });
-    uiContainer.appendChild(sensitivityInput);
+    controlContainer.appendChild(sensitivityInput);
   }
 
   // Rotation Rate Control (for all transducers)
@@ -295,8 +338,9 @@ function createUI(transducer) {
     3
   )}`;
   rotationRateLabel.style.marginTop = "5px";
-  uiContainer.appendChild(rotationRateLabel);
+  controlContainer.appendChild(rotationRateLabel);
 
+  // Create the input element for the rotation rate
   const rotationRateSlider = document.createElement("input");
   rotationRateSlider.type = "range";
   rotationRateSlider.min = "-0.01";
@@ -311,22 +355,20 @@ function createUI(transducer) {
       3
     )}`;
   });
-  uiContainer.appendChild(rotationRateSlider);
+  controlContainer.appendChild(rotationRateSlider);
 
   // Status Display for Sensors
+  let statusDisplay;
   if (isSensor) {
-    const statusDisplay = document.createElement("div");
+    statusDisplay = document.createElement("div");
     statusDisplay.textContent = `${transducer.name} Status: Initializing...`;
     statusDisplay.style.fontSize = "12px";
     statusDisplay.style.fontWeight = "lighter";
     statusDisplay.style.marginTop = "5px";
-    uiContainer.appendChild(statusDisplay);
-    return statusDisplay; // Return the status display for sensors
-  }
-
-  // Status Display for Actuators
-  if (isActuator) {
-    const statusDisplay = document.createElement("div");
+    panelContainer.appendChild(statusDisplay);
+  } else if (isActuator) {
+    // Status Display for Actuators
+    statusDisplay = document.createElement("div");
     statusDisplay.textContent = `Location: (${formatValue(
       transducer.position.x,
       1
@@ -337,7 +379,7 @@ function createUI(transducer) {
     statusDisplay.style.fontSize = "12px";
     statusDisplay.style.fontWeight = "lighter";
     statusDisplay.style.marginTop = "5px";
-    uiContainer.appendChild(statusDisplay);
+    panelContainer.appendChild(statusDisplay);
 
     const strengthLabel = document.createElement("div");
     strengthLabel.textContent = `Effective Range: ${formatValue(
@@ -346,17 +388,20 @@ function createUI(transducer) {
     strengthLabel.style.fontSize = "12px";
     strengthLabel.style.fontWeight = "lighter";
     strengthLabel.style.marginTop = "5px";
-    uiContainer.appendChild(strengthLabel);
-
-    return statusDisplay; // Return the status display for actuators
+    panelContainer.appendChild(strengthLabel);
   }
+  // Add the control container to the controls container
+  controlsContainer.appendChild(panelContainer);
 
-  return null; // Return null for any other type
+  titleButton.addEventListener("click", () => {
+    //toggle the display of the control panel
+    controlContainer.style.display =
+      controlContainer.style.display === "none" ? "block" : "none";
+  });
+
+  // Return the control container status display for the transducer
+  return statusDisplay;
 }
-
-// Create UI for each sensor and actuator
-const sensors_statusDisplays = sensors.map(createUI);
-const actuators_statusDisplays = actuators.map(createUI);
 
 // Function to update the scene on each frame
 function animate() {
@@ -376,19 +421,17 @@ function animate() {
     if (sensor.rotation.y > Math.PI * 2) {
       sensor.rotation.y = 0;
     }
-    updateTargetDetectionStatus(sensor, sensors_statusDisplays[index]);
+    // update sensor status display for each sensor
+    updateTargetDetectionStatus(sensor, sensors_control_status[index]);
   });
 
-  controls.update();
-  renderer.render(scene, camera);
+  // Render the scene
+  renderer.render(scene, cameraControl.camera);
 }
 
-// Handling window resizing
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
+// Create UI for each sensor and actuator
+const sensors_control_status = sensors.map(createTransducerControlUI);
+const actuators_control_status = actuators.map(createTransducerControlUI);
 
 // Start the animation loop
 animate();

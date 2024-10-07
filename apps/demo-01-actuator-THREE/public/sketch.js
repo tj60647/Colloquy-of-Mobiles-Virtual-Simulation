@@ -8,7 +8,7 @@
 
 // Import the Three.js library and OrbitControls from a CDN
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js";
-import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/OrbitControls.js";
+import { createCameraControl } from "../../../lib/cameraUtilities.js";
 
 // Import the custom Actuator_THREE class
 import { Actuator_THREE } from "../../lib/Actuator_THREE.js";
@@ -17,23 +17,13 @@ import { Actuator_THREE } from "../../lib/Actuator_THREE.js";
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xeeeeee);
 
-// Set up the main camera
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
-camera.position.set(-5, 11, -21);
-
 // Set up the WebGL renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Set up the OrbitControls for camera manipulation
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true; // Adds inertia to the controls for smoother camera movements
+// Create a container for the camera control
+const cameraControl = createCameraControl(renderer);
 
 // Add a directional light to the scene
 const light = new THREE.DirectionalLight(0xffffff, 3);
@@ -256,6 +246,8 @@ function createUI() {
 // Initialize UI and get references to dynamically updated elements
 const { statusDisplay } = createUI();
 
+//********************************************************************************
+
 /**
  * Function to update the scene on each animation frame.
  */
@@ -282,13 +274,10 @@ function animate() {
   // Check if any targets are within the actuator's field of effect and update UI
   updateTargetDetectionStatus();
 
-  // Update the OrbitControls for smoother camera movement
-  controls.update();
-
   // Render the main scene from the main camera's perspective
   renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
   renderer.clear(); // Clear the previous frame
-  renderer.render(scene, camera);
+  renderer.render(scene, cameraControl.camera);
 
   // Render the actuator's view in a square window in the top-right corner
   const insetSize = Math.min(window.innerWidth, window.innerHeight) / 4; // Make the viewport a square

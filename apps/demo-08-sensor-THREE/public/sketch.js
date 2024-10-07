@@ -10,7 +10,7 @@
 
 // Import the Three.js library and OrbitControls from a CDN
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js";
-import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/OrbitControls.js";
+import { createCameraControl } from "../../../lib/cameraUtilities.js";
 
 // Import the custom Sensor_THREE class
 import { Sensor_THREE } from "../../lib/Sensor_THREE.js";
@@ -21,23 +21,13 @@ import { formatValue } from "../../lib/UI_Utilities.js";
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xeeeeee);
 
-// Set up the main camera
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
-camera.position.set(-5, 11, -21);
-
 // Set up the WebGL renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Set up the OrbitControls for camera manipulation
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true; // Adds inertia to the controls for smoother camera movements
+// Create a container for the camera control
+const cameraControl = createCameraControl(renderer);
 
 // Add a directional light to the scene
 const light = new THREE.DirectionalLight(0xffffff, 3);
@@ -64,7 +54,7 @@ const targetCount = 100;
 
 const targets = [];
 for (let i = 0; i < targetCount; i++) {
-  const power = Math.floor(Math.random() * 100) * 20; // Assign a random power level to the target
+  const power = 1 + Math.floor(Math.random() * 100) * 20; // Assign a random power level to the target
   const dimension = power / 1000; // Scale the dimension based on the power level
   const target = new THREE.Mesh(
     new THREE.BoxGeometry(dimension, dimension, dimension), // input: width, height, depth
@@ -109,7 +99,7 @@ let rotationRate = 0.003; // Default rotation rate
 // UI Creation and Interaction
 
 // Function to create and set up the UI
-function createUI(transducer) {
+function createControls(transducer) {
   const isSensor =
     transducer.transducerType === Transducer_THREE.TRANSDUCER_TYPE.SENSOR;
   const isActuator =
@@ -131,28 +121,28 @@ function createUI(transducer) {
   const backgroundColor = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 
   // Create a UI container
-  const uiContainer = document.createElement("div");
-  uiContainer.style.position = "absolute";
-  uiContainer.style.top = "10px";
-  uiContainer.style.left = "10px";
-  uiContainer.style.color = "white";
-  uiContainer.style.fontFamily = "Arial, sans-serif";
-  uiContainer.style.zIndex = "100";
-  uiContainer.style.backgroundColor = backgroundColor;
-  uiContainer.style.padding = "10px";
-  uiContainer.style.borderRadius = "5px";
-  uiContainer.style.display = "flex";
-  uiContainer.style.flexDirection = "column";
-  uiContainer.style.gap = "10px";
-  uiContainer.style.width = "200px"; // Adjusted width for more space
-  document.body.appendChild(uiContainer);
+  const controlContainer = document.createElement("div");
+  controlContainer.style.position = "absolute";
+  controlContainer.style.top = "10px";
+  controlContainer.style.left = "10px";
+  controlContainer.style.color = "white";
+  controlContainer.style.fontFamily = "Arial, sans-serif";
+  controlContainer.style.zIndex = "100";
+  controlContainer.style.backgroundColor = backgroundColor;
+  controlContainer.style.padding = "10px";
+  controlContainer.style.borderRadius = "5px";
+  controlContainer.style.display = "flex";
+  controlContainer.style.flexDirection = "column";
+  controlContainer.style.gap = "10px";
+  controlContainer.style.width = "200px"; // Adjusted width for more space
+  document.body.appendChild(controlContainer);
 
   // Create a title label
   const titleLabel = document.createElement("div");
   titleLabel.textContent = "Sensor Controls";
   titleLabel.style.fontWeight = "bold";
   titleLabel.style.textAlign = "center";
-  uiContainer.appendChild(titleLabel);
+  controlContainer.appendChild(titleLabel);
 
   // Create a button to toggle the sensor visibility
   const toggleButton = document.createElement("button");
@@ -162,12 +152,12 @@ function createUI(transducer) {
     sensor.visible = !sensor.visible;
     toggleButton.textContent = sensor.visible ? "Hide Sensor" : "Show Sensor";
   };
-  uiContainer.appendChild(toggleButton);
+  controlContainer.appendChild(toggleButton);
 
   // Create a label and slider for the sensor's field of view
   const fovLabel = document.createElement("label");
   fovLabel.textContent = "Field of View:";
-  uiContainer.appendChild(fovLabel);
+  controlContainer.appendChild(fovLabel);
 
   const fovSliderContainer = document.createElement("div");
   fovSliderContainer.style.display = "flex";
@@ -194,12 +184,12 @@ function createUI(transducer) {
 
   fovSliderContainer.appendChild(fovSlider);
   fovSliderContainer.appendChild(fovValueDisplay);
-  uiContainer.appendChild(fovSliderContainer);
+  controlContainer.appendChild(fovSliderContainer);
 
   // Create a label and slider for the sensor's sensitivity
   const sensitivityLabel = document.createElement("label");
   sensitivityLabel.textContent = "Minimum Intesity Sense:";
-  uiContainer.appendChild(sensitivityLabel);
+  controlContainer.appendChild(sensitivityLabel);
 
   const sensitivitySliderContainer = document.createElement("div");
   sensitivitySliderContainer.style.display = "flex";
@@ -222,12 +212,12 @@ function createUI(transducer) {
 
   sensitivitySliderContainer.appendChild(sensitivitySlider);
   sensitivitySliderContainer.appendChild(sensitivityValueDisplay);
-  uiContainer.appendChild(sensitivitySliderContainer);
+  controlContainer.appendChild(sensitivitySliderContainer);
 
   // Create a label and slider for the sensor's rotation rate
   const rotationRateLabel = document.createElement("label");
   rotationRateLabel.textContent = "Rotation Rate:";
-  uiContainer.appendChild(rotationRateLabel);
+  controlContainer.appendChild(rotationRateLabel);
 
   const rotationRateSliderContainer = document.createElement("div");
   rotationRateSliderContainer.style.display = "flex";
@@ -250,12 +240,12 @@ function createUI(transducer) {
 
   rotationRateSliderContainer.appendChild(rotationRateSlider);
   rotationRateSliderContainer.appendChild(rotationRateValueDisplay);
-  uiContainer.appendChild(rotationRateSliderContainer);
+  controlContainer.appendChild(rotationRateSliderContainer);
 
   // Create a label for status display
   const statusDisplayLabel = document.createElement("label");
   statusDisplayLabel.textContent = "Sensor Status:";
-  uiContainer.appendChild(statusDisplayLabel);
+  controlContainer.appendChild(statusDisplayLabel);
 
   // Create a status display at the bottom for sensor data
   const statusDisplay = document.createElement("div");
@@ -263,10 +253,13 @@ function createUI(transducer) {
   statusDisplay.style.fontSize = "12px";
   statusDisplay.style.fontWeight = "lighter";
   statusDisplay.style.marginTop = "5px"; // Add some spacing above the status
-  uiContainer.appendChild(statusDisplay);
+  controlContainer.appendChild(statusDisplay);
 
   return { statusDisplay };
 }
+
+// Initialize UI and get references to dynamically updated elements
+const { statusDisplay } = createControls(sensor);
 
 //********************************************************************************
 
@@ -286,9 +279,6 @@ function updateBorderOverlay() {
   borderOverlay.style.top = `${10}px`;
   borderOverlay.style.left = `${window.innerWidth - insetSize - 10}px`;
 }
-
-// Initialize UI and get references to dynamically updated elements
-const { statusDisplay } = createUI(sensor);
 
 /**
  * Function to update the scene on each animation frame
@@ -322,13 +312,10 @@ function animate() {
   // Check if any targets are within the sensor's field of view and update UI
   updateTargetDetectionStatus();
 
-  // Update the OrbitControls for smoother camera movement
-  controls.update();
-
   // Render the main scene from the main camera's perspective
   renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
   renderer.clear(); // Clear the previous frame
-  renderer.render(scene, camera);
+  renderer.render(scene, cameraControl.camera);
 
   // Render the sensor's view in a square window in the top-right corner
   const insetSize = Math.min(window.innerWidth, window.innerHeight) / 4; // Make the viewport a square
@@ -437,8 +424,5 @@ animate();
 
 // Handle window resizing
 window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
   updateBorderOverlay();
 });

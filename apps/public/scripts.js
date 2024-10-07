@@ -66,13 +66,14 @@ function initializeUI() {
  * Dynamically creates the sidebar menu with demo links.
  */
 function createSidebarMenu() {
+  // build buttons for each demo
   const demoList = document.getElementById("demo-list");
   demos.forEach((demo) => {
     const listItem = document.createElement("li");
     listItem.classList.add("demo-item"); // Add a class for easier styling
 
     const link = document.createElement("a");
-    link.href = "#";
+    link.href = "#"; //
     link.textContent = demo.name;
 
     // Event listener for click to load demo and set it as active

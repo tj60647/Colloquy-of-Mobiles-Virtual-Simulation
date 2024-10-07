@@ -1,11 +1,11 @@
 // Import the Three.js library and OrbitControls from a CDN
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js";
-import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/OrbitControls.js";
+import { createCameraControl } from "../../../lib/cameraUtilities.js";
 
 // Import the custom Sensor_THREE class
 import { Transform_THREE } from "../../lib/Transform_THREE.js";
 
-let scene, camera, renderer, controls;
+let scene, cameraControl, renderer;
 let worldTransform,
   rootTransform,
   childTransform,
@@ -14,13 +14,13 @@ let worldTransform,
 let rotationSpeed = 0.001; // Speed of rotation in radians per frame
 let lightSource;
 
-let cylindarDiameter = 12;
-let sphereDiameter = 12;
+let cylindarDiameter = 3;
+let sphereDiameter = 3;
 
-let fogNear = 100;
-let fogFar = 500;
+let fogNear = 50;
+let fogFar = 250;
 
-let transormOffset = 50;
+let transormOffset = 12;
 
 // Create a glass-like material
 const glassMaterial = new THREE.MeshPhysicalMaterial({
@@ -90,29 +90,17 @@ function init() {
   scene.fog = new THREE.Fog(0xffffff, fogNear, fogFar); // Initial fog settings
   scene.ambientLight = new THREE.AmbientLight(0xffffff, 0.05);
 
-  // Set up the camera
-  camera = new THREE.PerspectiveCamera(
-    45,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
-  camera.position.set(0, 25, 200);
-
   // Set up the WebGL renderer
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
+  cameraControl = createCameraControl(renderer);
+
   // Set up a directional light source
   lightSource = new THREE.DirectionalLight(0xffffff, 1);
   lightSource.position.set(10, 10, 10);
   scene.add(lightSource);
-
-  // Set up OrbitControls to allow camera orbiting around the origin
-  controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 0, 0); // Set the target of the orbit controls to the origin
-  controls.update();
 
   // Create transforms with hierarchical relationships
   worldTransform = new Transform_THREE("World", "worldID");
@@ -152,7 +140,15 @@ function init() {
   greatGrandChildTransform.rotation.z = Math.PI / 2; // Rotate great-grandchild around its Y-axis
 
   // Add a grid to the scene for reference
-  const gridHelper = new THREE.GridHelper(200, 10);
+  // Add a grid helper to the scene
+  const gridHelper = new THREE.PolarGridHelper(
+    42,
+    8,
+    16,
+    128,
+    0xcccccc,
+    0xdddddd
+  );
   worldTransform.add(gridHelper);
 
   // Initialize UI and get references to dynamically updated elements
@@ -180,7 +176,7 @@ function drawLineBetweenTransforms(parent, child) {
 
   const cylindarMaterial = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
   const cylindar = new THREE.Mesh(cylindarGeometry, glassMaterial);
-  cylindar.position.set(0, 25, 0); // Position the cylindar halfway between the two transforms
+  cylindar.position.set(0, transormOffset / 2, 0); // Position the cylindar halfway between the two transforms
   parent.add(cylindar);
 }
 
@@ -204,11 +200,8 @@ function animate() {
   grandChildTransform.rotation.y += rotationSpeed;
   greatGrandChildTransform.rotation.y += rotationSpeed;
 
-  // Update the controls to enable smooth orbiting
-  controls.update();
-
   // Render the scene from the perspective of the camera
-  renderer.render(scene, camera);
+  renderer.render(scene, cameraControl.camera);
   renderer.antialias = true;
 }
 
