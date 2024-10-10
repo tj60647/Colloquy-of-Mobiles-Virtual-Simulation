@@ -100,6 +100,9 @@ let rotationRate = 0.003; // Default rotation rate
  * @returns {{statusDisplay: HTMLElement}} - Returns an object containing a reference to the status display element.
  */
 function createUI() {
+  //set the document body to not scroll
+  document.body.style.overflow = "hidden";
+
   // Create a UI container
   const uiContainer = document.createElement("div");
   uiContainer.style.position = "absolute";
@@ -276,8 +279,8 @@ function animate() {
 
   // Render the main scene from the main camera's perspective
   renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
-  renderer.clear(); // Clear the previous frame
-  renderer.render(scene, cameraControl.camera);
+
+  renderMainCamera();
 
   // Render the actuator's view in a square window in the top-right corner
   const insetSize = Math.min(window.innerWidth, window.innerHeight) / 4; // Make the viewport a square
@@ -296,6 +299,23 @@ function animate() {
   );
   renderer.render(scene, actuatorCamera);
   renderer.setScissorTest(false); // Disable scissor test after rendering
+}
+
+function renderMainCamera() {
+  // Render the main scene from the main camera's perspective
+  //renderer.setViewport(0, 0, window.innerWidth, window.innerHeight); --- is this optional?
+  renderer.clear(); // Clear the previous frame
+
+  // Update orbit mode if active
+
+  cameraControl.updateOrbit();
+
+  // Update the controls and render the scene
+  if (!cameraControl.isOrbiting) {
+    cameraControl.currentOrbitControl.update(); // Only update controls if not in orbit mode
+  }
+
+  renderer.render(scene, cameraControl.camera);
 }
 
 /**

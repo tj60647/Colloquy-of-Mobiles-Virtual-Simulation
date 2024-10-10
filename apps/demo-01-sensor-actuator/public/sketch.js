@@ -426,7 +426,7 @@ function animate() {
   });
 
   // Render the scene
-  renderer.render(scene, cameraControl.camera);
+  renderMainCamera();
 }
 
 // Create UI for each sensor and actuator
@@ -435,3 +435,19 @@ const actuators_control_status = actuators.map(createTransducerControlUI);
 
 // Start the animation loop
 animate();
+
+function renderMainCamera() {
+  // Render the main scene from the main camera's perspective
+  renderer.clear(); // Clear the previous frame
+
+  // Update orbit mode if active
+
+  cameraControl.updateOrbit();
+
+  // Update the controls and render the scene
+  if (!cameraControl.isOrbiting) {
+    cameraControl.currentOrbitControl.update(); // Only update controls if not in orbit mode
+  }
+
+  renderer.render(scene, cameraControl.camera);
+}

@@ -93,6 +93,9 @@ function init() {
   // Set up the WebGL renderer
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
+  // set the renderer to use antialiasing
+  renderer.antialias = true;
+
   document.body.appendChild(renderer.domElement);
 
   cameraControl = createCameraControl(renderer);
@@ -201,12 +204,14 @@ function animate() {
   greatGrandChildTransform.rotation.y += rotationSpeed;
 
   // Render the scene from the perspective of the camera
-  renderer.render(scene, cameraControl.camera);
-  renderer.antialias = true;
+  renderMainCamera();
 }
 
 // Function to create and set up the UI
 function createUI() {
+  //set the document body to not scroll
+  document.body.style.overflow = "hidden";
+
   // Create a UI container
   const uiContainer = document.createElement("div");
   uiContainer.style.position = "absolute";
@@ -328,3 +333,18 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+function renderMainCamera() {
+  renderer.clear(); // Clear the previous frame
+
+  // Update orbit mode if active
+
+  cameraControl.updateOrbit();
+
+  // Update the controls and render the scene
+  if (!cameraControl.isOrbiting) {
+    cameraControl.currentOrbitControl.update(); // Only update controls if not in orbit mode
+  }
+
+  renderer.render(scene, cameraControl.camera);
+}

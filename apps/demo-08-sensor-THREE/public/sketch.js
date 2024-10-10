@@ -8,7 +8,7 @@
 // The targets are represented by cubes with varying power levels.
 // the UI allows for adjusting the sensor's field of view and sensitivity.
 
-// Import the Three.js library and OrbitControls from a CDN
+// Import the Three.js library from a CDN
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js";
 import { createCameraControl } from "../../../lib/cameraUtilities.js";
 
@@ -16,6 +16,7 @@ import { createCameraControl } from "../../../lib/cameraUtilities.js";
 import { Sensor_THREE } from "../../lib/Sensor_THREE.js";
 import { Transducer_THREE } from "../../lib/Transducer_THREE.js";
 import { formatValue } from "../../lib/UI_Utilities.js";
+import { hexToRgba } from "../../lib/UI_Utilities.js";
 
 // Create the main scene
 const scene = new THREE.Scene();
@@ -107,18 +108,12 @@ function createControls(transducer) {
 
   //get the background color based on the field of effect color
   // Get the hexadecimal color value
-  const hexColor = transducer.fieldOfEffect_HelperColor;
+  const backgroundColor = hexToRgba(transducer.fieldOfEffect_HelperColor, 0.8);
 
-  // Extract RGB components from the hexadecimal color
-  let red = (hexColor >> 16) & 0xff;
-  let green = (hexColor >> 8) & 0xff;
-  let blue = hexColor & 0xff;
+  const buttonColor = hexToRgba(transducer.fieldOfEffect_HelperColor, 1.0);
 
-  // Set the transparency value (0.0 to 1.0, where 0 is fully transparent and 1 is fully opaque)
-  const alpha = 0.8; // Example: 80% opacity
-
-  // Create the rgba color string
-  const backgroundColor = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+  //set the document body to not scroll
+  document.body.style.overflow = "hidden";
 
   // Create a UI container
   const controlContainer = document.createElement("div");
@@ -144,15 +139,21 @@ function createControls(transducer) {
   titleLabel.style.textAlign = "center";
   controlContainer.appendChild(titleLabel);
 
-  // Create a button to toggle the sensor visibility
-  const toggleButton = document.createElement("button");
-  toggleButton.textContent = sensor.visible ? "Hide Sensor" : "Show Sensor";
-  toggleButton.style.width = "100%"; // Fixed width for the button
-  toggleButton.onclick = () => {
-    sensor.visible = !sensor.visible;
-    toggleButton.textContent = sensor.visible ? "Hide Sensor" : "Show Sensor";
-  };
-  controlContainer.appendChild(toggleButton);
+  // // Create a button to toggle the sensor visibility
+  // const toggleButton = document.createElement("button");
+  // toggleButton.textContent = sensor.visible ? "Hide Sensor" : "Show Sensor";
+  // toggleButton.style.borderRadius = "5px";
+  // toggleButton.style.border = "none";
+  // //add drop shadow to the button
+  // toggleButton.style.color = "white";
+  // toggleButton.style.boxShadow = "2px 2px 5px rgba(0,0,0,0.25)";
+  // toggleButton.style.width = "100%"; // Fixed width for the button
+  // toggleButton.style.backgroundColor = buttonColor;
+  // toggleButton.onclick = () => {
+  //   sensor.visible = !sensor.visible;
+  //   toggleButton.textContent = sensor.visible ? "Hide Sensor" : "Show Sensor";
+  // };
+  // controlContainer.appendChild(toggleButton);
 
   // Create a label and slider for the sensor's field of view
   const fovLabel = document.createElement("label");
@@ -312,10 +313,8 @@ function animate() {
   // Check if any targets are within the sensor's field of view and update UI
   updateTargetDetectionStatus();
 
-  // Render the main scene from the main camera's perspective
-  renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
-  renderer.clear(); // Clear the previous frame
-  renderer.render(scene, cameraControl.camera);
+  // Render the main camera and sensor camera views
+  renderMainCamera();
 
   // Render the sensor's view in a square window in the top-right corner
   const insetSize = Math.min(window.innerWidth, window.innerHeight) / 4; // Make the viewport a square
@@ -332,6 +331,7 @@ function animate() {
     insetSize,
     insetSize
   );
+
   renderer.render(scene, sensorCamera);
   renderer.setScissorTest(false); // Disable scissor test after rendering
 
@@ -339,6 +339,22 @@ function animate() {
   updateBorderOverlay();
 }
 
+function renderMainCamera() {
+  // Render the main scene from the main camera's perspective
+  renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+  renderer.clear(); // Clear the previous frame
+
+  // Update orbit mode if active
+
+  cameraControl.updateOrbit();
+
+  // Update the controls and render the scene
+  if (!cameraControl.isOrbiting) {
+    cameraControl.currentOrbitControl.update(); // Only update controls if not in orbit mode
+  }
+
+  renderer.render(scene, cameraControl.camera);
+}
 /**
  * Function to update the detection status of targets and update the UI.
  * This function checks if targets are in range and updates the UI accordingly.
@@ -372,22 +388,6 @@ function updateTargetDetectionStatus() {
     if (result.inRange) {
       targetIsDetectable = true;
 
-      // Create a new row for each detectable target
-      let targetRow = document.createElement("div");
-      targetRow.style.marginTop = "5px"; // Add some spacing between rows
-
-      // Add information about the target
-      targetRow.innerHTML = `
-        <strong>Target ${i + 1}:</strong> <br>
-        Distance: ${result.distance.toFixed(2)} <br>
-        Source Power: ${result.sourcePower} <br>
-        Sensed Intensity: ${result.receivedIntensity.toFixed(3)}
-      `;
-      //        In Range: ${result.inRange} <br>
-
-      // Append the target row to the status display
-      statusDisplay.appendChild(targetRow);
-
       // Adjust the color of the target based on the received intensity
       // Assuming intensity ranges from 0 (min) to 1 (max)
       let intensityFactor = result.receivedIntensity; // 0 to 1 scale
@@ -404,6 +404,36 @@ function updateTargetDetectionStatus() {
       // Set the target color (from red to green)
       target.material.color.setRGB(redValue / 255, greenValue / 255, 0);
       target.material.emissive.setRGB(0, greenValue / 255, 0);
+
+      // Update the text color to match the intensity (similar to target's color)
+      const targetColor = `rgb(${redValue}, ${greenValue}, 0)`;
+
+      // Create a new row for each detectable target
+      let targetRow = document.createElement("div");
+      targetRow.style.marginTop = "5px"; // Add some spacing between rows
+      //add a dark transparent background to the row
+      targetRow.style.backgroundColor = "rgba(0, 0, 0, 0.125)";
+      //add a left border the color of the target
+      // set the border width to 5px
+      targetRow.style.borderLeft = "5px solid " + targetColor;
+      // add padding around the border
+      targetRow.style.padding = "5px";
+      //add padding to the left of the border
+      targetRow.style.paddingLeft = "5px"; // Add some padding to the left of the border
+
+      // add rounded corners to the row
+      targetRow.style.borderRadius = "5px";
+      targetRow.style.color = "#ffffff";
+
+      // Add information about the target, color coded based on intensity
+      targetRow.innerHTML = `        <strong>Target ${i + 1}:</strong> <br>
+        Distance: ${result.distance.toFixed(2)} <br>
+        Source Power: ${result.sourcePower} <br>
+        Sensed Intensity: ${result.receivedIntensity.toFixed(3)}
+      `;
+
+      // Append the target row to the status display
+      statusDisplay.appendChild(targetRow);
     } else {
       // Set the target's color to red if not in range
       target.material.color.set(0xff0000);
