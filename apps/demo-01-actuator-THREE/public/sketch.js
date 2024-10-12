@@ -24,6 +24,7 @@ document.body.appendChild(renderer.domElement);
 
 // Create a container for the camera control
 const cameraControl = createCameraControl(renderer);
+console.log("cameraControl.isPerspective:" + cameraControl.isPerspective);
 
 // Add a directional light to the scene
 const light = new THREE.DirectionalLight(0xffffff, 3);
