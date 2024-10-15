@@ -1,7 +1,7 @@
 // List of demo paths and names
 const demos = [
   {
-    name: "Demo 01: Sensor + Actuator THREE",
+    name: "Demo 01: Sense+Act THREE",
     path: "/demo-01-sensor-actuator",
   },
   { name: "Demo 01: Actuator THREE", path: "/demo-01-actuator-THREE" },
