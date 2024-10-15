@@ -1,6 +1,5 @@
 // Import the Three.js library and OrbitControls from a CDN
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js";
-import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/OrbitControls.js";
 
 // Import Text from Troika Text library loaded via CDN
 import { Text } from "https://unpkg.com/troika-three-text?module";

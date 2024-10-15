@@ -1,0 +1,79 @@
+@startuml
+!define LOCALTRANSFORM -down-> 
+
+skinparam componentStyle rectangle
+skinparam defaultTextAlignment center
+
+' Define a custom color for actuators
+skinparam {
+    componentBackgroundColorActuator #fff274
+}
+
+' Place Armature at the top
+component "Armature" as Armature
+
+' Direct Bar and Female systems to appear below Armature
+Armature LOCALTRANSFORM Bar0_1
+
+' Horizontal subsystem for Bar with Servomotor Oscillator
+component "Bar Subsystem" as Bar0_1 {
+    component "Servomotor Oscillator" as ServoOscBar #fff274
+}
+
+' Place Bar below Armature with a horizontal subsystem for Servomotor Oscillator
+component "Bar" as Bar0
+Bar0_1 LOCALTRANSFORM Bar0
+
+' Correctly place Male subsystems hanging from the Bar
+Bar0 LOCALTRANSFORM Male1_1
+Bar0 LOCALTRANSFORM Male2_1
+
+' Horizontal subsystem for Male 1 with Oscillator
+component "Male 1-1" as Male1_1 {
+    component "Servomotor Oscillator" as ServoOscM1 #fff274
+}
+
+' Horizontal subsystem for Male 2 with Oscillator
+component "Male 2-1" as Male2_1 {
+    component "Servomotor Oscillator" as ServoOscM2 #fff274
+}
+
+' Place Female subsystems below the Armature
+Armature LOCALTRANSFORM Female1_1
+Armature LOCALTRANSFORM Female2_1
+Armature LOCALTRANSFORM Female3_1
+
+' First horizontal subsystem for Female 1 with Servomotor Oscillator
+component "Female 1-1" as Female1_1 {
+    component "Servomotor Oscillator" as ServoOscF1 #fff274
+}
+
+' Second vertical subsystem for Female 1 with Servomotor Oscillator
+component "Female 1-2" as Female1_2 {
+    component "Servomotor Oscillator" as ServoF1_2 #fff274
+}
+Female1_1 LOCALTRANSFORM Female1_2
+
+' First horizontal subsystem for Female 2 with Servomotor Oscillator
+component "Female 2-1" as Female2_1 {
+    component "Servomotor Oscillator" as ServoOscF2 #fff274
+}
+
+' Second vertical subsystem for Female 2 with Servomotor Oscillator
+component "Female 2-2" as Female2_2 {
+    component "Servomotor Oscillator" as ServoF2_2 #fff274
+}
+Female2_1 LOCALTRANSFORM Female2_2
+
+' First horizontal subsystem for Female 3 with Servomotor Oscillator
+component "Female 3-1" as Female3_1 {
+    component "Servomotor Oscillator" as ServoOscF3 #fff274
+}
+
+' Second vertical subsystem for Female 3 with Servomotor Oscillator
+component "Female 3-2" as Female3_2 {
+    component "Servomotor Oscillator" as ServoF3_2 #fff274
+}
+Female3_1 LOCALTRANSFORM Female3_2
+
+@enduml

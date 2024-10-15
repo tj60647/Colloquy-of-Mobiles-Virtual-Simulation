@@ -33,6 +33,10 @@ app.use(
   express.static(path.join(__dirname, "apps/demo-02-oscillator/public"))
 );
 app.use(
+  "/demo-02-oscillator-THREE",
+  express.static(path.join(__dirname, "apps/demo-02-oscillator-THREE/public"))
+);
+app.use(
   "/demo-03-transform-THREE",
   express.static(path.join(__dirname, "apps/demo-03-transform-THREE/public"))
 );

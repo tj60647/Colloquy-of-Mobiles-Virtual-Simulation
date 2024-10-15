@@ -6,8 +6,8 @@ import { formatValue } from "../../lib/UI_Utilities.js";
 import { hexToRgba } from "../../lib/UI_Utilities.js";
 import { createCameraControl } from "../../../lib/cameraUtilities.js";
 
-const sensorCount = 2;
-const actuatorCount = 2;
+const sensorCount = 4;
+const actuatorCount = 3;
 
 // Create the main scene
 const scene = new THREE.Scene();
@@ -118,7 +118,6 @@ function updateTargetDetectionStatus(sensor, transducer_status) {
   let targetIsDetectable = false;
   transducer_status.innerHTML = "";
   //clear the line container
-  lineContainer.children = [];
 
   const statusHeader = document.createElement("div");
   statusHeader.textContent = `Detection Summary:`;
@@ -407,6 +406,7 @@ function createTransducerControlUI(transducer) {
 function animate() {
   requestAnimationFrame(animate);
 
+  lineContainer.children = []; //clear the line container
   actuators.forEach((actuator, index) => {
     actuator.rotation.y += actuator.rotationRate;
     if (actuator.rotation.y > Math.PI * 2) {
