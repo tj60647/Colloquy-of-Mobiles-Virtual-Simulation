@@ -30,7 +30,7 @@ function init() {
   scene = new THREE.Scene();
 
   // Set up the renderer
-  renderer = new THREE.WebGLRenderer();
+  renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 

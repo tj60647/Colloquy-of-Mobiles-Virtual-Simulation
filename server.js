@@ -60,6 +60,10 @@ app.use(
   "/demo-08-sensor-THREE",
   express.static(path.join(__dirname, "apps/demo-08-sensor-THREE/public"))
 );
+app.use(
+  "/demo-01-sense-act-osc",
+  express.static(path.join(__dirname, "apps/demo-01-sense-act-osc/public"))
+);
 
 // Serve JavaScript modules from the 'lib' directory
 app.use("/lib", express.static(path.join(__dirname, "lib")));

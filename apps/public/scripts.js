@@ -1,17 +1,22 @@
 // List of demo paths and names
 const demos = [
+  { name: "Demo 01: Drives", path: "/demo-04-drives" },
+  { name: "Demo 02: Transceivers", path: "/demo-05-transceiversV2" },
+  { name: "Demo 03: Transform", path: "/demo-03-transform-THREE" },
+  { name: "Demo 04: Sensor", path: "/demo-08-sensor-THREE" },
+  { name: "Demo 05: Actuator", path: "/demo-01-actuator-THREE" },
+  { name: "Demo 06: Oscillator", path: "/demo-02-oscillator-THREE" },
   {
-    name: "Demo 01: Sense+Act THREE",
+    name: "Demo 07: Sense+Act",
     path: "/demo-01-sensor-actuator",
   },
-  { name: "Demo 01: Actuator THREE", path: "/demo-01-actuator-THREE" },
-  { name: "Demo 02: Oscillator", path: "/demo-02-oscillator" },
-  { name: "Demo 02.1: Oscillator THREE", path: "/demo-02-oscillator-THREE" },
-  { name: "Demo 03: Transform THREE", path: "/demo-03-transform-THREE" },
-  { name: "Demo 04: Drives", path: "/demo-04-drives" },
-  { name: "Demo 05: Transceivers", path: "/demo-05-transceiversV2" },
-  { name: "Demo 06: Assets", path: "/demo-06-assets-test" },
-  { name: "Demo 08: Sensor THREE", path: "/demo-08-sensor-THREE" },
+  {
+    name: "Demo 08: Sense+Act+Osc",
+    path: "/demo-01-sense-act-osc",
+  },
+
+  //{ name: "Demo 02: Oscillator", path: "/demo-02-oscillator" },
+  //{ name: "Demo 06: Assets", path: "/demo-06-assets-test" },
   // Add additional anticipated demos here
 ];
 
@@ -60,7 +65,9 @@ function initializeUI() {
   createSidebarMenu();
 
   // Optionally, load a default demo on page load
-  loadDemo("/demo-01-sensor-actuator");
+  loadDemo(demos[0].path);
+  //style the first demo as active
+  setActiveDemo(document.querySelector("#demo-list li"));
 }
 
 /**

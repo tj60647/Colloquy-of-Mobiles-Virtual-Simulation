@@ -1,5 +1,10 @@
 // Import the Three.js library and OrbitControls from a CDN
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js";
+import { Actuator_THREE } from "../../lib/Actuator_THREE.js";
+import { Sensor_THREE } from "../../lib/Sensor_THREE.js";
+import { Transducer_THREE } from "../../lib/Transducer_THREE.js";
+import { formatValue } from "../../lib/UI_Utilities.js";
+import { hexToRgba } from "../../lib/UI_Utilities.js";
 import { createCameraControl } from "../../../lib/cameraUtilities.js";
 
 // Import the oscillatorSystem class from the oscillatorSystem.js file
@@ -64,24 +69,33 @@ function init() {
   initSceneContext();
   initCameraControl();
 
-  let numPoints = 3; // Example value
-  let diameter = 84; // Example value
-  let centerX = 0;
-  let centerY = 0;
+  let numFemales = 3;
+  let numMales = 2;
+  let distanceFromCenter_female = 84;
+  let distanceFromCenter_male = 24;
+  let armature_centerX = 0;
+  let armature_centerZ = 0;
 
   let armature = new THREE.Group();
   let armature_axesHelper = new THREE.AxesHelper(12);
   armature.add(armature_axesHelper);
-  armature.position.set(0, 42, 0);
+  armature.position.set(armature_centerX, 42, armature_centerZ);
   scene.add(armature);
 
-  for (let i = 0; i < numPoints; i++) {
+  //set up the female oscillator systems
+  for (let i = 0; i < numFemales; i++) {
     // Get the position and orientation data for placing the oscillator on a circle
-    let pointData = getPointOnCircle(diameter, numPoints, i, centerX, centerY);
+    let pointData = getPointOnCircle(
+      distanceFromCenter_female,
+      numFemales,
+      i,
+      armature_centerX,
+      armature_centerZ
+    );
 
     //add female oscillator systems
     // Create a new oscillatorSystem at the computed position with a given name and orientation
-    let oscillatorSystem = new OscillatorSystem_THREE(
+    let femaleOscillatorSystem = new OscillatorSystem_THREE(
       `oscillatorSystem Female ${i + 1}`, // Name of the oscillator
       THREE.MathUtils.degToRad(-range_female), // minPosition converted to radians
       THREE.MathUtils.degToRad(range_female), // maxPosition converted to radians
@@ -89,20 +103,56 @@ function init() {
     );
 
     // Set the position of the oscillatorSystem
-    oscillatorSystem.position.set(pointData.x, -8, pointData.y); // Assuming Y is height, 0 for vertical axis
+    femaleOscillatorSystem.position.set(pointData.x, -8, pointData.y); // Assuming Y is height, 0 for vertical axis
 
     // Adjust the initial orientation of the oscillatorSystem
-    oscillatorSystem.rotation.y = pointData.orientation + Math.PI; // Rotate the oscillatorSystem to face the center
+    femaleOscillatorSystem.rotation.y = pointData.orientation + Math.PI; // Rotate the oscillatorSystem to face the center
 
     // Configure motion parameters for the oscillatorSystem
     //convert to radians
-    oscillatorSystem.maxVelocity = (maxVelocity_female * Math.PI) / 180;
-    oscillatorSystem.maxAcceleration = (maxAcceleration_female * Math.PI) / 180;
+    femaleOscillatorSystem.maxVelocity = (maxVelocity_female * Math.PI) / 180;
+    femaleOscillatorSystem.maxAcceleration =
+      (maxAcceleration_female * Math.PI) / 180;
 
     // Set the motion request to RELEASE
-    oscillatorSystem.setMotionRequest(
+    femaleOscillatorSystem.setMotionRequest(
       OscillatorSystem_THREE.MOTION_REQUEST.RELEASE
     );
+
+    //add the speaker
+    const speaker = new Actuator_THREE(
+      `speaker`,
+      Math.PI,
+      3000,
+      true,
+      true,
+      true
+    );
+    speaker.position.set(3, -12, 0);
+    femaleOscillatorSystem.oscillator.add(speaker);
+
+    //add the microphone
+    const microphone = new Sensor_THREE(
+      `microphone`,
+      Math.PI,
+      0.05,
+      true,
+      true,
+      true
+    );
+    microphone.position.set(-3, -12, 0);
+    femaleOscillatorSystem.oscillator.add(microphone);
+
+    //add a female body
+    // this is a sphere from the three.js library
+    let femaleGeometry = new THREE.SphereGeometry(8, 32, 32);
+    //make it glass
+    let femaleBody = new THREE.Mesh(femaleGeometry, glassMaterial);
+    //position it
+    femaleBody.position.set(0, -15, 0);
+    //add it to the oscillator system
+    femaleOscillatorSystem.oscillator.add(femaleBody);
+
     // add the search system to the oscillator system
     let searchSystem = new OscillatorSystem_THREE(
       `oscillatorSystem Search ${i + 1}`, // Name of the oscillatorSystem
@@ -125,20 +175,40 @@ function init() {
     searchSystem.maxAcceleration =
       (maxAcceleration_female_vertical_search * Math.PI) / 180;
 
+    //add the light sensor
+    const lightSensor = new Sensor_THREE(
+      `light sensor`,
+      Math.PI / 2,
+      0.05,
+      true,
+      true,
+      true
+    );
+    lightSensor.position.set(0, 0, 1);
+    searchSystem.oscillator.add(lightSensor);
+
+    //add a mirror to the oscillator system
+    // this is a box from the three.js library
+    const mirrorGeometry = new THREE.BoxGeometry(4, 4, 0.1);
+    //make it mirror
+    const mirror = new THREE.Mesh(mirrorGeometry, chromeMaterial);
+    mirror.position.set(0, 0, 0.5);
+    searchSystem.oscillator.add(mirror);
+
     // Set the motion request to RELEASE
     searchSystem.setMotionRequest(
       OscillatorSystem_THREE.MOTION_REQUEST.RELEASE
     );
 
     // Add the search system to the oscillator system
-    oscillatorSystem.oscillator.add(searchSystem);
+    femaleOscillatorSystem.oscillator.add(searchSystem);
 
     // add the oscillatorSystem to the oscillatorSystems array
     oscillatorSystems.push(searchSystem);
 
     // Add the oscillatorSystem to the environment
-    armature.add(oscillatorSystem);
-    oscillatorSystems.push(oscillatorSystem);
+    armature.add(femaleOscillatorSystem);
+    oscillatorSystems.push(femaleOscillatorSystem);
   }
 
   // Create a central "beam" oscillatorSystem
@@ -149,8 +219,16 @@ function init() {
     THREE.MathUtils.degToRad(0) // reinforcementPosition converted to radians
   );
 
-  // Set the position of the beam oscillatorSystem at the center
-  beamOscillatorSystem.position.set(centerX, -4, centerY);
+  // Set the position of the beam oscillatorSystem relative to the armature
+  beamOscillatorSystem.position.set(0, -4, 0);
+
+  // add the beam body
+  // this is a box from the three.js library
+  let beamGeometry = new THREE.BoxGeometry(0.5, 0.5, 24);
+  //make it chrome
+  let beamBody = new THREE.Mesh(beamGeometry, chromeMaterial);
+  beamBody.position.set(0, -4, 0);
+  beamOscillatorSystem.oscillator.add(beamBody);
 
   // Configure motion parameters for the beam oscillatorSystem
   beamOscillatorSystem.maxVelocity = (maxVelocity_beam * Math.PI) / 180;
@@ -168,38 +246,86 @@ function init() {
   armature.add(beamOscillatorSystem);
   oscillatorSystems.push(beamOscillatorSystem);
 
-  //add to ascillator systems to the beamOscillator system
+  //add to male oscillator systems to the beamOscillator system
+  // there are numMales oscillators
   //male 1 and 2
   //they are 24 units from the center of the beam
-  let male1 = new OscillatorSystem_THREE(
-    `oscillatorSystem Male 1`, // Name of the oscillatorSystem
-    THREE.MathUtils.degToRad(-range_male), // minPosition converted to radians
-    THREE.MathUtils.degToRad(range_male), // maxPosition converted to radians
-    THREE.MathUtils.degToRad(0) // reinforcementPosition converted to radians
-  );
-  male1.position.set(0, -4, 12);
-  male1.rotation.y = 0;
-  male1.maxVelocity = (maxVelocity_male * Math.PI) / 180; // Max velocity remains as is
-  male1.maxAcceleration = (maxAcceleration_male * Math.PI) / 180; // Max acceleration remains as is
-  male1.setMotionRequest(OscillatorSystem_THREE.MOTION_REQUEST.RELEASE);
+  // centered relative to the beam
+  for (let i = 0; i < numMales; i++) {
+    let pointData = getPointOnCircle(
+      distanceFromCenter_male,
+      numMales,
+      i,
+      0,
+      0
+    );
 
-  beamOscillatorSystem.oscillator.add(male1);
-  oscillatorSystems.push(male1);
+    // add male oscillator systems
+    // Create a new oscillatorSystem at the computed position with a given name and orientation
+    let maleOscillatorSystem = new OscillatorSystem_THREE(
+      `oscillatorSystem Male ${i + 1}`, // Name of the oscillator
+      THREE.MathUtils.degToRad(-range_male), // minPosition converted to radians
+      THREE.MathUtils.degToRad(range_male), // maxPosition converted to radians
+      THREE.MathUtils.degToRad(0) // reinforcementPosition converted to radians
+    );
+    // Assuming Y is height, 0 for vertical axis
+    maleOscillatorSystem.position.set(pointData.x, -4, pointData.y);
+    // Rotate the oscillatorSystem to face away from the center
+    maleOscillatorSystem.rotation.y = pointData.orientation;
+    maleOscillatorSystem.maxVelocity = (maxVelocity_male * Math.PI) / 180; // Max velocity remains as is
+    maleOscillatorSystem.maxAcceleration =
+      (maxAcceleration_male * Math.PI) / 180; // Max acceleration remains as is
+    maleOscillatorSystem.setMotionRequest(
+      OscillatorSystem_THREE.MOTION_REQUEST.RELEASE
+    );
 
-  let male2 = new OscillatorSystem_THREE(
-    `oscillator system male 2`, // Name of the oscillatorSystem
-    THREE.MathUtils.degToRad(-range_male), // minPosition converted to radians
-    THREE.MathUtils.degToRad(range_male), // maxPosition converted to radians
-    THREE.MathUtils.degToRad(0) // reinforcementPosition converted to radians
-  );
-  male2.position.set(0, -4, -12);
-  male2.rotation.y = Math.PI;
-  male2.maxVelocity = (maxVelocity_male * Math.PI) / 180; // Max velocity remains as is
-  male2.maxAcceleration = (maxAcceleration_male * Math.PI) / 180; // Max acceleration remains as is
-  male2.setMotionRequest(OscillatorSystem_THREE.MOTION_REQUEST.RELEASE);
+    //add the speaker
+    const speaker = new Actuator_THREE(
+      `speaker`,
+      Math.PI,
+      3000,
+      true,
+      true,
+      true
+    );
+    speaker.position.set(0, -8, 0);
+    maleOscillatorSystem.oscillator.add(speaker);
 
-  beamOscillatorSystem.oscillator.add(male2);
-  oscillatorSystems.push(male2);
+    //add the microphone
+    const microphone = new Sensor_THREE(
+      `microphone`,
+      Math.PI,
+      0.05,
+      true,
+      true,
+      true
+    );
+    microphone.position.set(-3, -9, 0);
+    maleOscillatorSystem.oscillator.add(microphone);
+
+    //add the light
+    const light = new Actuator_THREE(
+      `light`,
+      Math.PI / 8,
+      3000,
+      true,
+      true,
+      true
+    );
+    light.position.set(0, -15, 0);
+    maleOscillatorSystem.oscillator.add(light);
+
+    //add the male body
+    //this is a box from the three.js library
+    let maleGeometry = new THREE.BoxGeometry(6, 10, 1);
+    //make it glass
+    let maleBody = new THREE.Mesh(maleGeometry, chromeMaterial);
+    maleBody.position.set(0, -15, 0);
+    maleOscillatorSystem.oscillator.add(maleBody);
+
+    beamOscillatorSystem.oscillator.add(maleOscillatorSystem);
+    oscillatorSystems.push(maleOscillatorSystem);
+  }
 
   console.log(oscillatorSystems);
 
