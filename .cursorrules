@@ -6,16 +6,16 @@ This is a virtual simulation of Gordon Pask's "Colloquy of Mobiles" (1968), a cy
 
 ## Critical Documentation
 
-Before making changes, **always consult these canonical references**:
+The **2018 McLeish Reconstruction** is the primary source of truth for all behavioral logic and state definitions.
 
-1. **`docs/terminology.md`** - Standardized terminology (Mobile, Subsystem, Component, Drive states)
-2. **`docs/reference/mcleish/`** - 2018 physical reconstruction technical specs (PlantUML diagrams)
-3. **`docs/reference/pask/`** - Pask's original writings (1968)
-4. **`readme.md`** - System architecture and museum installation overview
+1.  **`docs/reference/mcleish/`** - **PRIMARY REFERENCE**. Contains the specific interpretations of Pask's intent used in this project.
+    *   Consult the **State Diagrams** and **Sequence Diagrams** here for all logic questions.
+2.  **`docs/terminology.md`** - Standardized terminology (Mobile, Subsystem, Component).
+3.  **`docs/reference/pask/`** - **Conceptual intent only**. Use *A Comment, a Case History and a Plan* to understand the "why," but rely on McLeish (2018) for the "how."
 
 ## Terminology (CRITICAL)
 
-Use these **canonical terms** from Pask's work:
+Use these **canonical terms** from the 2018 reconstruction:
 
 - **Mobile** (NOT "Agent") - Top-level autonomous entity
   - Types: Male, Female, Bar

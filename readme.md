@@ -12,18 +12,25 @@ This project is a virtual simulation of Gordon Pask's "Colloquy of Mobiles," mod
 - **SimulationConfigurationFiles/**: JSON configurations for runtime settings.
 
 ## Simulation Philosophy & Architecture
-### Position Statement: Simulating Analog Concurrency
-Gordon Pask's original 1968 installation was a system of **analog, concurrent entities**. Multiple mobiles moved, sensed, and interacted simultaneously in the physical world without a central "clock."
+### Position Statement: Simulating the 2018 Interpretation
+This simulation is strictly based on the **2018 physical reconstruction by McLeish**, which is an *interpretation* of the original work.
 
-To simulate this in a digital environment (JavaScript/Node.js), we must make a foundational architectural choice: **how to represent continuous, parallel behavior on a sequential, discrete machine.**
+The dynamic experience of Gordon Pask's original 1968 installation (the motion, sound, and light interactions) is primarily lost to history:
+-   There are no known recordings of the piece in motion.
+-   There is no surviving audio.
+-   Most photographs show the system powered off.
+-   The original 1968 schematic diagrams were not strictly followed in construction (as noted by Mark Dowson).
 
-We have chosen a **Synchronous Simulation Loop** architecture:
-1.  **Orchestrated Updates**: A central `Environment` updates every Mobile once per "tick" (frame).
-2.  **Deterministic Order**: Events are processed in a predictable sequence, ensuring stability and easier debugging.
-3.  **Apparent Autonomy**: From the user's perspective, Mobiles appear to act independently and simultaneously.
+Therefore, this project simulates the **2018 interpretation of Pask's intent**. Where the 1968 record is static or ambiguous, the specific behavioral logic, timing, and sensory interactions visualized here are derived entirely from the choices made in the 2018 reconstruction project (documented in `docs/reference/mcleish`).
+
+### Simulating Analog Concurrency
+Pask's installation was a system of **analog, concurrent entities**. To simulate this digitally:
+
+1.  **Orchestrated Updates**: We use a **Synchronous Simulation Loop**, updating every Mobile once per "tick".
+2.  **Apparent Autonomy**: From the user's perspective, Mobiles appear to act independently and simultaneously, preserving the social dynamics Pask intended.
 
 **Why not true parallel threads?**
-While modern web technologies (Web Workers) allow parallelism, they introduce significant complexity (race conditions, shared state management) that distracts from the core goal: **modeling the social cybernetics**. Our synchronous loop provides the necessary reliability to explore Pask's *interaction logic* without the unpredictability of low-level thread management.
+While modern web technologies (Web Workers) allow parallelism, they introduce significant complexity (race conditions, shared state management) that distracts from the core goal: **modeling the social cybernetics**. Our synchronous loop provides the necessary reliability to explore the *interaction logic* defined in the 2018 reconstruction.
 
 ### Architecture Patterns (The "How")
 *   **Agent-Based**: Each Mobile is a self-contained entity with private state (Drives, Position).
@@ -356,22 +363,22 @@ WiFi for **administrative access only** (not for critical components):
 ### Network Topology
 
 ```
-┌────────────────────────────────────────────────────┐
-│         Museum LAN (Ethernet Backbone)              │
-│                                                      │
-│  ┌──────────────┐                                  │
-│  │ Server       │                                  │
-│  │ 192.168.1.1  │                                  │
-│  └──────┬───────┘                                  │
-│         │ Ethernet                                  │
-│  ┌──────▼──────────────────────┐                  │
-│  │  Gigabit Switch (16-port)   │                  │
-│  └─┬──┬──┬──┬──┬──┬──┬──┬──┬──┘                  │
+┌───────────────────────────────────────────────────┐
+│         Museum LAN (Ethernet Backbone)            │
+│                                                   │
+│  ┌──────────────┐                                 │
+│  │ Server       │                                 │
+│  │ 192.168.1.1  │                                 │
+│  └──────┬───────┘                                 │
+│         │ Ethernet                                │
+│  ┌──────▼─────────────────────┐                   │
+│  │  Gigabit Switch (16-port)  │                   │
+│  └─┬──┬──┬──┬──┬──┬──┬──┬──┬──┘                   │
 │    │  │  │  │  │  │  │  │  │                      │
 │    ▼  ▼  ▼  ▼  ▼  ▼  ▼  ▼  ▼                      │
 │   S1 S2 S3 D1 D2 D3 VR DB WiFi                    │
-│                              (admin only)          │
-└────────────────────────────────────────────────────┘
+│                              (admin only)         │
+└───────────────────────────────────────────────────┘
 
 S  = Sensor Station (Ethernet)
 D  = Display Screen (Ethernet)
