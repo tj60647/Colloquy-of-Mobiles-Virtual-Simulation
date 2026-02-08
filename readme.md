@@ -285,14 +285,14 @@ Sensor Inputs → Virtual Colloquy Simulation (Heroku/Local) → Multiple Viewin
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│         Museum Local Network (No Internet Required)      │
-│                                                           │
+│         Museum Local Network (No Internet Required)     │
+│                                                         │
 │  ┌──────────────────────────────────┐                   │
 │  │  Local Server (Laptop/Mini PC)   │                   │
 │  │  - npm start                     │                   │
 │  │  - WebSocket: ws://192.168.x.x   │                   │
 │  └──────────────────────────────────┘                   │
-│              │                                            │
+│              │                                          │
 │     ┌────────┼────────┬──────────┬──────────┐           │
 │     ▼        ▼        ▼          ▼          ▼           │
 │  Sensor   3D View   VR View   Dashboard  Tablets        │
