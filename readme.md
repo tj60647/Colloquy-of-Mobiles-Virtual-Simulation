@@ -71,8 +71,10 @@ The Beam is a **Reactive Agent** that serves as the central arbitrator. Unlike t
 
 This implementation is based on **canonical documentation** by Gordon Pask and the McLeish 2018 implementation:
 
-*   **`docs/reference/pask/`** - Pask's original writings on the Colloquy of Mobiles (1968) and conversation theory
-*   **`docs/reference/mcleish/`** - Technical implementation specifications from the 2018 reconstruction
+*   **`docs/reference/pask/`** - Pask's original writings on the Colloquy of Mobiles (1968)
+*   **`docs/reference/dowson/`** - Dowson's recollection and correspondence about Pask's work
+*   **`docs/reference/mcleish/`** - Technical implementation specifications from the 2018 physical reconstruction
+*   **`docs/development/`** - Ongoing virtual simulation development work (2024-2026)
 *   **`docs/terminology.md`** - Standardized terminology guide defining Mobiles, Subsystems, Components, and behavioral states
 
 **Note:** All implementation decisions should align with these reference materials. The terminology guide provides the canonical mapping between Pask's concepts and this codebase.
