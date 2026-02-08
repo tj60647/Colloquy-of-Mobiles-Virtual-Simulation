@@ -9,14 +9,14 @@
 // the UI allows for adjusting the sensor's field of view and sensitivity.
 
 // Import the Three.js library from a CDN
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js";
-import { createCameraControl } from "../../../lib/cameraUtilities.js";
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
+import { createCameraControl } from '../../../lib/cameraUtilities.js';
 
 // Import the custom Sensor_THREE class
-import { Sensor_THREE } from "../../lib/Sensor_THREE.js";
-import { Transducer_THREE } from "../../lib/Transducer_THREE.js";
-import { formatValue } from "../../lib/UI_Utilities.js";
-import { hexToRgba } from "../../lib/UI_Utilities.js";
+import { Sensor_THREE } from '../../lib/Sensor_THREE.js';
+import { Transducer_THREE } from '../../lib/Transducer_THREE.js';
+import { formatValue } from '../../lib/UI_Utilities.js';
+import { hexToRgba } from '../../lib/UI_Utilities.js';
 
 // Create the main scene
 const scene = new THREE.Scene();
@@ -38,14 +38,7 @@ scene.add(light);
 // Add a grid helper to the scene
 //const gridHelper = new THREE.GridHelper(84, 84, 0xcccccc, 0xdddddd);
 
-const gridHelper = new THREE.PolarGridHelper(
-  42,
-  8,
-  16,
-  128,
-  0xcccccc,
-  0xdddddd
-);
+const gridHelper = new THREE.PolarGridHelper(42, 8, 16, 128, 0xcccccc, 0xdddddd);
 scene.add(gridHelper);
 
 //PolarGridHelper
@@ -65,11 +58,7 @@ for (let i = 0; i < targetCount; i++) {
   const distance = Math.random() * 38 + 4;
   const angle = Math.random() * Math.PI * 2;
   const deltaY = Math.random() * 10 - 5;
-  target.position.set(
-    distance * Math.cos(angle),
-    deltaY,
-    distance * Math.sin(angle)
-  );
+  target.position.set(distance * Math.cos(angle), deltaY, distance * Math.sin(angle));
   target.power = power;
   scene.add(target);
   targets.push(target);
@@ -77,7 +66,7 @@ for (let i = 0; i < targetCount; i++) {
 
 // Create a sensor instance
 const sensor = new Sensor_THREE(
-  "Front Sensor",
+  'Front Sensor',
   Math.PI / 2, // FOV in radians
   0.05, // Minimum intensity sensitivity
   true, // Show direction helper
@@ -101,10 +90,8 @@ let rotationRate = 0.003; // Default rotation rate
 
 // Function to create and set up the UI
 function createControls(transducer) {
-  const isSensor =
-    transducer.transducerType === Transducer_THREE.TRANSDUCER_TYPE.SENSOR;
-  const isActuator =
-    transducer.transducerType === Transducer_THREE.TRANSDUCER_TYPE.ACTUATOR;
+  const isSensor = transducer.transducerType === Transducer_THREE.TRANSDUCER_TYPE.SENSOR;
+  const isActuator = transducer.transducerType === Transducer_THREE.TRANSDUCER_TYPE.ACTUATOR;
 
   //get the background color based on the field of effect color
   // Get the hexadecimal color value
@@ -113,30 +100,30 @@ function createControls(transducer) {
   const buttonColor = hexToRgba(transducer.fieldOfEffect_HelperColor, 1.0);
 
   //set the document body to not scroll
-  document.body.style.overflow = "hidden";
+  document.body.style.overflow = 'hidden';
 
   // Create a UI container
-  const controlContainer = document.createElement("div");
-  controlContainer.style.position = "absolute";
-  controlContainer.style.top = "10px";
-  controlContainer.style.left = "10px";
-  controlContainer.style.color = "white";
-  controlContainer.style.fontFamily = "Arial, sans-serif";
-  controlContainer.style.zIndex = "100";
+  const controlContainer = document.createElement('div');
+  controlContainer.style.position = 'absolute';
+  controlContainer.style.top = '10px';
+  controlContainer.style.left = '10px';
+  controlContainer.style.color = 'white';
+  controlContainer.style.fontFamily = 'Arial, sans-serif';
+  controlContainer.style.zIndex = '100';
   controlContainer.style.backgroundColor = backgroundColor;
-  controlContainer.style.padding = "10px";
-  controlContainer.style.borderRadius = "5px";
-  controlContainer.style.display = "flex";
-  controlContainer.style.flexDirection = "column";
-  controlContainer.style.gap = "10px";
-  controlContainer.style.width = "200px"; // Adjusted width for more space
+  controlContainer.style.padding = '10px';
+  controlContainer.style.borderRadius = '5px';
+  controlContainer.style.display = 'flex';
+  controlContainer.style.flexDirection = 'column';
+  controlContainer.style.gap = '10px';
+  controlContainer.style.width = '200px'; // Adjusted width for more space
   document.body.appendChild(controlContainer);
 
   // Create a title label
-  const titleLabel = document.createElement("div");
-  titleLabel.textContent = "Sensor Controls";
-  titleLabel.style.fontWeight = "bold";
-  titleLabel.style.textAlign = "center";
+  const titleLabel = document.createElement('div');
+  titleLabel.textContent = 'Sensor Controls';
+  titleLabel.style.fontWeight = 'bold';
+  titleLabel.style.textAlign = 'center';
   controlContainer.appendChild(titleLabel);
 
   // // Create a button to toggle the sensor visibility
@@ -156,28 +143,24 @@ function createControls(transducer) {
   // controlContainer.appendChild(toggleButton);
 
   // Create a label and slider for the sensor's field of view
-  const fovLabel = document.createElement("label");
-  fovLabel.textContent = "Field of View:";
+  const fovLabel = document.createElement('label');
+  fovLabel.textContent = 'Field of View:';
   controlContainer.appendChild(fovLabel);
 
-  const fovSliderContainer = document.createElement("div");
-  fovSliderContainer.style.display = "flex";
-  fovSliderContainer.style.alignItems = "center";
-  const fovSlider = document.createElement("input");
-  fovSlider.type = "range";
-  fovSlider.min = "1";
-  fovSlider.max = "180";
-  fovSlider.value = (
-    sensor.fieldOfEffect_AngleFull *
-    (180 / Math.PI)
-  ).toString();
-  const fovValueDisplay = document.createElement("span");
-  fovValueDisplay.style.marginLeft = "10px";
+  const fovSliderContainer = document.createElement('div');
+  fovSliderContainer.style.display = 'flex';
+  fovSliderContainer.style.alignItems = 'center';
+  const fovSlider = document.createElement('input');
+  fovSlider.type = 'range';
+  fovSlider.min = '1';
+  fovSlider.max = '180';
+  fovSlider.value = (sensor.fieldOfEffect_AngleFull * (180 / Math.PI)).toString();
+  const fovValueDisplay = document.createElement('span');
+  fovValueDisplay.style.marginLeft = '10px';
   fovValueDisplay.textContent = formatValue(fovSlider.value, 1, 3, true);
 
   fovSlider.oninput = (event) => {
-    sensor.fieldOfEffect_AngleFull =
-      (parseInt(event.target.value) * Math.PI) / 180;
+    sensor.fieldOfEffect_AngleFull = (parseInt(event.target.value) * Math.PI) / 180;
     sensorCamera.fov = sensor.fieldOfEffect_AngleFull * (180 / Math.PI); // Update sensor camera FOV
     sensorCamera.updateProjectionMatrix();
     fovValueDisplay.textContent = formatValue(event.target.value, 1, 3, true);
@@ -188,22 +171,22 @@ function createControls(transducer) {
   controlContainer.appendChild(fovSliderContainer);
 
   // Create a label and slider for the sensor's sensitivity
-  const sensitivityLabel = document.createElement("label");
-  sensitivityLabel.textContent = "Minimum Intesity Sense:";
+  const sensitivityLabel = document.createElement('label');
+  sensitivityLabel.textContent = 'Minimum Intesity Sense:';
   controlContainer.appendChild(sensitivityLabel);
 
-  const sensitivitySliderContainer = document.createElement("div");
-  sensitivitySliderContainer.style.display = "flex";
-  sensitivitySliderContainer.style.alignItems = "center";
-  const sensitivitySlider = document.createElement("input");
-  sensitivitySlider.type = "range";
-  sensitivitySlider.min = "0.001";
-  sensitivitySlider.max = "1.000";
-  sensitivitySlider.step = "0.001"; // Adding step for better precision
+  const sensitivitySliderContainer = document.createElement('div');
+  sensitivitySliderContainer.style.display = 'flex';
+  sensitivitySliderContainer.style.alignItems = 'center';
+  const sensitivitySlider = document.createElement('input');
+  sensitivitySlider.type = 'range';
+  sensitivitySlider.min = '0.001';
+  sensitivitySlider.max = '1.000';
+  sensitivitySlider.step = '0.001'; // Adding step for better precision
   sensitivitySlider.value = sensor.minIntensitySensitivity.toString();
 
-  const sensitivityValueDisplay = document.createElement("span");
-  sensitivityValueDisplay.style.marginLeft = "10px";
+  const sensitivityValueDisplay = document.createElement('span');
+  sensitivityValueDisplay.style.marginLeft = '10px';
   sensitivityValueDisplay.textContent = formatValue(sensitivitySlider.value);
 
   sensitivitySlider.oninput = (event) => {
@@ -216,21 +199,21 @@ function createControls(transducer) {
   controlContainer.appendChild(sensitivitySliderContainer);
 
   // Create a label and slider for the sensor's rotation rate
-  const rotationRateLabel = document.createElement("label");
-  rotationRateLabel.textContent = "Rotation Rate:";
+  const rotationRateLabel = document.createElement('label');
+  rotationRateLabel.textContent = 'Rotation Rate:';
   controlContainer.appendChild(rotationRateLabel);
 
-  const rotationRateSliderContainer = document.createElement("div");
-  rotationRateSliderContainer.style.display = "flex";
-  rotationRateSliderContainer.style.alignItems = "center";
-  const rotationRateSlider = document.createElement("input");
-  rotationRateSlider.type = "range";
-  rotationRateSlider.min = "-0.01";
-  rotationRateSlider.max = "0.01";
-  rotationRateSlider.step = "0.001";
+  const rotationRateSliderContainer = document.createElement('div');
+  rotationRateSliderContainer.style.display = 'flex';
+  rotationRateSliderContainer.style.alignItems = 'center';
+  const rotationRateSlider = document.createElement('input');
+  rotationRateSlider.type = 'range';
+  rotationRateSlider.min = '-0.01';
+  rotationRateSlider.max = '0.01';
+  rotationRateSlider.step = '0.001';
   rotationRateSlider.value = rotationRate.toString(); // Default rotation rate
-  const rotationRateValueDisplay = document.createElement("span");
-  rotationRateValueDisplay.style.marginLeft = "10px";
+  const rotationRateValueDisplay = document.createElement('span');
+  rotationRateValueDisplay.style.marginLeft = '10px';
   // Set initial value display, add a + or - to the string, use 3 digits for value
   rotationRateValueDisplay.textContent = formatValue(rotationRateSlider.value);
 
@@ -244,16 +227,16 @@ function createControls(transducer) {
   controlContainer.appendChild(rotationRateSliderContainer);
 
   // Create a label for status display
-  const statusDisplayLabel = document.createElement("label");
-  statusDisplayLabel.textContent = "Sensor Status:";
+  const statusDisplayLabel = document.createElement('label');
+  statusDisplayLabel.textContent = 'Sensor Status:';
   controlContainer.appendChild(statusDisplayLabel);
 
   // Create a status display at the bottom for sensor data
-  const statusDisplay = document.createElement("div");
-  statusDisplay.textContent = "Sensor Status: Initializing...";
-  statusDisplay.style.fontSize = "12px";
-  statusDisplay.style.fontWeight = "lighter";
-  statusDisplay.style.marginTop = "5px"; // Add some spacing above the status
+  const statusDisplay = document.createElement('div');
+  statusDisplay.textContent = 'Sensor Status: Initializing...';
+  statusDisplay.style.fontSize = '12px';
+  statusDisplay.style.fontWeight = 'lighter';
+  statusDisplay.style.marginTop = '5px'; // Add some spacing above the status
   controlContainer.appendChild(statusDisplay);
 
   return { statusDisplay };
@@ -265,11 +248,11 @@ const { statusDisplay } = createControls(sensor);
 //********************************************************************************
 
 // Create a border overlay for the sensor camera view
-const borderOverlay = document.createElement("div");
-borderOverlay.style.position = "absolute";
-borderOverlay.style.border = "2px solid white"; // White border
-borderOverlay.style.boxSizing = "border-box"; // Include the border in the size calculations
-borderOverlay.style.zIndex = "99"; // Make sure it appears above other elements
+const borderOverlay = document.createElement('div');
+borderOverlay.style.position = 'absolute';
+borderOverlay.style.border = '2px solid white'; // White border
+borderOverlay.style.boxSizing = 'border-box'; // Include the border in the size calculations
+borderOverlay.style.zIndex = '99'; // Make sure it appears above other elements
 document.body.appendChild(borderOverlay);
 
 // Function to position and resize the border overlay
@@ -287,7 +270,7 @@ function updateBorderOverlay() {
 function animate() {
   // verify the scene is ready for animation
   if (!scene) {
-    console.log("Scene not ready yet...");
+    console.log('Scene not ready yet...');
     return;
   }
 
@@ -364,12 +347,12 @@ function updateTargetDetectionStatus() {
   let targetIsDetectable = false;
 
   // Clear previous summary in the status display
-  statusDisplay.innerHTML = ""; // Clear existing content
+  statusDisplay.innerHTML = ''; // Clear existing content
 
   // Create a status message header
-  let statusHeader = document.createElement("div");
-  statusHeader.textContent = "Target Detection Summary:";
-  statusHeader.style.fontWeight = "bold";
+  let statusHeader = document.createElement('div');
+  statusHeader.textContent = 'Target Detection Summary:';
+  statusHeader.style.fontWeight = 'bold';
   statusDisplay.appendChild(statusHeader);
 
   // Iterate over each target and check if it is detectable
@@ -377,7 +360,7 @@ function updateTargetDetectionStatus() {
     const target = targets[i];
 
     //if the target does not have a power property, skip it
-    if (typeof target.power !== "number") {
+    if (typeof target.power !== 'number') {
       // Log a message to the console that incldues the target index
       console.log(`Target ${i} does not have a power property.`);
       continue;
@@ -409,21 +392,21 @@ function updateTargetDetectionStatus() {
       const targetColor = `rgb(${redValue}, ${greenValue}, 0)`;
 
       // Create a new row for each detectable target
-      let targetRow = document.createElement("div");
-      targetRow.style.marginTop = "5px"; // Add some spacing between rows
+      let targetRow = document.createElement('div');
+      targetRow.style.marginTop = '5px'; // Add some spacing between rows
       //add a dark transparent background to the row
-      targetRow.style.backgroundColor = "rgba(0, 0, 0, 0.125)";
+      targetRow.style.backgroundColor = 'rgba(0, 0, 0, 0.125)';
       //add a left border the color of the target
       // set the border width to 5px
-      targetRow.style.borderLeft = "5px solid " + targetColor;
+      targetRow.style.borderLeft = '5px solid ' + targetColor;
       // add padding around the border
-      targetRow.style.padding = "5px";
+      targetRow.style.padding = '5px';
       //add padding to the left of the border
-      targetRow.style.paddingLeft = "5px"; // Add some padding to the left of the border
+      targetRow.style.paddingLeft = '5px'; // Add some padding to the left of the border
 
       // add rounded corners to the row
-      targetRow.style.borderRadius = "5px";
-      targetRow.style.color = "#ffffff";
+      targetRow.style.borderRadius = '5px';
+      targetRow.style.color = '#ffffff';
 
       // Add information about the target, color coded based on intensity
       targetRow.innerHTML = `        <strong>Target ${i + 1}:</strong> <br>
@@ -443,8 +426,8 @@ function updateTargetDetectionStatus() {
 
   // If no targets are detectable, display a corresponding message
   if (!targetIsDetectable) {
-    let noTargetMessage = document.createElement("div");
-    noTargetMessage.textContent = "No targets are in the field of view.";
+    let noTargetMessage = document.createElement('div');
+    noTargetMessage.textContent = 'No targets are in the field of view.';
     statusDisplay.appendChild(noTargetMessage);
   }
 }
@@ -453,6 +436,6 @@ function updateTargetDetectionStatus() {
 animate();
 
 // Handle window resizing
-window.addEventListener("resize", () => {
+window.addEventListener('resize', () => {
   updateBorderOverlay();
 });

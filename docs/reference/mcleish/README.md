@@ -9,7 +9,9 @@ This directory contains comprehensive documentation of the 2018 physical reconst
 ## Directory Structure
 
 ### `system-design/`
+
 **Technical specifications and behavioral logic**
+
 - PlantUML diagrams (state machines, sequence diagrams, class diagrams)
 - System architecture specifications
 - Agent behavior state machines
@@ -17,14 +19,18 @@ This directory contains comprehensive documentation of the 2018 physical reconst
 - Subsystem interaction protocols
 
 ### `physical-build/`
+
 **Documentation of the actual built artifact**
+
 - Photos of the physical installation
 - Engineering drawings and schematics (PDFs)
 - Construction details and materials
 - Physical component specifications
 
 ### `implementation-map/`
+
 **Integration documentation bridging design and physical build**
+
 - Annotated diagrams showing how technical specs map to physical components
 - "As-built" documentation
 - Component callouts linking code/behavior to physical hardware

@@ -1,16 +1,12 @@
 // Import the Three.js library and OrbitControls from a CDN
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js";
-import { createCameraControl } from "../../../lib/cameraUtilities.js";
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
+import { createCameraControl } from '../../../lib/cameraUtilities.js';
 
 // Import the custom Sensor_THREE class
-import { Transform_THREE } from "../../lib/Transform_THREE.js";
+import { Transform_THREE } from '../../lib/Transform_THREE.js';
 
 let scene, cameraControl, renderer;
-let worldTransform,
-  rootTransform,
-  childTransform,
-  grandChildTransform,
-  greatGrandChildTransform;
+let worldTransform, rootTransform, childTransform, grandChildTransform, greatGrandChildTransform;
 let rotationSpeed = 0.001; // Speed of rotation in radians per frame
 let lightSource;
 
@@ -57,7 +53,7 @@ const chromeMaterial = new THREE.MeshPhysicalMaterial({
 function init() {
   // Create the scene
   scene = new THREE.Scene();
-  scene.background = new THREE.Color("white"); // Set the scene background color
+  scene.background = new THREE.Color('white'); // Set the scene background color
   scene.fog = new THREE.Fog(0xffffff, fogNear, fogFar); // Initial fog settings
   scene.ambientLight = new THREE.AmbientLight(0xffffff, 0.05);
 
@@ -77,16 +73,16 @@ function init() {
   scene.add(lightSource);
 
   // Create transforms with hierarchical relationships
-  worldTransform = new Transform_THREE("World", "worldID");
+  worldTransform = new Transform_THREE('World', 'worldID');
   scene.add(worldTransform); // Add root to the scene
 
-  rootTransform = new Transform_THREE("Root", "rootID");
+  rootTransform = new Transform_THREE('Root', 'rootID');
   rootTransform.originHelperMaterial(chromeMaterial);
   drawLineBetweenTransforms(rootTransform, childTransform);
   addSphereAtTransform(rootTransform);
   scene.add(rootTransform); // Add root to the scene
 
-  childTransform = new Transform_THREE("Child", "childID");
+  childTransform = new Transform_THREE('Child', 'childID');
   drawLineBetweenTransforms(rootTransform, childTransform);
   addSphereAtTransform(childTransform);
   childTransform.originHelperMaterial(chromeMaterial);
@@ -94,7 +90,7 @@ function init() {
   childTransform.position.set(0, transformOffset, 0); // Position child relative to root
   childTransform.rotation.z = Math.PI / 2; // Rotate child around its Y-axis
 
-  grandChildTransform = new Transform_THREE("Grandchild", "grandchildID");
+  grandChildTransform = new Transform_THREE('Grandchild', 'grandchildID');
   drawLineBetweenTransforms(childTransform, grandChildTransform);
   addSphereAtTransform(grandChildTransform);
   grandChildTransform.originHelperMaterial(chromeMaterial);
@@ -102,10 +98,7 @@ function init() {
   grandChildTransform.position.set(0, transformOffset, 0); // Position grandchild relative to child
   grandChildTransform.rotation.z = Math.PI / 2; // Rotate grandchild around its Y-axis
 
-  greatGrandChildTransform = new Transform_THREE(
-    "Great-grandchild",
-    "greatGrandchildID"
-  );
+  greatGrandChildTransform = new Transform_THREE('Great-grandchild', 'greatGrandchildID');
   drawLineBetweenTransforms(grandChildTransform, greatGrandChildTransform);
   addSphereAtTransform(greatGrandChildTransform);
   greatGrandChildTransform.originHelperMaterial(chromeMaterial);
@@ -115,14 +108,7 @@ function init() {
 
   // Add a grid to the scene for reference
   // Add a grid helper to the scene
-  const gridHelper = new THREE.PolarGridHelper(
-    42,
-    8,
-    16,
-    128,
-    0xcccccc,
-    0xdddddd
-  );
+  const gridHelper = new THREE.PolarGridHelper(42, 8, 16, 128, 0xcccccc, 0xdddddd);
   worldTransform.add(gridHelper);
 
   // Initialize UI and get references to dynamically updated elements
@@ -181,42 +167,42 @@ function animate() {
 // Function to create and set up the UI
 function createUI() {
   //set the document body to not scroll
-  document.body.style.overflow = "hidden";
+  document.body.style.overflow = 'hidden';
 
   // Create a UI container
-  const uiContainer = document.createElement("div");
-  uiContainer.style.position = "absolute";
-  uiContainer.style.top = "10px";
-  uiContainer.style.left = "10px";
-  uiContainer.style.color = "white";
-  uiContainer.style.fontFamily = "Arial, sans-serif";
-  uiContainer.style.zIndex = "100";
-  uiContainer.style.backgroundColor = "rgba(128, 128, 128, 0.5)";
-  uiContainer.style.padding = "10px";
-  uiContainer.style.borderRadius = "5px";
-  uiContainer.style.display = "flex";
-  uiContainer.style.flexDirection = "column";
-  uiContainer.style.gap = "10px";
-  uiContainer.style.width = "200px"; // Increased width to accommodate value display
+  const uiContainer = document.createElement('div');
+  uiContainer.style.position = 'absolute';
+  uiContainer.style.top = '10px';
+  uiContainer.style.left = '10px';
+  uiContainer.style.color = 'white';
+  uiContainer.style.fontFamily = 'Arial, sans-serif';
+  uiContainer.style.zIndex = '100';
+  uiContainer.style.backgroundColor = 'rgba(128, 128, 128, 0.5)';
+  uiContainer.style.padding = '10px';
+  uiContainer.style.borderRadius = '5px';
+  uiContainer.style.display = 'flex';
+  uiContainer.style.flexDirection = 'column';
+  uiContainer.style.gap = '10px';
+  uiContainer.style.width = '200px'; // Increased width to accommodate value display
   document.body.appendChild(uiContainer);
 
   // Create a title label
-  const titleLabel = document.createElement("div");
-  titleLabel.textContent = "Transform Controls";
-  titleLabel.style.fontWeight = "bold";
-  titleLabel.style.textAlign = "center";
+  const titleLabel = document.createElement('div');
+  titleLabel.textContent = 'Transform Controls';
+  titleLabel.style.fontWeight = 'bold';
+  titleLabel.style.textAlign = 'center';
   uiContainer.appendChild(titleLabel);
 
   // Create a label and slider for the sensor's rotation rate
-  const rotationRateLabel = document.createElement("label");
-  rotationRateLabel.textContent = "Rotation Rate:";
+  const rotationRateLabel = document.createElement('label');
+  rotationRateLabel.textContent = 'Rotation Rate:';
   uiContainer.appendChild(rotationRateLabel);
 
-  const rotationRateSlider = document.createElement("input");
-  rotationRateSlider.type = "range";
-  rotationRateSlider.min = "-0.01";
-  rotationRateSlider.max = "0.01";
-  rotationRateSlider.step = "0.001";
+  const rotationRateSlider = document.createElement('input');
+  rotationRateSlider.type = 'range';
+  rotationRateSlider.min = '-0.01';
+  rotationRateSlider.max = '0.01';
+  rotationRateSlider.step = '0.001';
   rotationRateSlider.value = rotationSpeed.toString(); // Default rotation rate
   rotationRateSlider.oninput = (event) => {
     rotationSpeed = parseFloat(event.target.value);
@@ -224,7 +210,7 @@ function createUI() {
   };
   uiContainer.appendChild(rotationRateSlider);
 
-  const rotationRateValue = document.createElement("span");
+  const rotationRateValue = document.createElement('span');
   rotationRateValue.textContent = rotationSpeed.toFixed(3); // Initial value display
   uiContainer.appendChild(rotationRateValue);
 }
@@ -233,7 +219,7 @@ function createUI() {
 init();
 
 // Handle window resizing
-window.addEventListener("resize", () => {
+window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);

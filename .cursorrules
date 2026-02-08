@@ -1,0 +1,446 @@
+# Colloquy of Mobiles Virtual Simulation - AI Agent Instructions
+
+## Project Overview
+
+This is a virtual simulation of Gordon Pask's "Colloquy of Mobiles" (1968), a cybernetic art installation. The project models autonomous entities (Mobiles) that interact through light and sound, exhibiting emergent social behaviors based on internal drive systems.
+
+## Critical Documentation
+
+Before making changes, **always consult these canonical references**:
+
+1. **`docs/terminology.md`** - Standardized terminology (Mobile, Subsystem, Component, Drive states)
+2. **`docs/reference/mcleish/`** - 2018 physical reconstruction technical specs (PlantUML diagrams)
+3. **`docs/reference/pask/`** - Pask's original writings (1968)
+4. **`readme.md`** - System architecture and museum installation overview
+
+## Terminology (CRITICAL)
+
+Use these **canonical terms** from Pask's work:
+
+- **Mobile** (NOT "Agent") - Top-level autonomous entity
+  - Types: Male, Female, Bar
+- **Subsystem** - Functional component (Drive, Horizontal Control, Vertical Reflector)
+- **Component** - Low-level unit (Servomotor Oscillator, Sensors, Actuators)
+- **Drive O (Orange)** and **Drive P (Puce)** - Internal entropy drives
+- **Behavioral States**: SatisfiedAndInert, SatisfactionSearch, EngagingPartner
+
+**Note**: Current codebase uses `Agent.js` but should be renamed to `Mobile.js` during migration.
+
+## Tech Stack
+
+### Current
+- **Language**: JavaScript (ES6+) with p5.js for rendering
+- **Server**: Node.js + Express
+- **Libraries**: THREE.js, p5.js, EasyCam
+
+### Migration In Progress
+- **TypeScript**: Gradual migration from JS to TS
+- **Testing**: Jest with ts-jest
+- **Linting**: ESLint + TypeScript ESLint
+- **Formatting**: Prettier
+
+## Development Workflow
+
+### Before Making Changes
+
+1. **Run tests**: `npm test`
+2. **Check types**: `npm run type-check`
+3. **Lint code**: `npm run lint`
+
+### After Making Changes
+
+1. **Format code**: `npm run format` (or let Prettier auto-format)
+2. **Fix lint issues**: `npm run lint:fix`
+3. **Verify tests pass**: `npm test`
+4. **Check types**: `npm run type-check`
+
+### Class Migration Workflow
+
+When migrating a class from JS to TS:
+
+1. **Write baseline tests first** - Test current JS behavior
+2. **Run tests** - Ensure they pass before migration
+3. **Rename file** - `.js` → `.ts`
+4. **Add type annotations** - Use types from `lib/types/`
+5. **Fix type errors** - Run `npm run type-check`
+6. **Verify tests still pass** - Ensure no behavior changes
+7. **Update imports** - Fix any broken imports in other files
+
+## Code Style
+
+### TypeScript
+- Use **explicit types** for function parameters and return values
+- Import types from `lib/types/` (events, state, drives, websocket)
+- Avoid `any` - use `unknown` if type is truly unknown
+- Enable strict mode gradually (currently lenient during migration)
+
+### Naming Conventions
+- **Classes**: PascalCase (e.g., `DriveManager`, `Mobile`)
+- **Files**: Match class name (e.g., `DriveManager.ts`)
+- **Variables**: camelCase (e.g., `driveValues`, `behavioralState`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `MAX_DRIVE_VALUE`)
+
+### Formatting (Prettier)
+- **Quotes**: Single quotes
+- **Semi-colons**: Yes
+- **Print width**: 100 characters
+- **Tab width**: 2 spaces
+- **Trailing commas**: ES5 style
+
+## Documentation Standards
+
+### Audience: Assume Novice Reader
+**CRITICAL**: Write all documentation, comments, and code as if the reader is a novice programmer or student learning about cybernetics and autonomous systems. Explain concepts clearly, avoid jargon without definition, and provide context.
+
+### File Headers (Required for All Files)
+
+Every `.ts`, `.js`, and `.md` file must have a header comment:
+
+```typescript
+/**
+ * Mobile.ts
+ * 
+ * Represents an autonomous Mobile in the Colloquy of Mobiles simulation.
+ * A Mobile is a self-contained entity with internal drives (Orange and Puce)
+ * that seeks satisfaction through interactions with other Mobiles.
+ * 
+ * Based on Gordon Pask's original 1968 cybernetic art installation and
+ * the 2018 physical reconstruction by McLeish.
+ * 
+ * @see docs/terminology.md for canonical terminology
+ * @see docs/reference/mcleish/system-design/ for technical specifications
+ */
+```
+
+**Header should include:**
+1. **Filename** - What file this is
+2. **Purpose** - What this file does (1-2 sentences for novices)
+3. **Context** - How it relates to Pask's work or the larger system
+4. **References** - Links to relevant documentation
+
+### TSDoc Comments (Required for All Public APIs)
+
+Use TSDoc for all classes, interfaces, and public methods:
+
+```typescript
+/**
+ * Manages the internal drive system for a Mobile.
+ * 
+ * Drives are like "needs" or "motivations" that increase over time (entropy)
+ * and decrease when the Mobile successfully interacts with a partner.
+ * Think of it like hunger: it grows over time and is satisfied by eating.
+ * 
+ * There are two drives:
+ * - Drive O (Orange): One type of need
+ * - Drive P (Puce): Another type of need
+ * 
+ * The Mobile always tries to satisfy whichever drive is higher (dominant).
+ * 
+ * @example
+ * ```typescript
+ * const driveManager = new DriveManager(config);
+ * driveManager.incrementDrives(); // Drives increase (like getting hungry)
+ * driveManager.decrementODrive(); // Orange drive decreases (like eating)
+ * ```
+ */
+export class DriveManager {
+  /**
+   * Creates a new DriveManager with the specified configuration.
+   * 
+   * @param config - Configuration object defining drive limits and behavior
+   * @param config.O - Orange drive configuration (initial value, limits, etc.)
+   * @param config.P - Puce drive configuration (initial value, limits, etc.)
+   * 
+   * @example
+   * ```typescript
+   * const config = {
+   *   O: { initialValue: 0, lowerLimit: 50, upperLimit: 100 },
+   *   P: { initialValue: 0, lowerLimit: 50, upperLimit: 100 }
+   * };
+   * const manager = new DriveManager(config);
+   * ```
+   */
+  constructor(config: DriveSystemConfig) {
+    // Implementation...
+  }
+
+  /**
+   * Increases both drives by their configured increment values.
+   * 
+   * This simulates entropy - the natural tendency for the Mobile's
+   * "needs" to grow over time, like hunger or thirst increasing.
+   * 
+   * Call this method on every simulation tick (e.g., 60 times per second).
+   */
+  incrementDrives(): void {
+    // Implementation...
+  }
+}
+```
+
+### Inline Comments (Required for Complex Logic)
+
+Add inline comments for any logic that isn't immediately obvious to a novice:
+
+```typescript
+// Check if Orange drive is higher than Puce drive
+// The higher drive is "dominant" and determines what the Mobile seeks
+if (this.drives.O > this.drives.P) {
+  this.dominantDrive = 'O';
+} else {
+  this.dominantDrive = 'P';
+}
+
+// Increment drives to simulate entropy (needs growing over time)
+// This is like hunger increasing - it happens automatically
+this.drives.O += this.config.O.increment;
+this.drives.P += this.config.P.increment;
+
+// Clamp drives to max value to prevent overflow
+// Think of this as a maximum capacity - you can only be "so hungry"
+this.drives.O = Math.min(this.drives.O, this.config.O.max);
+this.drives.P = Math.min(this.drives.P, this.config.P.max);
+```
+
+### Documentation Guidelines
+
+1. **Explain "Why" not just "What"**
+   - ❌ Bad: `// Set drive to 0`
+   - ✅ Good: `// Reset drive to 0 because the Mobile successfully satisfied this need`
+
+2. **Use Analogies for Complex Concepts**
+   - Drives = Hunger/thirst
+   - Entropy = Natural increase over time
+   - Satisfaction = Eating/drinking
+   - Threshold = Point where you feel hungry enough to seek food
+
+3. **Define Domain-Specific Terms**
+   - First use of "Mobile" → explain it's an autonomous entity
+   - First use of "Drive" → explain it's like a need or motivation
+   - First use of "Subsystem" → explain it's a functional component
+
+4. **Provide Examples**
+   - Include `@example` blocks in TSDoc
+   - Show realistic usage scenarios
+   - Demonstrate edge cases
+
+5. **Link to Documentation**
+   - Use `@see` tags to reference `docs/terminology.md`
+   - Link to PlantUML diagrams in `docs/reference/mcleish/system-design/`
+   - Reference Pask's original concepts when relevant
+
+6. **Explain Magic Numbers**
+   ```typescript
+   // ❌ Bad
+   if (drive > 50) { ... }
+   
+   // ✅ Good
+   const DRIVE_THRESHOLD = 50; // Point where Mobile becomes "unsatisfied" and seeks interaction
+   if (drive > DRIVE_THRESHOLD) { ... }
+   ```
+
+7. **Document State Transitions**
+   ```typescript
+   /**
+    * Transitions from SatisfiedAndInert to SatisfactionSearch state.
+    * 
+    * This happens when at least one drive exceeds its threshold.
+    * Think of it like: the Mobile was content (satisfied), but now
+    * it's hungry (unsatisfied) and starts looking for food (searching).
+    */
+   ```
+
+### README Files (Required for Each Directory)
+
+Every directory should have a `README.md` explaining:
+1. **Purpose** - What this directory contains (for novices)
+2. **Contents** - List of files with brief descriptions
+3. **Usage** - How to use the code in this directory
+4. **Examples** - Sample code or usage scenarios
+5. **References** - Links to related documentation
+
+### Type Definitions (Extra Documentation Required)
+
+Type definitions need especially clear documentation since they define the data model:
+
+```typescript
+/**
+ * Represents the complete state of a Mobile at a point in time.
+ * 
+ * This is like a "snapshot" of everything about a Mobile:
+ * where it is, what direction it's facing, what it's doing,
+ * and how "hungry" (unsatisfied) it is.
+ */
+export interface MobileState {
+  /** Unique identifier for this Mobile (e.g., "male-1", "female-2") */
+  id: string;
+  
+  /** Type of Mobile: Male, Female, or Bar (the central arbitrator) */
+  type: MobileType;
+  
+  /** 3D position in space (x, y, z coordinates) */
+  position: Vector3D;
+  
+  /** Direction the Mobile is facing (normalized vector) */
+  orientation: Vector3D;
+  
+  /** 
+   * Current behavioral state: what the Mobile is doing right now.
+   * - SatisfiedAndInert: Content, not moving
+   * - SatisfactionSearch: Hungry, looking for a partner
+   * - EngagingPartner: Found a partner, exchanging signals
+   */
+  behavioralState: BehavioralState;
+  
+  /** 
+   * Current drive values (Orange and Puce).
+   * Optional because the Bar doesn't have drives - only Males and Females do.
+   */
+  drives?: DriveValues;
+  
+  /** 
+   * Which drive is higher (dominant).
+   * The Mobile seeks to satisfy this drive first.
+   * Optional because the Bar doesn't have drives.
+   */
+  dominantDrive?: 'O' | 'P';
+}
+```
+
+### Comment Density
+
+Aim for **1 comment per 3-5 lines of complex logic**. Simple getters/setters don't need inline comments if they have TSDoc.
+
+### Educational Value
+
+Remember: This code may be used for teaching cybernetics, autonomous systems, and art-technology intersection. Every comment is an opportunity to educate!
+
+## Architecture Patterns
+
+### 1. Agent-Based Architecture (The "Who")
+Instead of one giant program controlling everything, we have independent **Mobiles**.
+*   **Concept**: Each Mobile is like a separate character in a video game. It has its own private data (Drives, Position) and makes its own decisions based on its internal state.
+*   **Why**: This models the real world (and Pask's original installation) where entities are autonomous and distinct.
+
+### 2. Composition over Inheritance (The "What")
+We build Mobiles by plugging together smaller parts (**Subsystems** and **Components**), rather than writing one massive "Mobile" class or using deep inheritance trees.
+*   **Pattern**: A `Mobile` *has* a `DriveManager`, *has* a `HorizontalControlSubsystem`. It doesn't "inherit" behavior; it owns tools that do the work.
+*   **Why**: This makes it easy to swap parts (e.g., giving a Female mobile a different type of reflector) without breaking the whole agent.
+
+### 3. Hierarchical State Machines (The "How")
+We organize behavior in nested layers of states.
+*   **Pattern**: Instead of a flat list of many states, we have big states that contain smaller ones.
+    *   **Top Level**: `Alive`
+    *   **Middle Level**: `Unsatisfied` (inside Alive)
+    *   **Bottom Level**: `Searching` (inside Unsatisfied)
+*   **Why**: It prevents invalid logic. You can't be "Searching" if you aren't "Unsatisfied" first. It keeps complex behavior organized.
+
+### 4. The Simulation Loop (The "Environment")
+The system uses a **Synchronous Simulation Loop** to manage time.
+*   **Concept**: An "all-knowing" `Environment` class holds the list of all Mobiles. On every "tick" (frame), it tells each Mobile: *"Update yourself!"*
+*   **Asynchronous Inputs**: External events (like a user shining a light via WebSocket) happen asynchronously. The Environment catches these events and applies them on the next synchronous tick.
+*   **Why**: Pask's original work was analog and truly concurrent. We simulate this digitally using a loop to ensure **determinism** (predictable order of events) and **stability**, while preserving the *appearance* of independent agency.
+
+## Testing
+
+### Test Location
+- Place tests in `__tests__/` directory next to code
+- Name test files: `*.test.ts` or `*.spec.ts`
+
+### Test Structure
+```typescript
+describe('ClassName', () => {
+  describe('methodName', () => {
+    it('should do something specific', () => {
+      // Arrange
+      const input = ...;
+      
+      // Act
+      const result = ...;
+      
+      // Assert
+      expect(result).toBe(expected);
+    });
+  });
+});
+```
+
+### Coverage Target
+- Aim for **>80% coverage** on core `lib/` classes
+- Run `npm run test:coverage` to check
+
+## Directory Structure
+
+```
+├── apps/                    # Demo applications (to be consolidated)
+├── lib/                     # Core library (migration target)
+│   ├── types/              # TypeScript type definitions
+│   ├── Agent.js            # → Rename to Mobile.ts
+│   ├── DriveManager.js     # → Migrate to DriveManager.ts
+│   └── Oscillator.js       # → Migrate to HorizontalControlSubsystem.ts
+├── docs/
+│   ├── reference/          # Historical documentation (Pask, Dowson, McLeish)
+│   ├── development/        # Current virtual simulation work
+│   ├── terminology.md      # Canonical terminology (READ THIS FIRST)
+│   ├── TYPESCRIPT_MIGRATION.md
+│   └── TESTING_AND_LINTING.md
+└── server.js               # Express server
+```
+
+## Common Tasks
+
+### Add a new type definition
+1. Create/edit file in `lib/types/`
+2. Export from `lib/types/index.ts`
+3. Import where needed: `import { TypeName } from './lib/types'`
+
+### Fix lint errors
+```bash
+npm run lint:fix  # Auto-fix
+npm run format    # Format code
+```
+
+### Run specific test file
+```bash
+npm test -- path/to/test.test.ts
+```
+
+### Check TypeScript errors without emitting files
+```bash
+npm run type-check
+```
+
+## Important Notes
+
+### p5.js Globals
+- Many lint warnings about `createVector`, `push`, `pop`, etc. are expected
+- These are p5.js global functions available in browser context
+- Don't try to fix these - they're not errors
+
+### Migration Strategy
+- **Gradual**: JS and TS files coexist during migration
+- **Bottom-up**: Migrate foundational classes first (Drive, Mobile)
+- **Test-driven**: Write tests before migrating each class
+- **Incremental strictness**: Start lenient, increase strictness over time
+
+### Museum Installation Context
+- This is the **core simulation engine** for a museum installation
+- Multiple "viewing lenses" will connect via WebSocket (3D, VR, analytics)
+- Sensor stations publish light/sound events to simulation
+- Keep WebSocket message types in `lib/types/websocket.ts`
+
+## When in Doubt
+
+1. Check `docs/terminology.md` for correct terminology
+2. Check `docs/reference/mcleish/system-design/` for technical specs
+3. Run the full quality check: `npm run type-check && npm run lint && npm test`
+4. Ask the user for clarification on Pask-specific concepts
+
+## Avoid
+
+- ❌ Using "Agent" instead of "Mobile" in new code
+- ❌ Making changes without running tests
+- ❌ Disabling ESLint rules without documenting why
+- ❌ Using `any` type in TypeScript
+- ❌ Committing code that doesn't pass `npm test`
+- ❌ Ignoring Prettier formatting

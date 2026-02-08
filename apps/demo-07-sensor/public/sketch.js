@@ -1,6 +1,6 @@
-import { Sensor } from "../../lib/Sensor.js";
-import { Transform } from "../../lib/Transform.js";
-import { Render3Dp5 } from "../../lib/Render3Dp5.js";
+import { Sensor } from '../../lib/Sensor.js';
+import { Transform } from '../../lib/Transform.js';
+import { Render3Dp5 } from '../../lib/Render3Dp5.js';
 
 //console.log("Sketch starting..."); // Should appear in the console immediately
 
@@ -21,7 +21,7 @@ window.draw = draw;
  * Also sets up a HUD for displaying statistics about the transforms.
  */
 function preload() {
-  easyFont = loadFont("roboto-regular-webfont.ttf"); // on openprocessing, this file is in the "files" tab of the web ide.
+  easyFont = loadFont('roboto-regular-webfont.ttf'); // on openprocessing, this file is in the "files" tab of the web ide.
 }
 
 function setup() {
@@ -38,15 +38,10 @@ function setup() {
     null,
     { x: 0, y: 0, z: 0 },
     { yaw: 0, pitch: 0, roll: 0 },
-    "Root",
+    'Root',
     1
   );
-  sensor = new Sensor(
-    rootTransform,
-    { x: 0, y: 0, z: 50 },
-    { yaw: 0, pitch: 15, roll: 15 },
-    60
-  );
+  sensor = new Sensor(rootTransform, { x: 0, y: 0, z: 50 }, { yaw: 0, pitch: 15, roll: 15 }, 60);
 
   // Generate 100 test points at z = 50
   const numPoints = 121;
@@ -112,9 +107,7 @@ function drawHUD() {
 
   // Root Transform
   text(
-    `Root Global Position: (${rootTransform
-      .getGlobalPosition()
-      .x.toFixed(2)}, ` +
+    `Root Global Position: (${rootTransform.getGlobalPosition().x.toFixed(2)}, ` +
       `${rootTransform.getGlobalPosition().y.toFixed(2)}, ` +
       `${rootTransform.getGlobalPosition().z.toFixed(2)})`,
     20,
@@ -128,9 +121,7 @@ function drawHUD() {
     40
   );
   text(
-    `Root Global Orientation: (Yaw: ${rootTransform
-      .getGlobalOrientation()
-      .yaw.toFixed(2)}, ` +
+    `Root Global Orientation: (Yaw: ${rootTransform.getGlobalOrientation().yaw.toFixed(2)}, ` +
       `Pitch: ${rootTransform.getGlobalOrientation().pitch.toFixed(2)}, ` +
       `Roll: ${rootTransform.getGlobalOrientation().roll.toFixed(2)})`,
     20,
@@ -160,9 +151,7 @@ function drawHUD() {
     140
   );
   text(
-    `Sensor Global Orientation: (Yaw: ${sensor
-      .getGlobalOrientation()
-      .yaw.toFixed(2)}, ` +
+    `Sensor Global Orientation: (Yaw: ${sensor.getGlobalOrientation().yaw.toFixed(2)}, ` +
       `Pitch: ${sensor.getGlobalOrientation().pitch.toFixed(2)}, ` +
       `Roll: ${sensor.getGlobalOrientation().roll.toFixed(2)})`,
     20,
@@ -176,16 +165,14 @@ function drawHUD() {
     180
   );
   text(
-    `Point In FOV: (${testPoints[0].x.toFixed(2)}, ${testPoints[0].y.toFixed(
-      2
-    )}, ` + `${testPoints[0].z.toFixed(2)})`,
+    `Point In FOV: (${testPoints[0].x.toFixed(2)}, ${testPoints[0].y.toFixed(2)}, ` +
+      `${testPoints[0].z.toFixed(2)})`,
     20,
     220
   );
   text(
-    `Point Out FOV: (${testPoints[1].x.toFixed(2)}, ${testPoints[1].y.toFixed(
-      2
-    )}, ` + `${testPoints[1].z.toFixed(2)})`,
+    `Point Out FOV: (${testPoints[1].x.toFixed(2)}, ${testPoints[1].y.toFixed(2)}, ` +
+      `${testPoints[1].z.toFixed(2)})`,
     20,
     240
   );

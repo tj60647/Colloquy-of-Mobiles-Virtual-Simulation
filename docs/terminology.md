@@ -9,16 +9,19 @@ This document defines the canonical terminology used throughout the Colloquy of 
 ## Hierarchical Structure
 
 ### Mobile
+
 **Definition**: The top-level autonomous entity in the Colloquy system.
 
 A Mobile is a complete, self-contained agent with internal drive systems, subsystems for sensing and actuation, and behavioral state machines that govern its interactions with other Mobiles.
 
 **Types:**
+
 - **Male Mobile** - Autonomous agent with horizontal oscillation subsystem and drive system
-- **Female Mobile** - Autonomous agent with both horizontal and vertical (reflector) subsystems and drive system  
+- **Female Mobile** - Autonomous agent with both horizontal and vertical (reflector) subsystems and drive system
 - **The Bar (The Beam)** - Reactive arbitrator without internal drives, responds to Male drive signals
 
 **Key Characteristics:**
+
 - Possesses internal entropy drives (O and P) that increment over time (except The Bar)
 - Exhibits autonomous behavior through state machines
 - Engages in social interactions to satisfy drives
@@ -26,6 +29,7 @@ A Mobile is a complete, self-contained agent with internal drive systems, subsys
 ---
 
 ### Subsystem
+
 **Definition**: Functional component within a Mobile that performs specific tasks.
 
 Subsystems are the operational units that implement Mobile behaviors, including motion control, sensing, actuation, and drive management.
@@ -33,22 +37,26 @@ Subsystems are the operational units that implement Mobile behaviors, including 
 **Examples:**
 
 #### Drive Subsystem (Males and Females)
+
 - Manages two entropy drives: Drive_O and Drive_P
 - Drives increment continuously over time
 - Drives decrement on successful partner engagement
 - Determines dominant drive and overall satisfaction state
 
 #### Horizontal Control Subsystem (Males and Females)
+
 - Controls horizontal oscillation motion
 - Implemented via servomotor oscillator
 - Used for searching behavior and partner engagement
 
 #### Vertical Reflector Subsystem (Females only)
+
 - Controls vertical reflector motion
-- Implemented via servomotor oscillator  
+- Implemented via servomotor oscillator
 - Additional degree of freedom for Female engagement negotiation
 
 #### Bar Motor Subsystem (The Bar)
+
 - Controls bar horizontal motion
 - Arbitrates between Male I and Male II based on dominant drive signals
 - Moves to reinforcement position or oscillates in search mode
@@ -56,9 +64,11 @@ Subsystems are the operational units that implement Mobile behaviors, including 
 ---
 
 ### Component
+
 **Definition**: Low-level functional unit within Subsystems.
 
 **Examples:**
+
 - **Servomotor Oscillator** - Actuator component that produces oscillating motion
 - **Sensors** - Light sensors, sound sensors (to be implemented for virtual simulation)
 - **Actuators** - Light actuators, sound actuators (transceivers)
@@ -68,44 +78,52 @@ Subsystems are the operational units that implement Mobile behaviors, including 
 ## Behavioral Terminology
 
 ### Drive
+
 **Definition**: Internal state variable representing a Mobile's need or motivation.
 
 Drives are the fundamental mechanism that creates autonomous behavior. They increment continuously (entropy) and decrement through successful social interaction (satisfaction).
 
 **Types:**
+
 - **Drive O (Orange)** - One of two entropy drives, named after Pask's original color-based terminology
 - **Drive P (Puce)** - One of two entropy drives, named after Pask's original color-based terminology
 
 > **Note**: "Orange" and "Puce" are abstract variable names from Pask's original work. The colors are symbolic labels, not literal color representations (Pask's "Puce" was actually a green color in the physical installation).
 
 **Mechanics:**
+
 - **Increment**: Drives increase continuously over time while Mobile is alive
 - **Decrement**: Drives decrease on successful exchange with partner
 - **Threshold**: Boundary value that determines satisfied vs. unsatisfied state
 - **Dominant Drive**: The higher of Drive_O or Drive_P determines search priority
 
 **States:**
+
 - **Satisfied**: Drive value below threshold
 - **Unsatisfied**: Drive value above threshold
 
 ---
 
 ### Interaction States
+
 **Definition**: High-level behavioral states that govern Mobile actions.
 
 Based on PlantUML diagram analysis:
 
 #### Satisfied and Inert
+
 - Both Drive_O and Drive_P are below threshold
 - Mobile is inactive, not searching for partners
 - Drives continue to increment in background
 
-#### Satisfaction Search  
+#### Satisfaction Search
+
 - At least one drive (O or P) is above threshold (Unsatisfied)
 - Mobile actively searches for partner via horizontal oscillation
 - Dominant drive determines type of interaction sought
 
 #### Engaging Partner
+
 - Partner has been found and locked
 - Mobile exchanges signals with partner
 - Successful exchange decrements the relevant drive
@@ -133,13 +151,13 @@ Alive
 
 ### Code → Terminology
 
-| Current Code Class/Module | Canonical Term (from diagrams) | Alignment Status |
-|---------------------------|--------------------------------|------------------|
-| `Agent.js` | Mobile | ❌ Needs renaming |
-| `DriveManager.js` | Drive Subsystem | ⚠️ Verify terminology |
-| `Oscillator.js` | Horizontal Control Subsystem | ⚠️ Verify terminology |
-| `Sensor.js` | Sensor Component | ✅ Aligned |
-| `Actuator.js` | Actuator Component | ✅ Aligned |
+| Current Code Class/Module | Canonical Term (from diagrams) | Alignment Status      |
+| ------------------------- | ------------------------------ | --------------------- |
+| `Agent.js`                | Mobile                         | ❌ Needs renaming     |
+| `DriveManager.js`         | Drive Subsystem                | ⚠️ Verify terminology |
+| `Oscillator.js`           | Horizontal Control Subsystem   | ⚠️ Verify terminology |
+| `Sensor.js`               | Sensor Component               | ✅ Aligned            |
+| `Actuator.js`             | Actuator Component             | ✅ Aligned            |
 
 ---
 

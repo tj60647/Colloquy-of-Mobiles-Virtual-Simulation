@@ -7,11 +7,11 @@
 // and displays the detection status of targets
 
 // Import the Three.js library and OrbitControls from a CDN
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js";
-import { createCameraControl } from "../../../lib/cameraUtilities.js";
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
+import { createCameraControl } from '../../../lib/cameraUtilities.js';
 
 // Import the custom Actuator_THREE class
-import { Actuator_THREE } from "../../lib/Actuator_THREE.js";
+import { Actuator_THREE } from '../../lib/Actuator_THREE.js';
 
 // Create the main scene
 const scene = new THREE.Scene();
@@ -24,7 +24,7 @@ document.body.appendChild(renderer.domElement);
 
 // Create a container for the camera control
 const cameraControl = createCameraControl(renderer);
-console.log("cameraControl.isPerspective:" + cameraControl.isPerspective);
+console.log('cameraControl.isPerspective:' + cameraControl.isPerspective);
 
 // Add a directional light to the scene
 const light = new THREE.DirectionalLight(0xffffff, 3);
@@ -32,14 +32,7 @@ light.position.set(70, 200, 100).normalize();
 scene.add(light);
 
 // Add a grid helper to the scene
-const gridHelper = new THREE.PolarGridHelper(
-  42,
-  8,
-  16,
-  128,
-  0xcccccc,
-  0xdddddd
-);
+const gridHelper = new THREE.PolarGridHelper(42, 8, 16, 128, 0xcccccc, 0xdddddd);
 scene.add(gridHelper);
 
 // Add an array of targets to the scene inside a 100 unit circle
@@ -61,11 +54,7 @@ for (let i = 0; i < targetCount; i++) {
   const distance = Math.random() * 38 + 4;
   const angle = Math.random() * Math.PI * 2;
   const deltaY = Math.random() * 10 - 5;
-  target.position.set(
-    distance * Math.cos(angle),
-    deltaY,
-    distance * Math.sin(angle)
-  );
+  target.position.set(distance * Math.cos(angle), deltaY, distance * Math.sin(angle));
 
   target.minIntensitySensitivity = minIntensitySensitivity;
   scene.add(target);
@@ -74,7 +63,7 @@ for (let i = 0; i < targetCount; i++) {
 
 // Create an actuator instance
 const actuator = new Actuator_THREE(
-  "Central Actuator",
+  'Central Actuator',
   Math.PI / 2, // Field of effect angle in radians
   1000, // Power of the actuator
   true, // Show direction helper
@@ -102,69 +91,61 @@ let rotationRate = 0.003; // Default rotation rate
  */
 function createUI() {
   //set the document body to not scroll
-  document.body.style.overflow = "hidden";
+  document.body.style.overflow = 'hidden';
 
   // Create a UI container
-  const uiContainer = document.createElement("div");
-  uiContainer.style.position = "absolute";
-  uiContainer.style.top = "10px";
-  uiContainer.style.left = "10px";
-  uiContainer.style.color = "white";
-  uiContainer.style.fontFamily = "Arial, sans-serif";
-  uiContainer.style.zIndex = "100";
-  uiContainer.style.backgroundColor = "rgba(128, 128, 128, 0.5)";
-  uiContainer.style.padding = "10px";
-  uiContainer.style.borderRadius = "5px";
-  uiContainer.style.display = "flex";
-  uiContainer.style.flexDirection = "column";
-  uiContainer.style.gap = "10px";
-  uiContainer.style.width = "200px"; // Adjusted width for more space
+  const uiContainer = document.createElement('div');
+  uiContainer.style.position = 'absolute';
+  uiContainer.style.top = '10px';
+  uiContainer.style.left = '10px';
+  uiContainer.style.color = 'white';
+  uiContainer.style.fontFamily = 'Arial, sans-serif';
+  uiContainer.style.zIndex = '100';
+  uiContainer.style.backgroundColor = 'rgba(128, 128, 128, 0.5)';
+  uiContainer.style.padding = '10px';
+  uiContainer.style.borderRadius = '5px';
+  uiContainer.style.display = 'flex';
+  uiContainer.style.flexDirection = 'column';
+  uiContainer.style.gap = '10px';
+  uiContainer.style.width = '200px'; // Adjusted width for more space
   document.body.appendChild(uiContainer);
 
   // Create a title label
-  const titleLabel = document.createElement("div");
-  titleLabel.textContent = "Actuator Controls";
-  titleLabel.style.fontWeight = "bold";
-  titleLabel.style.textAlign = "center";
+  const titleLabel = document.createElement('div');
+  titleLabel.textContent = 'Actuator Controls';
+  titleLabel.style.fontWeight = 'bold';
+  titleLabel.style.textAlign = 'center';
   uiContainer.appendChild(titleLabel);
 
   // Create a button to toggle the actuator visibility
-  const toggleButton = document.createElement("button");
-  toggleButton.textContent = actuator.visible
-    ? "Hide Actuator"
-    : "Show Actuator";
-  toggleButton.style.width = "100%"; // Fixed width for the button
+  const toggleButton = document.createElement('button');
+  toggleButton.textContent = actuator.visible ? 'Hide Actuator' : 'Show Actuator';
+  toggleButton.style.width = '100%'; // Fixed width for the button
   toggleButton.onclick = () => {
     actuator.visible = !actuator.visible;
-    toggleButton.textContent = actuator.visible
-      ? "Hide Actuator"
-      : "Show Actuator";
+    toggleButton.textContent = actuator.visible ? 'Hide Actuator' : 'Show Actuator';
   };
   uiContainer.appendChild(toggleButton);
 
   // Create a label and slider for the actuator's field of view
-  const fovLabel = document.createElement("label");
-  fovLabel.textContent = "Field of View:";
+  const fovLabel = document.createElement('label');
+  fovLabel.textContent = 'Field of View:';
   uiContainer.appendChild(fovLabel);
 
-  const fovSliderContainer = document.createElement("div");
-  fovSliderContainer.style.display = "flex";
-  fovSliderContainer.style.alignItems = "center";
-  const fovSlider = document.createElement("input");
-  fovSlider.type = "range";
-  fovSlider.min = "1";
-  fovSlider.max = "180";
-  fovSlider.value = (
-    actuator.fieldOfEffect_AngleFull *
-    (180 / Math.PI)
-  ).toString();
-  const fovValueDisplay = document.createElement("span");
-  fovValueDisplay.style.marginLeft = "10px";
+  const fovSliderContainer = document.createElement('div');
+  fovSliderContainer.style.display = 'flex';
+  fovSliderContainer.style.alignItems = 'center';
+  const fovSlider = document.createElement('input');
+  fovSlider.type = 'range';
+  fovSlider.min = '1';
+  fovSlider.max = '180';
+  fovSlider.value = (actuator.fieldOfEffect_AngleFull * (180 / Math.PI)).toString();
+  const fovValueDisplay = document.createElement('span');
+  fovValueDisplay.style.marginLeft = '10px';
   fovValueDisplay.textContent = `${fovSlider.value}°`;
 
   fovSlider.oninput = (event) => {
-    actuator.fieldOfEffect_AngleFull =
-      (parseInt(event.target.value) * Math.PI) / 180;
+    actuator.fieldOfEffect_AngleFull = (parseInt(event.target.value) * Math.PI) / 180;
     actuatorCamera.fov = actuator.fieldOfEffect_AngleFull * (180 / Math.PI); // Update actuator camera FOV
     actuatorCamera.updateProjectionMatrix();
     fovValueDisplay.textContent = `${event.target.value}°`;
@@ -175,22 +156,22 @@ function createUI() {
   uiContainer.appendChild(fovSliderContainer);
 
   // Create a label and slider for the actuator's power
-  const powerLabel = document.createElement("label");
-  powerLabel.textContent = "Actuator Power:";
+  const powerLabel = document.createElement('label');
+  powerLabel.textContent = 'Actuator Power:';
   uiContainer.appendChild(powerLabel);
 
-  const powerSliderContainer = document.createElement("div");
-  powerSliderContainer.style.display = "flex";
-  powerSliderContainer.style.alignItems = "center";
-  const powerSlider = document.createElement("input");
-  powerSlider.type = "range";
-  powerSlider.min = "0";
-  powerSlider.max = "1000";
-  powerSlider.step = "10"; // Adding step for better precision
+  const powerSliderContainer = document.createElement('div');
+  powerSliderContainer.style.display = 'flex';
+  powerSliderContainer.style.alignItems = 'center';
+  const powerSlider = document.createElement('input');
+  powerSlider.type = 'range';
+  powerSlider.min = '0';
+  powerSlider.max = '1000';
+  powerSlider.step = '10'; // Adding step for better precision
   powerSlider.value = actuator.power.toString();
 
-  const powerValueDisplay = document.createElement("span");
-  powerValueDisplay.style.marginLeft = "10px";
+  const powerValueDisplay = document.createElement('span');
+  powerValueDisplay.style.marginLeft = '10px';
   powerValueDisplay.textContent = `${powerSlider.value}`;
 
   powerSlider.oninput = (event) => {
@@ -203,21 +184,21 @@ function createUI() {
   uiContainer.appendChild(powerSliderContainer);
 
   // Create a label and slider for the actuator's rotation rate
-  const rotationRateLabel = document.createElement("label");
-  rotationRateLabel.textContent = "Rotation Rate:";
+  const rotationRateLabel = document.createElement('label');
+  rotationRateLabel.textContent = 'Rotation Rate:';
   uiContainer.appendChild(rotationRateLabel);
 
-  const rotationRateSliderContainer = document.createElement("div");
-  rotationRateSliderContainer.style.display = "flex";
-  rotationRateSliderContainer.style.alignItems = "center";
-  const rotationRateSlider = document.createElement("input");
-  rotationRateSlider.type = "range";
-  rotationRateSlider.min = "-0.01";
-  rotationRateSlider.max = "0.01";
-  rotationRateSlider.step = "0.001";
+  const rotationRateSliderContainer = document.createElement('div');
+  rotationRateSliderContainer.style.display = 'flex';
+  rotationRateSliderContainer.style.alignItems = 'center';
+  const rotationRateSlider = document.createElement('input');
+  rotationRateSlider.type = 'range';
+  rotationRateSlider.min = '-0.01';
+  rotationRateSlider.max = '0.01';
+  rotationRateSlider.step = '0.001';
   rotationRateSlider.value = rotationRate.toString(); // Default rotation rate
-  const rotationRateValueDisplay = document.createElement("span");
-  rotationRateValueDisplay.style.marginLeft = "10px";
+  const rotationRateValueDisplay = document.createElement('span');
+  rotationRateValueDisplay.style.marginLeft = '10px';
   rotationRateValueDisplay.textContent = `${rotationRateSlider.value}`;
 
   rotationRateSlider.oninput = (event) => {
@@ -230,16 +211,16 @@ function createUI() {
   uiContainer.appendChild(rotationRateSliderContainer);
 
   // Create a label for status display
-  const statusDisplayLabel = document.createElement("label");
-  statusDisplayLabel.textContent = "Actuator Status:";
+  const statusDisplayLabel = document.createElement('label');
+  statusDisplayLabel.textContent = 'Actuator Status:';
   uiContainer.appendChild(statusDisplayLabel);
 
   // Create a status display at the bottom for actuator data
-  const statusDisplay = document.createElement("div");
-  statusDisplay.textContent = "Actuator Status: Initializing...";
-  statusDisplay.style.fontSize = "12px";
-  statusDisplay.style.fontWeight = "lighter";
-  statusDisplay.style.marginTop = "5px"; // Add some spacing above the status
+  const statusDisplay = document.createElement('div');
+  statusDisplay.textContent = 'Actuator Status: Initializing...';
+  statusDisplay.style.fontSize = '12px';
+  statusDisplay.style.fontWeight = 'lighter';
+  statusDisplay.style.marginTop = '5px'; // Add some spacing above the status
   uiContainer.appendChild(statusDisplay);
 
   return { statusDisplay };
@@ -328,12 +309,12 @@ function updateTargetDetectionStatus() {
   let targetIsDetectable = false;
 
   // Clear previous summary in the status display
-  statusDisplay.innerHTML = ""; // Clear existing content
+  statusDisplay.innerHTML = ''; // Clear existing content
 
   // Create a status message header
-  let statusHeader = document.createElement("div");
-  statusHeader.textContent = "Target Detection Summary:";
-  statusHeader.style.fontWeight = "bold";
+  let statusHeader = document.createElement('div');
+  statusHeader.textContent = 'Target Detection Summary:';
+  statusHeader.style.fontWeight = 'bold';
   statusDisplay.appendChild(statusHeader);
 
   // Iterate over each target and check if it is within the actuator's field of effect
@@ -341,15 +322,12 @@ function updateTargetDetectionStatus() {
     const target = targets[i];
     const result = actuator.isTargetInFieldOfEffect(target);
 
-    if (
-      result.inFieldOfEffect &&
-      result.transmittedIntensity >= target.minIntensitySensitivity
-    ) {
+    if (result.inFieldOfEffect && result.transmittedIntensity >= target.minIntensitySensitivity) {
       targetIsDetectable = true;
 
       // Create a new row for each detectable target
-      let targetRow = document.createElement("div");
-      targetRow.style.marginTop = "5px"; // Add some spacing between rows
+      let targetRow = document.createElement('div');
+      targetRow.style.marginTop = '5px'; // Add some spacing between rows
 
       // Add information about the target
       targetRow.innerHTML = `
@@ -388,8 +366,8 @@ function updateTargetDetectionStatus() {
 
   // If no targets are detectable, display a corresponding message
   if (!targetIsDetectable) {
-    let noTargetMessage = document.createElement("div");
-    noTargetMessage.textContent = "No targets are in the field of effect.";
+    let noTargetMessage = document.createElement('div');
+    noTargetMessage.textContent = 'No targets are in the field of effect.';
     statusDisplay.appendChild(noTargetMessage);
   }
 }
@@ -398,7 +376,7 @@ function updateTargetDetectionStatus() {
 animate();
 
 // Handle window resizing
-window.addEventListener("resize", () => {
+window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);

@@ -1,18 +1,18 @@
 // List of demo paths and names
 const demos = [
-  { name: "Demo 01: Drives", path: "/demo-04-drives" },
-  { name: "Demo 02: Transceivers", path: "/demo-05-transceiversV2" },
-  { name: "Demo 03: Transform", path: "/demo-03-transform-THREE" },
-  { name: "Demo 04: Sensor", path: "/demo-08-sensor-THREE" },
-  { name: "Demo 05: Actuator", path: "/demo-01-actuator-THREE" },
-  { name: "Demo 06: Oscillator", path: "/demo-02-oscillator-THREE" },
+  { name: 'Demo 01: Drives', path: '/demo-04-drives' },
+  { name: 'Demo 02: Transceivers', path: '/demo-05-transceiversV2' },
+  { name: 'Demo 03: Transform', path: '/demo-03-transform-THREE' },
+  { name: 'Demo 04: Sensor', path: '/demo-08-sensor-THREE' },
+  { name: 'Demo 05: Actuator', path: '/demo-01-actuator-THREE' },
+  { name: 'Demo 06: Oscillator', path: '/demo-02-oscillator-THREE' },
   {
-    name: "Demo 07: Sense+Act",
-    path: "/demo-01-sensor-actuator",
+    name: 'Demo 07: Sense+Act',
+    path: '/demo-01-sensor-actuator',
   },
   {
-    name: "Demo 08: Sense+Act+Osc",
-    path: "/demo-01-sense-act-osc",
+    name: 'Demo 08: Sense+Act+Osc',
+    path: '/demo-01-sense-act-osc',
   },
 
   //{ name: "Demo 02: Oscillator", path: "/demo-02-oscillator" },
@@ -25,34 +25,34 @@ const demos = [
  */
 function initializeUI() {
   // Create the main container
-  const container = document.createElement("div");
-  container.classList.add("container");
+  const container = document.createElement('div');
+  container.classList.add('container');
 
   // Create the sidebar
-  const sidebar = document.createElement("div");
-  sidebar.id = "sidebar";
+  const sidebar = document.createElement('div');
+  sidebar.id = 'sidebar';
 
   // Create the sidebar header
-  const header = document.createElement("h2");
-  header.textContent = "Demonstration Apps";
+  const header = document.createElement('h2');
+  header.textContent = 'Demonstration Apps';
   sidebar.appendChild(header);
 
   // Create the demo list
-  const demoList = document.createElement("ul");
-  demoList.id = "demo-list";
+  const demoList = document.createElement('ul');
+  demoList.id = 'demo-list';
   sidebar.appendChild(demoList);
 
   // Add the sidebar to the container
   container.appendChild(sidebar);
 
   // Create the main content area
-  const mainContent = document.createElement("div");
-  mainContent.id = "main-content";
+  const mainContent = document.createElement('div');
+  mainContent.id = 'main-content';
 
   // Create the iframe to display demos
-  const iframe = document.createElement("iframe");
-  iframe.id = "demo-frame";
-  iframe.title = "Demo Frame";
+  const iframe = document.createElement('iframe');
+  iframe.id = 'demo-frame';
+  iframe.title = 'Demo Frame';
   mainContent.appendChild(iframe);
 
   // Add the main content area to the container
@@ -67,7 +67,7 @@ function initializeUI() {
   // Optionally, load a default demo on page load
   loadDemo(demos[0].path);
   //style the first demo as active
-  setActiveDemo(document.querySelector("#demo-list li"));
+  setActiveDemo(document.querySelector('#demo-list li'));
 }
 
 /**
@@ -75,13 +75,13 @@ function initializeUI() {
  */
 function createSidebarMenu() {
   // build buttons for each demo
-  const demoList = document.getElementById("demo-list");
+  const demoList = document.getElementById('demo-list');
   demos.forEach((demo) => {
-    const listItem = document.createElement("li");
-    listItem.classList.add("demo-item"); // Add a class for easier styling
+    const listItem = document.createElement('li');
+    listItem.classList.add('demo-item'); // Add a class for easier styling
 
-    const link = document.createElement("a");
-    link.href = "#"; //
+    const link = document.createElement('a');
+    link.href = '#'; //
     link.textContent = demo.name;
 
     // Event listener for click to load demo and set it as active
@@ -101,13 +101,13 @@ function createSidebarMenu() {
  */
 function setActiveDemo(activeItem) {
   // Get all list items and remove the active class
-  const listItems = document.querySelectorAll("#demo-list li");
+  const listItems = document.querySelectorAll('#demo-list li');
   listItems.forEach((item) => {
-    item.classList.remove("active");
+    item.classList.remove('active');
   });
 
   // Set the active list item
-  activeItem.classList.add("active");
+  activeItem.classList.add('active');
 }
 
 /**
@@ -115,8 +115,8 @@ function setActiveDemo(activeItem) {
  * @param {string} demoPath - The path of the demo to load.
  */
 function loadDemo(demoPath) {
-  document.getElementById("demo-frame").src = demoPath;
+  document.getElementById('demo-frame').src = demoPath;
 }
 
 // Initialize the UI when the page loads
-document.addEventListener("DOMContentLoaded", initializeUI);
+document.addEventListener('DOMContentLoaded', initializeUI);

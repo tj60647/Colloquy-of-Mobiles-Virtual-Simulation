@@ -4,66 +4,66 @@
       "name": "world",
       "type": "coordinateSystem",
       "description": "Global coordinate system for the entire setup.",
-      "location": {"x": 0, "y": 0, "z": 0},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+      "location": { "x": 0, "y": 0, "z": 0 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
     },
     {
       "name": "armature",
       "type": "coordinateSystem",
       "parentCoordinateSystem": "world",
       "description": "Coordinate system for the armature unit, based on world coordinates.",
-      "location": {"x": 0, "y": 0, "z": 0},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+      "location": { "x": 0, "y": 0, "z": 0 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
     },
     {
       "name": "plinth",
       "type": "coordinateSystem",
       "parentCoordinateSystem": "world",
       "description": "Coordinate system for the plinth, based on world coordinates.",
-      "location": {"x": 0, "y": 0, "z": 2.0},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+      "location": { "x": 0, "y": 0, "z": 2.0 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
     },
     {
       "name": "female_1_base",
       "type": "coordinateSystem",
       "parentCoordinateSystem": "armature",
       "description": "Base coordinate system for female 1, based on armature coordinates.",
-      "location": {"x": 0, "y": 68, "z": 0},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+      "location": { "x": 0, "y": 68, "z": 0 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
     },
     {
       "name": "female_2_base",
       "type": "coordinateSystem",
       "parentCoordinateSystem": "armature",
       "description": "Base coordinate system for female 2, based on armature coordinates.",
-      "location": {"x": 58.5, "y": -34, "z": 0},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 240}
+      "location": { "x": 58.5, "y": -34, "z": 0 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 240 }
     },
     {
       "name": "female_3_base",
       "type": "coordinateSystem",
       "parentCoordinateSystem": "armature",
       "description": "Base coordinate system for female 3, based on armature coordinates.",
-      "location": {"x": -58.5, "y": -34, "z": 0},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 120}
+      "location": { "x": -58.5, "y": -34, "z": 0 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 120 }
     },
     {
       "name": "beam",
       "type": "coordinateSystem",
       "parentCoordinateSystem": "armature",
       "description": "Coordinate system for the beam unit, based on armature coordinates.",
-      "location": {"x": 0, "y": 0, "z": 0},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+      "location": { "x": 0, "y": 0, "z": 0 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
     },
-      {
+    {
       "name": "beam_horizontal_control",
       "type": "coordinateSystem",
       "parentCoordinateSystem": "beam",
       "description": "Coordinate system for the horizontal control subsystem of the beam.",
-      "location": {"x": 0, "y": 0, "z": 0},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+      "location": { "x": 0, "y": 0, "z": 0 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
       "rangeOfMotion": {
-        "yaw": {"min": -180, "max": 180}
+        "yaw": { "min": -180, "max": 180 }
       }
     },
     {
@@ -71,26 +71,26 @@
       "type": "coordinateSystem",
       "parentCoordinateSystem": "beam",
       "description": "Base coordinate system for male 1, based on beam coordinates.",
-      "location": {"x": 0, "y": 23.5, "z": 0},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+      "location": { "x": 0, "y": 23.5, "z": 0 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
     },
     {
       "name": "male_2_base",
       "type": "coordinateSystem",
       "parentCoordinateSystem": "beam",
       "description": "Base coordinate system for male 2, based on beam coordinates.",
-      "location": {"x": 0, "y": -23.5, "z": 0},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 180}
+      "location": { "x": 0, "y": -23.5, "z": 0 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 180 }
     },
     {
       "name": "female_1_horizontal_control",
       "type": "coordinateSystem",
       "parentCoordinateSystem": "female_1_base",
       "description": "Coordinate system for the horizontal control subsystem of female 1.",
-      "location": {"x": 0, "y": 0, "z": 0},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+      "location": { "x": 0, "y": 0, "z": 0 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
       "rangeOfMotion": {
-        "yaw": {"min": -30, "max": 30}
+        "yaw": { "min": -30, "max": 30 }
       }
     },
     {
@@ -98,10 +98,10 @@
       "type": "coordinateSystem",
       "parentCoordinateSystem": "female_1_horizontal_control",
       "description": "Coordinate system for the vertical control subsystem of female 1.",
-      "location": {"x": 0, "y": -9.872, "z": -40.5},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+      "location": { "x": 0, "y": -9.872, "z": -40.5 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
       "rangeOfMotion": {
-        "roll": {"min": -15, "max": 15}
+        "roll": { "min": -15, "max": 15 }
       }
     },
     {
@@ -109,10 +109,10 @@
       "type": "coordinateSystem",
       "parentCoordinateSystem": "female_2_base",
       "description": "Coordinate system for the horizontal control subsystem of female 2.",
-      "location": {"x": 0, "y": 0, "z": 0},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+      "location": { "x": 0, "y": 0, "z": 0 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
       "rangeOfMotion": {
-        "yaw": {"min": -30, "max": 30}
+        "yaw": { "min": -30, "max": 30 }
       }
     },
     {
@@ -120,10 +120,10 @@
       "type": "coordinateSystem",
       "parentCoordinateSystem": "female_2_horizontal_control",
       "description": "Coordinate system for the vertical control subsystem of female 2.",
-      "location": {"x": 0, "y": -9.872, "z": -40.5},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+      "location": { "x": 0, "y": -9.872, "z": -40.5 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
       "rangeOfMotion": {
-        "roll": {"min": -15, "max": 15}
+        "roll": { "min": -15, "max": 15 }
       }
     },
     {
@@ -131,10 +131,10 @@
       "type": "coordinateSystem",
       "parentCoordinateSystem": "female_3_base",
       "description": "Coordinate system for the horizontal control subsystem of female 3.",
-      "location": {"x": 0, "y": 0, "z": 0},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+      "location": { "x": 0, "y": 0, "z": 0 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
       "rangeOfMotion": {
-        "yaw": {"min": -30, "max": 30}
+        "yaw": { "min": -30, "max": 30 }
       }
     },
     {
@@ -142,10 +142,10 @@
       "type": "coordinateSystem",
       "parentCoordinateSystem": "female_3_horizontal_control",
       "description": "Coordinate system for the vertical control subsystem of female 3.",
-      "location": {"x": 0, "y": -9.872, "z": -40.5},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+      "location": { "x": 0, "y": -9.872, "z": -40.5 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
       "rangeOfMotion": {
-        "roll": {"min": -15, "max": 15}
+        "roll": { "min": -15, "max": 15 }
       }
     },
     {
@@ -153,10 +153,10 @@
       "type": "coordinateSystem",
       "parentCoordinateSystem": "male_1_base",
       "description": "Coordinate system for the horizontal control subsystem of male 1.",
-      "location": {"x": 0, "y": 0, "z": 0},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+      "location": { "x": 0, "y": 0, "z": 0 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
       "rangeOfMotion": {
-        "yaw": {"min": -60, "max": 60}
+        "yaw": { "min": -60, "max": 60 }
       }
     },
     {
@@ -164,10 +164,10 @@
       "type": "coordinateSystem",
       "parentCoordinateSystem": "male_2_base",
       "description": "Coordinate system for the horizontal control subsystem of male 2.",
-      "location": {"x": 0, "y": 0, "z": 0},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+      "location": { "x": 0, "y": 0, "z": 0 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
       "rangeOfMotion": {
-        "yaw": {"min": -60, "max": 60}
+        "yaw": { "min": -60, "max": 60 }
       }
     }
   ],
@@ -176,42 +176,42 @@
       "name": "armature",
       "type": "location",
       "thisCoordinateSystem": "world",
-      "location": {"x": 0, "y": 0, "z": 0},
-      "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+      "location": { "x": 0, "y": 0, "z": 0 },
+      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
       "childElements": [
         {
           "name": "plinth",
           "type": "location",
           "thisCoordinateSystem": "armature",
           "parentCoordinateSystem": "world",
-          "location": {"x": 0, "y": 0, "z": 2},
-          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+          "location": { "x": 0, "y": 0, "z": 2 },
+          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
         },
         {
           "name": "female 1",
           "type": "location",
           "thisCoordinateSystem": "armature",
           "parentCoordinateSystem": "world",
-          "location": {"x": 0, "y": 68, "z": 0},
-          "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+          "location": { "x": 0, "y": 68, "z": 0 },
+          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
           "childElements": [
             {
               "name": "female",
               "type": "origin",
               "thisCoordinateSystem": "female_1_base",
               "parentCoordinateSystem": "armature",
-              "location": {"x": 0, "y": 0, "z": 0},
-              "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+              "location": { "x": 0, "y": 0, "z": 0 },
+              "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
               "childElements": [
                 {
                   "name": "horizontal control subsystem",
                   "type": "actuator",
                   "thisCoordinateSystem": "female_1_horizontal_control",
                   "parentCoordinateSystem": "female_1_base",
-                  "location": {"x": 0, "y": 0, "z": 0},
-                  "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+                  "location": { "x": 0, "y": 0, "z": 0 },
+                  "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
                   "rangeOfMotion": {
-                    "yaw": {"min": -30, "max": 30}
+                    "yaw": { "min": -30, "max": 30 }
                   },
                   "childElements": [
                     {
@@ -219,26 +219,26 @@
                       "type": "actuator",
                       "thisCoordinateSystem": "female_1_horizontal_control",
                       "parentCoordinateSystem": "horizontal control subsystem",
-                      "location": {"x": -2, "y": -0.25, "z": -34.75},
-                      "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                      "location": { "x": -2, "y": -0.25, "z": -34.75 },
+                      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                     },
                     {
                       "name": "female microphone",
                       "type": "sensor",
                       "thisCoordinateSystem": "female_1_horizontal_control",
                       "parentCoordinateSystem": "horizontal control subsystem",
-                      "location": {"x": 2, "y": -0.25, "z": -34.75},
-                      "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                      "location": { "x": 2, "y": -0.25, "z": -34.75 },
+                      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                     },
                     {
                       "name": "vertical control subsystem",
                       "type": "actuator",
                       "thisCoordinateSystem": "female_1_vertical_control",
                       "parentCoordinateSystem": "horizontal control subsystem",
-                      "location": {"x": 0, "y": -9.872, "z": -40.5},
-                      "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+                      "location": { "x": 0, "y": -9.872, "z": -40.5 },
+                      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
                       "rangeOfMotion": {
-                        "roll": {"min": -15, "max": 15}
+                        "roll": { "min": -15, "max": 15 }
                       },
                       "childElements": [
                         {
@@ -246,8 +246,8 @@
                           "type": "sensor",
                           "thisCoordinateSystem": "female_1_vertical_control",
                           "parentCoordinateSystem": "vertical control subsystem",
-                          "location": {"x": 0, "y": 0, "z": 0},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": 0, "y": 0, "z": 0 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         }
                       ]
                     }
@@ -262,26 +262,26 @@
           "type": "location",
           "thisCoordinateSystem": "armature",
           "parentCoordinateSystem": "world",
-          "location": {"x": 58.5, "y": -34, "z": 0},
-          "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+          "location": { "x": 58.5, "y": -34, "z": 0 },
+          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
           "childElements": [
             {
               "name": "female",
               "type": "origin",
               "thisCoordinateSystem": "female_2_base",
               "parentCoordinateSystem": "armature",
-              "location": {"x": 0, "y": 0, "z": 0},
-              "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+              "location": { "x": 0, "y": 0, "z": 0 },
+              "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
               "childElements": [
                 {
                   "name": "horizontal control subsystem",
                   "type": "actuator",
                   "thisCoordinateSystem": "female_2_horizontal_control",
                   "parentCoordinateSystem": "female_2_base",
-                  "location": {"x": 0, "y": 0, "z": 0},
-                  "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+                  "location": { "x": 0, "y": 0, "z": 0 },
+                  "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
                   "rangeOfMotion": {
-                    "yaw": {"min": -30, "max": 30}
+                    "yaw": { "min": -30, "max": 30 }
                   },
                   "childElements": [
                     {
@@ -289,26 +289,26 @@
                       "type": "actuator",
                       "thisCoordinateSystem": "female_2_horizontal_control",
                       "parentCoordinateSystem": "horizontal control subsystem",
-                      "location": {"x": -2, "y": -0.25, "z": -34.75},
-                      "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                      "location": { "x": -2, "y": -0.25, "z": -34.75 },
+                      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                     },
                     {
                       "name": "female microphone",
                       "type": "sensor",
                       "thisCoordinateSystem": "female_2_horizontal_control",
                       "parentCoordinateSystem": "horizontal control subsystem",
-                      "location": {"x": 2, "y": -0.25, "z": -34.75},
-                      "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                      "location": { "x": 2, "y": -0.25, "z": -34.75 },
+                      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                     },
                     {
                       "name": "vertical control subsystem",
                       "type": "actuator",
                       "thisCoordinateSystem": "female_2_vertical_control",
                       "parentCoordinateSystem": "horizontal control subsystem",
-                      "location": {"x": 0, "y": -9.872, "z": -40.5},
-                      "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+                      "location": { "x": 0, "y": -9.872, "z": -40.5 },
+                      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
                       "rangeOfMotion": {
-                        "roll": {"min": -15, "max": 15}
+                        "roll": { "min": -15, "max": 15 }
                       },
                       "childElements": [
                         {
@@ -316,8 +316,8 @@
                           "type": "sensor",
                           "thisCoordinateSystem": "female_2_vertical_control",
                           "parentCoordinateSystem": "vertical control subsystem",
-                          "location": {"x": 0, "y": 0, "z": 0},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": 0, "y": 0, "z": 0 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         }
                       ]
                     }
@@ -332,26 +332,26 @@
           "type": "location",
           "thisCoordinateSystem": "armature",
           "parentCoordinateSystem": "world",
-          "location": {"x": -58.5, "y": -34, "z": 0},
-          "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+          "location": { "x": -58.5, "y": -34, "z": 0 },
+          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
           "childElements": [
             {
               "name": "female",
               "type": "origin",
               "thisCoordinateSystem": "female_3_base",
               "parentCoordinateSystem": "armature",
-              "location": {"x": 0, "y": 0, "z": 0},
-              "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+              "location": { "x": 0, "y": 0, "z": 0 },
+              "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
               "childElements": [
                 {
                   "name": "horizontal control subsystem",
                   "type": "actuator",
                   "thisCoordinateSystem": "female_3_horizontal_control",
                   "parentCoordinateSystem": "female_3_base",
-                  "location": {"x": 0, "y": 0, "z": 0},
-                  "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+                  "location": { "x": 0, "y": 0, "z": 0 },
+                  "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
                   "rangeOfMotion": {
-                    "yaw": {"min": -30, "max": 30}
+                    "yaw": { "min": -30, "max": 30 }
                   },
                   "childElements": [
                     {
@@ -359,26 +359,26 @@
                       "type": "actuator",
                       "thisCoordinateSystem": "female_3_horizontal_control",
                       "parentCoordinateSystem": "horizontal control subsystem",
-                      "location": {"x": -2, "y": -0.25, "z": -34.75},
-                      "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                      "location": { "x": -2, "y": -0.25, "z": -34.75 },
+                      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                     },
                     {
                       "name": "female microphone",
                       "type": "sensor",
                       "thisCoordinateSystem": "female_3_horizontal_control",
                       "parentCoordinateSystem": "horizontal control subsystem",
-                      "location": {"x": 2, "y": -0.25, "z": -34.75},
-                      "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                      "location": { "x": 2, "y": -0.25, "z": -34.75 },
+                      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                     },
                     {
                       "name": "vertical control subsystem",
                       "type": "actuator",
                       "thisCoordinateSystem": "female_3_vertical_control",
                       "parentCoordinateSystem": "horizontal control subsystem",
-                      "location": {"x": 0, "y": -9.872, "z": -40.5},
-                      "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+                      "location": { "x": 0, "y": -9.872, "z": -40.5 },
+                      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
                       "rangeOfMotion": {
-                        "roll": {"min": -15, "max": 15}
+                        "roll": { "min": -15, "max": 15 }
                       },
                       "childElements": [
                         {
@@ -386,8 +386,8 @@
                           "type": "sensor",
                           "thisCoordinateSystem": "female_3_vertical_control",
                           "parentCoordinateSystem": "vertical control subsystem",
-                          "location": {"x": 0, "y": 0, "z": 0},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": 0, "y": 0, "z": 0 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         }
                       ]
                     }
@@ -402,34 +402,34 @@
           "type": "origin",
           "thisCoordinateSystem": "armature",
           "parentCoordinateSystem": "world",
-          "location": {"x": 0, "y": 0, "z": 0},
-          "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+          "location": { "x": 0, "y": 0, "z": 0 },
+          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
           "childElements": [
             {
               "name": "male 1",
               "type": "location",
               "thisCoordinateSystem": "beam",
               "parentCoordinateSystem": "armature",
-              "location": {"x": 0, "y": 23.5, "z": 0},
-              "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+              "location": { "x": 0, "y": 23.5, "z": 0 },
+              "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
               "childElements": [
                 {
                   "name": "male",
                   "type": "origin",
                   "thisCoordinateSystem": "male_1_base",
                   "parentCoordinateSystem": "beam",
-                  "location": {"x": 0, "y": 0, "z": 0},
-                  "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+                  "location": { "x": 0, "y": 0, "z": 0 },
+                  "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
                   "childElements": [
                     {
                       "name": "horizontal control subsystem",
                       "type": "actuator",
                       "thisCoordinateSystem": "male_1_horizontal_control",
                       "parentCoordinateSystem": "male_1_base",
-                      "location": {"x": 0, "y": 0, "z": 0},
-                      "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+                      "location": { "x": 0, "y": 0, "z": 0 },
+                      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
                       "rangeOfMotion": {
-                        "yaw": {"min": -60, "max": 60}
+                        "yaw": { "min": -60, "max": 60 }
                       },
                       "childElements": [
                         {
@@ -437,56 +437,56 @@
                           "type": "actuator",
                           "thisCoordinateSystem": "male_1_horizontal_control",
                           "parentCoordinateSystem": "horizontal control subsystem",
-                          "location": {"x": 0.125, "y": 2.125, "z": -33.75},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": 0.125, "y": 2.125, "z": -33.75 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         },
                         {
                           "name": "male microphone",
                           "type": "sensor",
                           "thisCoordinateSystem": "male_1_horizontal_control",
                           "parentCoordinateSystem": "horizontal control subsystem",
-                          "location": {"x": -2.125, "y": 2.6575, "z": -36.5},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": -2.125, "y": 2.6575, "z": -36.5 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         },
                         {
                           "name": "male light source",
                           "type": "actuator",
                           "thisCoordinateSystem": "male_1_horizontal_control",
                           "parentCoordinateSystem": "horizontal control subsystem",
-                          "location": {"x": 0.125, "y": 2.5, "z": -40.5},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": 0.125, "y": 2.5, "z": -40.5 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         },
                         {
                           "name": "male upper light sensor A",
                           "type": "sensor",
                           "thisCoordinateSystem": "male_1_horizontal_control",
                           "parentCoordinateSystem": "horizontal control subsystem",
-                          "location": {"x": 3.13082, "y": -13.65211, "z": -9.82129},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": 3.13082, "y": -13.65211, "z": -9.82129 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         },
                         {
                           "name": "male upper light sensor B",
                           "type": "sensor",
                           "thisCoordinateSystem": "male_1_horizontal_control",
                           "parentCoordinateSystem": "horizontal control subsystem",
-                          "location": {"x": -3.13012, "y": -13.96944, "z": -9.82152},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": -3.13012, "y": -13.96944, "z": -9.82152 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         },
                         {
                           "name": "male lower light sensor A",
                           "type": "sensor",
                           "thisCoordinateSystem": "male_1_horizontal_control",
                           "parentCoordinateSystem": "horizontal control subsystem",
-                          "location": {"x": -2.88281, "y": 1.89948, "z": -51.40671},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": -2.88281, "y": 1.89948, "z": -51.40671 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         },
                         {
                           "name": "male lower light sensor B",
                           "type": "sensor",
                           "thisCoordinateSystem": "male_1_horizontal_control",
                           "parentCoordinateSystem": "horizontal control subsystem",
-                          "location": {"x": 3.13466, "y": 1.89964, "z": -51.40666},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": 3.13466, "y": 1.89964, "z": -51.40666 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         }
                       ]
                     }
@@ -499,26 +499,26 @@
               "type": "location",
               "thisCoordinateSystem": "beam",
               "parentCoordinateSystem": "armature",
-              "location": {"x": 0, "y": -23.5, "z": 0},
-              "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+              "location": { "x": 0, "y": -23.5, "z": 0 },
+              "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
               "childElements": [
                 {
                   "name": "male",
                   "type": "origin",
                   "thisCoordinateSystem": "male_2_base",
                   "parentCoordinateSystem": "beam",
-                  "location": {"x": 0, "y": 0, "z": 0},
-                  "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+                  "location": { "x": 0, "y": 0, "z": 0 },
+                  "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
                   "childElements": [
                     {
                       "name": "horizontal control subsystem",
                       "type": "actuator",
                       "thisCoordinateSystem": "male_2_horizontal_control",
                       "parentCoordinateSystem": "male_2_base",
-                      "location": {"x": 0, "y": 0, "z": 0},
-                      "orientation": {"roll": 0, "pitch": 0, "yaw": 0},
+                      "location": { "x": 0, "y": 0, "z": 0 },
+                      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
                       "rangeOfMotion": {
-                        "yaw": {"min": -60, "max": 60}
+                        "yaw": { "min": -60, "max": 60 }
                       },
                       "childElements": [
                         {
@@ -526,56 +526,56 @@
                           "type": "actuator",
                           "thisCoordinateSystem": "male_2_horizontal_control",
                           "parentCoordinateSystem": "horizontal control subsystem",
-                          "location": {"x": 0.125, "y": 2.125, "z": -33.75},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": 0.125, "y": 2.125, "z": -33.75 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         },
                         {
                           "name": "male microphone",
                           "type": "sensor",
                           "thisCoordinateSystem": "male_2_horizontal_control",
                           "parentCoordinateSystem": "horizontal control subsystem",
-                          "location": {"x": -2.125, "y": 2.6575, "z": -36.5},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": -2.125, "y": 2.6575, "z": -36.5 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         },
                         {
                           "name": "male light source",
                           "type": "actuator",
                           "thisCoordinateSystem": "male_2_horizontal_control",
                           "parentCoordinateSystem": "horizontal control subsystem",
-                          "location": {"x": 0.125, "y": 2.5, "z": -40.5},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": 0.125, "y": 2.5, "z": -40.5 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         },
                         {
                           "name": "male upper light sensor A",
                           "type": "sensor",
                           "thisCoordinateSystem": "male_2_horizontal_control",
                           "parentCoordinateSystem": "horizontal control subsystem",
-                          "location": {"x": 3.13082, "y": -13.65211, "z": -9.82129},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": 3.13082, "y": -13.65211, "z": -9.82129 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         },
                         {
                           "name": "male upper light sensor B",
                           "type": "sensor",
                           "thisCoordinateSystem": "male_2_horizontal_control",
                           "parentCoordinateSystem": "horizontal control subsystem",
-                          "location": {"x": -3.13012, "y": -13.96944, "z": -9.82152},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": -3.13012, "y": -13.96944, "z": -9.82152 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         },
                         {
                           "name": "male lower light sensor A",
                           "type": "sensor",
                           "thisCoordinateSystem": "male_2_horizontal_control",
                           "parentCoordinateSystem": "horizontal control subsystem",
-                          "location": {"x": -2.88281, "y": 1.89948, "z": -51.40671},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": -2.88281, "y": 1.89948, "z": -51.40671 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         },
                         {
                           "name": "male lower light sensor B",
                           "type": "sensor",
                           "thisCoordinateSystem": "male_2_horizontal_control",
                           "parentCoordinateSystem": "horizontal control subsystem",
-                          "location": {"x": 3.13466, "y": 1.89964, "z": -51.40666},
-                          "orientation": {"roll": 0, "pitch": 0, "yaw": 0}
+                          "location": { "x": 3.13466, "y": 1.89964, "z": -51.40666 },
+                          "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
                         }
                       ]
                     }

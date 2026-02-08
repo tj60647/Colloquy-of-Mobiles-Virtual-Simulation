@@ -1,4 +1,4 @@
-import { Transform } from "../lib/Transform.js";
+import { Transform } from '../lib/Transform.js';
 
 // Attach the functions to the window object
 window.preload = preload;
@@ -7,10 +7,7 @@ window.draw = draw;
 
 let easyFont;
 let easycam;
-let rootTransform,
-  childTransform,
-  grandChildTransform,
-  greatGrandChildTransform;
+let rootTransform, childTransform, grandChildTransform, greatGrandChildTransform;
 let hud;
 const rotationSpeed = 0.5; // Speed of rotation in degrees per frame
 
@@ -20,7 +17,7 @@ const rotationSpeed = 0.5; // Speed of rotation in degrees per frame
  * Also sets up a HUD for displaying statistics about the transforms.
  */
 function preload() {
-  easyFont = loadFont("roboto-regular-webfont.ttf"); // Load font for text rendering
+  easyFont = loadFont('roboto-regular-webfont.ttf'); // Load font for text rendering
 }
 
 function setup() {
@@ -35,28 +32,28 @@ function setup() {
     null,
     { x: 0, y: 0, z: 0 },
     { yaw: 0, pitch: 0, roll: 0 },
-    "Root",
+    'Root',
     1
   );
   childTransform = new Transform(
     rootTransform,
     { x: 0, y: 50, z: 0 },
     { yaw: 0, pitch: 90, roll: 0 },
-    "Child",
+    'Child',
     2
   );
   grandChildTransform = new Transform(
     childTransform,
     { x: 0, y: 0, z: 50 },
     { yaw: 0, pitch: 90, roll: 0 },
-    "GrandChild",
+    'GrandChild',
     3
   );
   greatGrandChildTransform = new Transform(
     grandChildTransform,
     { x: 0, y: 0, z: 50 },
     { yaw: 0, pitch: 90, roll: 0 },
-    "GreatGrandChild",
+    'GreatGrandChild',
     4
   );
 
@@ -142,11 +139,11 @@ function drawTransform(transform) {
   // Draw axis labels
   textSize(8);
   fill(255, 0, 0);
-  text("X", 22, 0, 0);
+  text('X', 22, 0, 0);
   fill(0, 255, 0);
-  text("Y", 0, 22, 0);
+  text('Y', 0, 22, 0);
   fill(0, 0, 255);
-  text("Z", 0, 0, 22);
+  text('Z', 0, 0, 22);
 
   // // Recursively draw child transforms
   // for (let child of [
@@ -179,41 +176,35 @@ function drawHUD() {
       globalPos: `(${globalPos.x.toFixed(2)}, ${globalPos.y.toFixed(
         2
       )}, ${globalPos.z.toFixed(2)})`,
-      localPos: `(${transform.x.toFixed(2)}, ${transform.y.toFixed(
-        2
-      )}, ${transform.z.toFixed(2)})`,
+      localPos: `(${transform.x.toFixed(2)}, ${transform.y.toFixed(2)}, ${transform.z.toFixed(2)})`,
       globalOri: `(Yaw: ${globalOri.yaw.toFixed(
         2
-      )}, Pitch: ${globalOri.pitch.toFixed(2)}, Roll: ${globalOri.roll.toFixed(
-        2
-      )})`,
+      )}, Pitch: ${globalOri.pitch.toFixed(2)}, Roll: ${globalOri.roll.toFixed(2)})`,
       localOri: `(Yaw: ${transform.yaw.toFixed(
         2
-      )}, Pitch: ${transform.pitch.toFixed(2)}, Roll: ${transform.roll.toFixed(
-        2
-      )})`,
+      )}, Pitch: ${transform.pitch.toFixed(2)}, Roll: ${transform.roll.toFixed(2)})`,
     };
   }
 
   // Draw information for each transform
   const transforms = [
     {
-      name: "Root",
+      name: 'Root',
       data: formatPositionAndOrientation(rootTransform),
       yOffset: 20,
     },
     {
-      name: "Child",
+      name: 'Child',
       data: formatPositionAndOrientation(childTransform),
       yOffset: 120,
     },
     {
-      name: "GrandChild",
+      name: 'GrandChild',
       data: formatPositionAndOrientation(grandChildTransform),
       yOffset: 220,
     },
     {
-      name: "GreatGrandChild",
+      name: 'GreatGrandChild',
       data: formatPositionAndOrientation(greatGrandChildTransform),
       yOffset: 320,
     },
@@ -222,11 +213,7 @@ function drawHUD() {
   transforms.forEach((t) => {
     text(`${t.name} Global Position: ${t.data.globalPos}`, 20, t.yOffset);
     text(`${t.name} Local Position: ${t.data.localPos}`, 20, t.yOffset + 20);
-    text(
-      `${t.name} Global Orientation: ${t.data.globalOri}`,
-      20,
-      t.yOffset + 40
-    );
+    text(`${t.name} Global Orientation: ${t.data.globalOri}`, 20, t.yOffset + 40);
     text(`${t.name} Local Orientation: ${t.data.localOri}`, 20, t.yOffset + 60);
   });
 }

@@ -1,15 +1,15 @@
 // Import the Three.js library and OrbitControls from a CDN
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js";
-import { Actuator_THREE } from "../../lib/Actuator_THREE.js";
-import { Sensor_THREE } from "../../lib/Sensor_THREE.js";
-import { Transducer_THREE } from "../../lib/Transducer_THREE.js";
-import { formatValue } from "../../lib/UI_Utilities.js";
-import { hexToRgba } from "../../lib/UI_Utilities.js";
-import { createCameraControl } from "../../../lib/cameraUtilities.js";
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
+import { Actuator_THREE } from '../../lib/Actuator_THREE.js';
+import { Sensor_THREE } from '../../lib/Sensor_THREE.js';
+import { Transducer_THREE } from '../../lib/Transducer_THREE.js';
+import { formatValue } from '../../lib/UI_Utilities.js';
+import { hexToRgba } from '../../lib/UI_Utilities.js';
+import { createCameraControl } from '../../../lib/cameraUtilities.js';
 
 // Import the oscillatorSystem class from the oscillatorSystem.js file
 // includ the MotionRequest class
-import { OscillatorSystem_THREE } from "../../../lib/OscillatorSystem_THREE.js";
+import { OscillatorSystem_THREE } from '../../../lib/OscillatorSystem_THREE.js';
 
 // variables common to all THREE.js sketches
 let scene, renderer, cameraControl, lightSource;
@@ -111,35 +111,18 @@ function init() {
     // Configure motion parameters for the oscillatorSystem
     //convert to radians
     femaleOscillatorSystem.maxVelocity = (maxVelocity_female * Math.PI) / 180;
-    femaleOscillatorSystem.maxAcceleration =
-      (maxAcceleration_female * Math.PI) / 180;
+    femaleOscillatorSystem.maxAcceleration = (maxAcceleration_female * Math.PI) / 180;
 
     // Set the motion request to RELEASE
-    femaleOscillatorSystem.setMotionRequest(
-      OscillatorSystem_THREE.MOTION_REQUEST.RELEASE
-    );
+    femaleOscillatorSystem.setMotionRequest(OscillatorSystem_THREE.MOTION_REQUEST.RELEASE);
 
     //add the speaker
-    const speaker = new Actuator_THREE(
-      `speaker`,
-      Math.PI,
-      3000,
-      true,
-      true,
-      true
-    );
+    const speaker = new Actuator_THREE(`speaker`, Math.PI, 3000, true, true, true);
     speaker.position.set(3, -12, 0);
     femaleOscillatorSystem.oscillator.add(speaker);
 
     //add the microphone
-    const microphone = new Sensor_THREE(
-      `microphone`,
-      Math.PI,
-      0.05,
-      true,
-      true,
-      true
-    );
+    const microphone = new Sensor_THREE(`microphone`, Math.PI, 0.05, true, true, true);
     microphone.position.set(-3, -12, 0);
     femaleOscillatorSystem.oscillator.add(microphone);
 
@@ -170,20 +153,11 @@ function init() {
 
     // Configure motion parameters for the oscillatorSystem
     //convert to radians
-    searchSystem.maxVelocity =
-      (maxVelocity_female_vertical_search * Math.PI) / 180;
-    searchSystem.maxAcceleration =
-      (maxAcceleration_female_vertical_search * Math.PI) / 180;
+    searchSystem.maxVelocity = (maxVelocity_female_vertical_search * Math.PI) / 180;
+    searchSystem.maxAcceleration = (maxAcceleration_female_vertical_search * Math.PI) / 180;
 
     //add the light sensor
-    const lightSensor = new Sensor_THREE(
-      `light sensor`,
-      Math.PI / 2,
-      0.05,
-      true,
-      true,
-      true
-    );
+    const lightSensor = new Sensor_THREE(`light sensor`, Math.PI / 2, 0.05, true, true, true);
     lightSensor.position.set(0, 0, 1);
     searchSystem.oscillator.add(lightSensor);
 
@@ -196,9 +170,7 @@ function init() {
     searchSystem.oscillator.add(mirror);
 
     // Set the motion request to RELEASE
-    searchSystem.setMotionRequest(
-      OscillatorSystem_THREE.MOTION_REQUEST.RELEASE
-    );
+    searchSystem.setMotionRequest(OscillatorSystem_THREE.MOTION_REQUEST.RELEASE);
 
     // Add the search system to the oscillator system
     femaleOscillatorSystem.oscillator.add(searchSystem);
@@ -235,9 +207,7 @@ function init() {
   beamOscillatorSystem.maxAcceleration = (maxAcceleration_beam * Math.PI) / 180;
 
   // Set the motion request to RELEASE
-  beamOscillatorSystem.setMotionRequest(
-    OscillatorSystem_THREE.MOTION_REQUEST.RELEASE
-  );
+  beamOscillatorSystem.setMotionRequest(OscillatorSystem_THREE.MOTION_REQUEST.RELEASE);
 
   // Adjust the initial orientation of the oscillatorSystem
   beamOscillatorSystem.rotation.y = Math.PI; // Rotate the oscillatorSystem to face the center
@@ -252,13 +222,7 @@ function init() {
   //they are 24 units from the center of the beam
   // centered relative to the beam
   for (let i = 0; i < numMales; i++) {
-    let pointData = getPointOnCircle(
-      distanceFromCenter_male,
-      numMales,
-      i,
-      0,
-      0
-    );
+    let pointData = getPointOnCircle(distanceFromCenter_male, numMales, i, 0, 0);
 
     // add male oscillator systems
     // Create a new oscillatorSystem at the computed position with a given name and orientation
@@ -273,45 +237,21 @@ function init() {
     // Rotate the oscillatorSystem to face away from the center
     maleOscillatorSystem.rotation.y = pointData.orientation;
     maleOscillatorSystem.maxVelocity = (maxVelocity_male * Math.PI) / 180; // Max velocity remains as is
-    maleOscillatorSystem.maxAcceleration =
-      (maxAcceleration_male * Math.PI) / 180; // Max acceleration remains as is
-    maleOscillatorSystem.setMotionRequest(
-      OscillatorSystem_THREE.MOTION_REQUEST.RELEASE
-    );
+    maleOscillatorSystem.maxAcceleration = (maxAcceleration_male * Math.PI) / 180; // Max acceleration remains as is
+    maleOscillatorSystem.setMotionRequest(OscillatorSystem_THREE.MOTION_REQUEST.RELEASE);
 
     //add the speaker
-    const speaker = new Actuator_THREE(
-      `speaker`,
-      Math.PI,
-      3000,
-      true,
-      true,
-      true
-    );
+    const speaker = new Actuator_THREE(`speaker`, Math.PI, 3000, true, true, true);
     speaker.position.set(0, -8, 0);
     maleOscillatorSystem.oscillator.add(speaker);
 
     //add the microphone
-    const microphone = new Sensor_THREE(
-      `microphone`,
-      Math.PI,
-      0.05,
-      true,
-      true,
-      true
-    );
+    const microphone = new Sensor_THREE(`microphone`, Math.PI, 0.05, true, true, true);
     microphone.position.set(-3, -9, 0);
     maleOscillatorSystem.oscillator.add(microphone);
 
     //add the light
-    const light = new Actuator_THREE(
-      `light`,
-      Math.PI / 8,
-      3000,
-      true,
-      true,
-      true
-    );
+    const light = new Actuator_THREE(`light`, Math.PI / 8, 3000, true, true, true);
     light.position.set(0, -15, 0);
     maleOscillatorSystem.oscillator.add(light);
 
@@ -365,7 +305,7 @@ function initRenderer() {
 function initSceneContext() {
   // Create the scene
   scene = new THREE.Scene();
-  scene.background = new THREE.Color("white"); // Set the scene background color
+  scene.background = new THREE.Color('white'); // Set the scene background color
   scene.fog = new THREE.Fog(0xffffff, fogNear, fogFar); // Initial fog settings
   scene.ambientLight = new THREE.AmbientLight(0xffffff, 0.05);
 
@@ -375,21 +315,14 @@ function initSceneContext() {
   scene.add(lightSource);
 
   // Add a grid to the scene for reference
-  const gridHelper = new THREE.PolarGridHelper(
-    42,
-    6,
-    12,
-    128,
-    0xcccccc,
-    0xdddddd
-  );
+  const gridHelper = new THREE.PolarGridHelper(42, 6, 12, 128, 0xcccccc, 0xdddddd);
   scene.add(gridHelper);
 }
 
 function initCameraControl() {
   //verify the renderer is created
   if (!renderer) {
-    console.log("Renderer not created");
+    console.log('Renderer not created');
   }
   const defaultPerspectiveViewScale = 4;
   // Create a container for the camera control
@@ -399,9 +332,7 @@ function initCameraControl() {
     11 * defaultPerspectiveViewScale,
     -21 * defaultPerspectiveViewScale
   );
-  cameraControl.perspectiveCamera.position.copy(
-    cameraControl.perspectiveCameraDefaultPosition
-  );
+  cameraControl.perspectiveCamera.position.copy(cameraControl.perspectiveCameraDefaultPosition);
 }
 
 ////////////////////////////////////////
@@ -410,157 +341,136 @@ function initCameraControl() {
 
 function createUI() {
   // Create a parent container for the control panels
-  const controlsContainer = document.createElement("div");
-  controlsContainer.style.position = "absolute";
-  controlsContainer.style.top = "10px";
-  controlsContainer.style.left = "10px";
-  controlsContainer.style.display = "flex";
-  controlsContainer.style.flexDirection = "row";
-  controlsContainer.style.alignItems = "flex-start";
-  controlsContainer.style.gap = "10px";
-  controlsContainer.style.zIndex = "100";
-  controlsContainer.style.visibility = "hidden"; // Hide the controls by default
+  const controlsContainer = document.createElement('div');
+  controlsContainer.style.position = 'absolute';
+  controlsContainer.style.top = '10px';
+  controlsContainer.style.left = '10px';
+  controlsContainer.style.display = 'flex';
+  controlsContainer.style.flexDirection = 'row';
+  controlsContainer.style.alignItems = 'flex-start';
+  controlsContainer.style.gap = '10px';
+  controlsContainer.style.zIndex = '100';
+  controlsContainer.style.visibility = 'hidden'; // Hide the controls by default
   document.body.appendChild(controlsContainer);
 
   // Create control panels for Females, Males, and Beam
   createControlPanel(
     controlsContainer,
-    "Females",
+    'Females',
     {
       range: range_female,
       maxVelocity: maxVelocity_female,
       maxAcceleration: maxAcceleration_female,
     },
     updateFemaleParams,
-    "rgba(128, 0, 128, 0.8)"
+    'rgba(128, 0, 128, 0.8)'
   ); // Add color for Females panel
 
   createControlPanel(
     controlsContainer,
-    "Males",
+    'Males',
     {
       range: range_male,
       maxVelocity: maxVelocity_male,
       maxAcceleration: maxAcceleration_male,
     },
     updateMaleParams,
-    "rgba(0, 128, 128, 0.8)"
+    'rgba(0, 128, 128, 0.8)'
   ); // Add color for Males panel
 
   createControlPanel(
     controlsContainer,
-    "Beam",
+    'Beam',
     {
       range: range_beam,
       maxVelocity: maxVelocity_beam,
       maxAcceleration: maxAcceleration_beam,
     },
     updateBeamParams,
-    "rgba(0, 128, 0, 0.8)"
+    'rgba(0, 128, 0, 0.8)'
   ); // Add color for Beam panel
 }
 
 // Function to create individual control panels
-function createControlPanel(
-  parentElement,
-  label,
-  params,
-  onUpdateCallback,
-  backgroundColor
-) {
+function createControlPanel(parentElement, label, params, onUpdateCallback, backgroundColor) {
   // Create the container for the control panel
-  const panelContainer = document.createElement("div");
-  panelContainer.style.color = "white";
-  panelContainer.style.fontFamily = "Arial, sans-serif";
+  const panelContainer = document.createElement('div');
+  panelContainer.style.color = 'white';
+  panelContainer.style.fontFamily = 'Arial, sans-serif';
   panelContainer.style.backgroundColor = backgroundColor; // Use the passed background color
-  panelContainer.style.padding = "10px";
-  panelContainer.style.borderRadius = "5px";
-  panelContainer.style.width = "200px";
-  panelContainer.style.marginBottom = "10px";
-  panelContainer.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.2)";
-  panelContainer.style.boxSizing = "border-box";
-  panelContainer.style.flexGrow = "0";
-  panelContainer.style.flexShrink = "1";
+  panelContainer.style.padding = '10px';
+  panelContainer.style.borderRadius = '5px';
+  panelContainer.style.width = '200px';
+  panelContainer.style.marginBottom = '10px';
+  panelContainer.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.2)';
+  panelContainer.style.boxSizing = 'border-box';
+  panelContainer.style.flexGrow = '0';
+  panelContainer.style.flexShrink = '1';
 
   // Title Button for the control panel
-  const titleButton = document.createElement("button");
+  const titleButton = document.createElement('button');
   titleButton.textContent = `${label} Controls`;
-  titleButton.style.width = "100%";
+  titleButton.style.width = '100%';
   titleButton.style.backgroundColor = backgroundColor;
-  titleButton.style.fontWeight = "bold";
-  titleButton.style.textAlign = "center";
-  titleButton.style.fontSize = "16px";
-  titleButton.style.color = "white";
-  titleButton.style.border = "1px solid white";
-  titleButton.style.borderRadius = "5px";
-  titleButton.style.cursor = "pointer";
+  titleButton.style.fontWeight = 'bold';
+  titleButton.style.textAlign = 'center';
+  titleButton.style.fontSize = '16px';
+  titleButton.style.color = 'white';
+  titleButton.style.border = '1px solid white';
+  titleButton.style.borderRadius = '5px';
+  titleButton.style.cursor = 'pointer';
   panelContainer.appendChild(titleButton);
 
   // Create a container for the sliders
-  const controlContainer = document.createElement("div");
-  controlContainer.style.display = "flex";
-  controlContainer.style.flexDirection = "column";
-  controlContainer.style.gap = "5px";
+  const controlContainer = document.createElement('div');
+  controlContainer.style.display = 'flex';
+  controlContainer.style.flexDirection = 'column';
+  controlContainer.style.gap = '5px';
   panelContainer.appendChild(controlContainer);
 
   // Create sliders for range, max velocity, and max acceleration
-  createSlider(controlContainer, "Range", params.range, 1, 180, (value) => {
+  createSlider(controlContainer, 'Range', params.range, 1, 180, (value) => {
     params.range = value;
     onUpdateCallback(params);
   });
 
-  createSlider(
-    controlContainer,
-    "Max Velocity",
-    params.maxVelocity,
-    1,
-    30,
-    (value) => {
-      params.maxVelocity = value;
-      onUpdateCallback(params);
-    }
-  );
+  createSlider(controlContainer, 'Max Velocity', params.maxVelocity, 1, 30, (value) => {
+    params.maxVelocity = value;
+    onUpdateCallback(params);
+  });
 
-  createSlider(
-    controlContainer,
-    "Max Acceleration",
-    params.maxAcceleration,
-    1,
-    20,
-    (value) => {
-      params.maxAcceleration = value;
-      onUpdateCallback(params);
-    }
-  );
+  createSlider(controlContainer, 'Max Acceleration', params.maxAcceleration, 1, 20, (value) => {
+    params.maxAcceleration = value;
+    onUpdateCallback(params);
+  });
 
   // Add panel to the main controls container
   parentElement.appendChild(panelContainer);
 
   // Toggle the display of the control panel on button click
-  titleButton.addEventListener("click", () => {
-    controlContainer.style.display =
-      controlContainer.style.display === "none" ? "block" : "none";
+  titleButton.addEventListener('click', () => {
+    controlContainer.style.display = controlContainer.style.display === 'none' ? 'block' : 'none';
   });
 }
 
 // Function to create a slider for a specific parameter
 function createSlider(panel, label, initialValue, min, max, onChange) {
-  const container = document.createElement("div");
-  container.style.display = "flex";
-  container.style.flexDirection = "column";
-  container.style.alignItems = "center";
+  const container = document.createElement('div');
+  container.style.display = 'flex';
+  container.style.flexDirection = 'column';
+  container.style.alignItems = 'center';
 
-  const sliderLabel = document.createElement("label");
+  const sliderLabel = document.createElement('label');
   sliderLabel.textContent = `${label}: ${initialValue.toFixed(0)}`;
   container.appendChild(sliderLabel);
 
-  const slider = document.createElement("input");
-  slider.type = "range";
+  const slider = document.createElement('input');
+  slider.type = 'range';
   slider.min = min;
   slider.max = max;
   slider.value = initialValue;
   slider.step = 1.0;
-  slider.style.width = "100%";
+  slider.style.width = '100%';
 
   // Update label and call the onChange callback when the slider changes
   slider.oninput = function () {
@@ -579,7 +489,7 @@ function updateFemaleParams(params) {
   maxAcceleration_female = params.maxAcceleration;
 
   oscillatorSystems.forEach((oscillator) => {
-    if (oscillator.name.includes("Female")) {
+    if (oscillator.name.includes('Female')) {
       oscillator.maxVelocity = (maxVelocity_female * Math.PI) / 180;
       oscillator.maxAcceleration = (maxAcceleration_female * Math.PI) / 180;
       oscillator.minPosition = -((range_female / 2) * Math.PI) / 180; // Update the range
@@ -598,7 +508,7 @@ function updateMaleParams(params) {
   maxAcceleration_male = params.maxAcceleration;
 
   oscillatorSystems.forEach((oscillator) => {
-    if (oscillator.name.includes("Male")) {
+    if (oscillator.name.includes('Male')) {
       oscillator.maxVelocity = (maxVelocity_male * Math.PI) / 180;
       oscillator.maxAcceleration = (maxAcceleration_male * Math.PI) / 180;
       oscillator.minPosition = -((range_male / 2) * Math.PI) / 180; // Update the range
@@ -617,7 +527,7 @@ function updateBeamParams(params) {
   maxAcceleration_beam = params.maxAcceleration;
 
   oscillatorSystems.forEach((oscillator) => {
-    if (oscillator.name.includes("Beam")) {
+    if (oscillator.name.includes('Beam')) {
       oscillator.maxVelocity = (maxVelocity_beam * Math.PI) / 180;
       oscillator.maxAcceleration = (maxAcceleration_beam * Math.PI) / 180;
       oscillator.minPosition = -((range_beam / 2) * Math.PI) / 180; // Update the range

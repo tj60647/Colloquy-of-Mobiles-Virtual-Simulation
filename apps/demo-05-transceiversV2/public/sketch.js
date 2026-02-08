@@ -1,9 +1,9 @@
 //import classes
-import { Transform } from "../lib/Transform.js";
-import { LightActuator } from "../lib/LightActuator.js";
-import { SoundActuator } from "../lib/SoundActuator.js";
-import { LightSensor } from "../lib/LightSensor.js";
-import { SoundSensor } from "../lib/SoundSensor.js";
+import { Transform } from '../lib/Transform.js';
+import { LightActuator } from '../lib/LightActuator.js';
+import { SoundActuator } from '../lib/SoundActuator.js';
+import { LightSensor } from '../lib/LightSensor.js';
+import { SoundSensor } from '../lib/SoundSensor.js';
 
 // Attach the functions to the window object
 window.setup = setup;
@@ -15,7 +15,7 @@ window.draw = draw;
 class Actor {
   constructor() {
     if (this.constructor === Actor) {
-      throw new Error("Cannot instantiate abstract class Actor directly.");
+      throw new Error('Cannot instantiate abstract class Actor directly.');
     }
   }
 
@@ -26,7 +26,7 @@ class Actor {
   }
 
   receive(message, sender) {
-    throw new Error("receive() must be implemented in a subclass.");
+    throw new Error('receive() must be implemented in a subclass.');
   }
 }
 
@@ -156,18 +156,8 @@ class Agent {
       30
     );
 
-    this.lightTransmitter = new PulseTransmitter(
-      40,
-      "light",
-      this.lightActuator,
-      randomPattern
-    );
-    this.soundTransmitter = new PulseTransmitter(
-      40,
-      "sound",
-      this.soundActuator,
-      randomPattern
-    );
+    this.lightTransmitter = new PulseTransmitter(40, 'light', this.lightActuator, randomPattern);
+    this.soundTransmitter = new PulseTransmitter(40, 'sound', this.soundActuator, randomPattern);
 
     this.lightSensor = new LightSensor(
       this.transform,
@@ -182,34 +172,16 @@ class Agent {
       30
     );
 
-    this.lightReceiver = new PulseReceiver(
-      40,
-      20,
-      patterns,
-      "light",
-      this.lightSensor,
-      this
-    );
-    this.soundReceiver = new PulseReceiver(
-      40,
-      20,
-      patterns,
-      "sound",
-      this.soundSensor,
-      this
-    );
+    this.lightReceiver = new PulseReceiver(40, 20, patterns, 'light', this.lightSensor, this);
+    this.soundReceiver = new PulseReceiver(40, 20, patterns, 'sound', this.soundSensor, this);
   }
 
   act(environment) {
     this.isTransmitting = true; // Set flag to true when transmitting
 
-    if (this.id === "Agent1") {
+    if (this.id === 'Agent1') {
       // Only Agent 1 transmits light
-      this.lightTransmitter.sendPulse(
-        environment,
-        `${this.id}_lightTransmitter`,
-        0.9
-      );
+      this.lightTransmitter.sendPulse(environment, `${this.id}_lightTransmitter`, 0.9);
     }
 
     // this.soundTransmitter.sendPulse(
@@ -275,8 +247,7 @@ class Renderer {
       const yOffset = yOffsetStart + agentIndex * bufferSpacing;
 
       // Calculate width of the buffer area
-      const bufferWidth =
-        agent.lightTransmitter.bufferSize * cellSize + 2 * xOffset;
+      const bufferWidth = agent.lightTransmitter.bufferSize * cellSize + 2 * xOffset;
       const bufferHeight = 4 * yOffsetStep + 20; // Adjust for four buffers
 
       // Draw a rectangle around the buffers for each agent
@@ -293,10 +264,7 @@ class Renderer {
       for (let i = 0; i < agent.lightTransmitter.bufferSize; i++) {
         const value =
           agent.lightTransmitter.pattern[
-            (agent.lightTransmitter.patternIndex -
-              1 -
-              i +
-              agent.lightTransmitter.pattern.length) %
+            (agent.lightTransmitter.patternIndex - 1 - i + agent.lightTransmitter.pattern.length) %
               agent.lightTransmitter.pattern.length
           ];
         fill(value === 1 ? 255 : 0);
@@ -312,79 +280,47 @@ class Renderer {
       for (let i = 0; i < agent.soundTransmitter.bufferSize; i++) {
         const value =
           agent.soundTransmitter.pattern[
-            (agent.soundTransmitter.patternIndex -
-              1 -
-              i +
-              agent.soundTransmitter.pattern.length) %
+            (agent.soundTransmitter.patternIndex - 1 - i + agent.soundTransmitter.pattern.length) %
               agent.soundTransmitter.pattern.length
           ];
         fill(value === 1 ? 255 : 0);
-        rect(
-          xOffset + i * cellSize,
-          yOffset + 10 + yOffsetStep,
-          cellSize,
-          cellSize
-        );
+        rect(xOffset + i * cellSize, yOffset + 10 + yOffsetStep, cellSize, cellSize);
       }
 
       // Draw Light Receiver Buffer
       fill(255);
       noStroke();
-      text(
-        `Agent ${agentIndex + 1} Light RX:`,
-        xOffset,
-        yOffset + yOffsetStep * 2
-      );
+      text(`Agent ${agentIndex + 1} Light RX:`, xOffset, yOffset + yOffsetStep * 2);
       strokeWeight(1);
       stroke(128);
       for (let i = 0; i < agent.lightReceiver.buffer.length; i++) {
         const index =
-          (agent.lightReceiver.bufferIndex -
-            1 -
-            i +
-            agent.lightReceiver.bufferSize) %
+          (agent.lightReceiver.bufferIndex - 1 - i + agent.lightReceiver.bufferSize) %
           agent.lightReceiver.bufferSize;
         if (agent.lightReceiver.buffer[index] === 1) {
           fill(255, 255, 0);
         } else {
           fill(64);
         }
-        rect(
-          xOffset + i * cellSize,
-          yOffset + 10 + yOffsetStep * 2,
-          cellSize,
-          cellSize
-        );
+        rect(xOffset + i * cellSize, yOffset + 10 + yOffsetStep * 2, cellSize, cellSize);
       }
 
       // Draw Sound Receiver Buffer
       fill(255);
       noStroke();
-      text(
-        `Agent ${agentIndex + 1} Sound RX:`,
-        xOffset,
-        yOffset + yOffsetStep * 3
-      );
+      text(`Agent ${agentIndex + 1} Sound RX:`, xOffset, yOffset + yOffsetStep * 3);
       strokeWeight(1);
       stroke(128);
       for (let i = 0; i < agent.soundReceiver.buffer.length; i++) {
         const index =
-          (agent.soundReceiver.bufferIndex -
-            1 -
-            i +
-            agent.soundReceiver.bufferSize) %
+          (agent.soundReceiver.bufferIndex - 1 - i + agent.soundReceiver.bufferSize) %
           agent.soundReceiver.bufferSize;
         if (agent.soundReceiver.buffer[index] === 1) {
           fill(0, 0, 255);
         } else {
           fill(64);
         }
-        rect(
-          xOffset + i * cellSize,
-          yOffset + 10 + yOffsetStep * 3,
-          cellSize,
-          cellSize
-        );
+        rect(xOffset + i * cellSize, yOffset + 10 + yOffsetStep * 3, cellSize, cellSize);
       }
     });
   }
@@ -419,44 +355,44 @@ class Message {
 
 const patterns = {
   I_O: [
-    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1,
   ],
   I_P: [
-    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 0, 0, 0, 0,
   ],
   I_OP: [
-    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0,
-    0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1,
+    0, 0, 0, 0, 1, 1, 1, 1,
   ],
   II_O: [
-    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    0, 0, 0, 0, 0, 0, 0, 0,
   ],
   II_P: [
-    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 1, 1, 1, 1, 1, 1, 1,
   ],
   II_OP: [
-    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1,
-    1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0,
+    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0,
+    1, 1, 1, 1, 0, 0, 0, 0,
   ],
   I_R: [
-    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 1, 1, 1, 1,
   ],
   II_R: [
-    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
   ],
   E: [
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1,
   ],
   rejection: [
-    1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1,
-    1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0,
+    1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0,
+    1, 1, 1, 1, 0, 0, 0, 0,
   ],
 };
 
@@ -468,26 +404,11 @@ function setup() {
 
   environment = new Environment();
 
-  const agent1 = new Agent(
-    "Agent1",
-    createVector(100, 200, 0),
-    createVector(1, 0, 0),
-    patterns
-  );
-  agent1.lightTransmitter.pattern = patterns["II_P"];
+  const agent1 = new Agent('Agent1', createVector(100, 200, 0), createVector(1, 0, 0), patterns);
+  agent1.lightTransmitter.pattern = patterns['II_P'];
 
-  const agent2 = new Agent(
-    "Agent2",
-    createVector(300, 200, 0),
-    createVector(-1, 0, 0),
-    patterns
-  );
-  const agent3 = new Agent(
-    "Agent3",
-    createVector(200, 300, 0),
-    createVector(0, 1, 0),
-    patterns
-  );
+  const agent2 = new Agent('Agent2', createVector(300, 200, 0), createVector(-1, 0, 0), patterns);
+  const agent3 = new Agent('Agent3', createVector(200, 300, 0), createVector(0, 1, 0), patterns);
 
   environment.registerAgent(agent1);
   environment.registerAgent(agent2);

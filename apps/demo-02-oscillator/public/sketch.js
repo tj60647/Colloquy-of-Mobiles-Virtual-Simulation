@@ -1,8 +1,8 @@
-import { Agent } from "../lib/Agent.js";
-import { Environment } from "../lib/Environment.js";
-import { Render2Dp5 } from "../lib/Render2Dp5.js";
-import { DebugUtility } from "../lib/DebugUtility.js";
-import { MotionRequest } from "../lib/Oscillator.js";
+import { Agent } from '../lib/Agent.js';
+import { Environment } from '../lib/Environment.js';
+import { Render2Dp5 } from '../lib/Render2Dp5.js';
+import { DebugUtility } from '../lib/DebugUtility.js';
+import { MotionRequest } from '../lib/Oscillator.js';
 
 //console.log("Sketch starting..."); // Should appear in the console immediately
 
@@ -70,9 +70,9 @@ function setup() {
     y: 800 - 50,
     width: 80,
     height: 30,
-    label: "Release",
+    label: 'Release',
   };
-  stopButton = { x: 100, y: 800 - 50, width: 80, height: 30, label: "Stop" };
+  stopButton = { x: 100, y: 800 - 50, width: 80, height: 30, label: 'Stop' };
 }
 
 function draw() {

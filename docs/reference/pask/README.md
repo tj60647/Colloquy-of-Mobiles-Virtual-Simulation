@@ -12,4 +12,3 @@ This directory contains original writings and documentation by Gordon Pask relat
 ## About Gordon Pask
 
 Gordon Pask (1928-1996) was a British cybernetician who created the original "Colloquy of Mobiles" installation in 1968.
-

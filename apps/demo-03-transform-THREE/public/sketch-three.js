@@ -1,17 +1,13 @@
 // Import the Three.js library and OrbitControls from a CDN
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js";
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
 
 // Import Text from Troika Text library loaded via CDN
-import { Text } from "https://unpkg.com/troika-three-text?module";
+import { Text } from 'https://unpkg.com/troika-three-text?module';
 
-import { createCameraControl } from "../../../lib/cameraUtilities.js";
+import { createCameraControl } from '../../../lib/cameraUtilities.js';
 
 let scene, renderer, cameraControl;
-let worldTransform,
-  rootTransform,
-  childTransform,
-  grandChildTransform,
-  greatGrandChildTransform;
+let worldTransform, rootTransform, childTransform, grandChildTransform, greatGrandChildTransform;
 const rotationSpeed = 0.5; // Speed of rotation in degrees per frame
 const axisLength = 20;
 
@@ -101,26 +97,17 @@ function init() {
  */
 function createAxisGeometriesAndMaterials() {
   // X-axis: Red
-  const xAxisPoints = [
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(axisLength, 0, 0),
-  ];
+  const xAxisPoints = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(axisLength, 0, 0)];
   xAxisGeometry = new THREE.BufferGeometry().setFromPoints(xAxisPoints);
   xAxisMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
 
   // Y-axis: Green
-  const yAxisPoints = [
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(0, axisLength, 0),
-  ];
+  const yAxisPoints = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, axisLength, 0)];
   yAxisGeometry = new THREE.BufferGeometry().setFromPoints(yAxisPoints);
   yAxisMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 });
 
   // Z-axis: Blue
-  const zAxisPoints = [
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(0, 0, axisLength),
-  ];
+  const zAxisPoints = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, axisLength)];
   zAxisGeometry = new THREE.BufferGeometry().setFromPoints(zAxisPoints);
   zAxisMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
 }
@@ -133,15 +120,15 @@ function drawAxes(transform) {
   // Reuse pre-created geometries and materials for axes
   const xAxisLine = new THREE.Line(xAxisGeometry, xAxisMaterial);
   transform.add(xAxisLine);
-  createTextLabel("X", axisLength / 2, 0, 0, transform); // Position label at midpoint of X-axis
+  createTextLabel('X', axisLength / 2, 0, 0, transform); // Position label at midpoint of X-axis
 
   const yAxisLine = new THREE.Line(yAxisGeometry, yAxisMaterial);
   transform.add(yAxisLine);
-  createTextLabel("Y", 0, axisLength / 2, 0, transform); // Position label at midpoint of Y-axis
+  createTextLabel('Y', 0, axisLength / 2, 0, transform); // Position label at midpoint of Y-axis
 
   const zAxisLine = new THREE.Line(zAxisGeometry, zAxisMaterial);
   transform.add(zAxisLine);
-  createTextLabel("Z", 0, 0, axisLength / 2, transform); // Position label at midpoint of Z-axis
+  createTextLabel('Z', 0, 0, axisLength / 2, transform); // Position label at midpoint of Z-axis
 }
 
 /**
@@ -178,8 +165,8 @@ function createTextLabel(text, x, y, z, parent) {
   textMesh.fontSize = 5;
   textMesh.position.set(x, y, z);
   textMesh.color = 0xffffff; // Set text color
-  textMesh.anchorX = "center"; // Anchor the text at the center horizontally
-  textMesh.anchorY = "middle"; // Anchor the text at the center vertically
+  textMesh.anchorX = 'center'; // Anchor the text at the center horizontally
+  textMesh.anchorY = 'middle'; // Anchor the text at the center vertically
   textMesh.sync(); // Sync the text
 
   parent.add(textMesh);
@@ -203,8 +190,7 @@ function animate() {
   rootTransform.rotation.y += THREE.MathUtils.degToRad(rotationSpeed);
   childTransform.rotation.y += THREE.MathUtils.degToRad(rotationSpeed);
   grandChildTransform.rotation.y += THREE.MathUtils.degToRad(rotationSpeed);
-  greatGrandChildTransform.rotation.y +=
-    THREE.MathUtils.degToRad(rotationSpeed);
+  greatGrandChildTransform.rotation.y += THREE.MathUtils.degToRad(rotationSpeed);
 
   // Render the scene from the perspective of the camera
   renderer.render(scene, cameraControl.camera);
@@ -216,7 +202,7 @@ function animate() {
 function clearLines() {
   for (let i = scene.children.length - 1; i >= 0; i--) {
     const obj = scene.children[i];
-    if (obj.type === "Line") {
+    if (obj.type === 'Line') {
       scene.remove(obj);
     }
   }

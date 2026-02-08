@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "ES2020",
+    "lib": ["ES2020"],
+    "types": ["node", "jest"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    /* Emit */
+    "outDir": "./dist",
+    "rootDir": "./",
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    /* Interop Constraints */
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    /* Type Checking - Gradual Migration Strategy */
+    "strict": false /* Start lenient, increase strictness gradually */,
+    "noImplicitAny": false /* Allow 'any' during migration */,
+    "strictNullChecks": false /* Enable later */,
+    "strictFunctionTypes": false /* Enable later */,
+    "strictPropertyInitialization": false /* Enable later */,
+    "noImplicitThis": false /* Enable later */,
+    "alwaysStrict": true /* Use 'use strict' in emitted JS */,
+    /* Additional Checks */
+    "noUnusedLocals": false /* Enable after cleanup */,
+    "noUnusedParameters": false /* Enable after cleanup */,
+    "noImplicitReturns": false /* Enable after cleanup */,
+    "noFallthroughCasesInSwitch": true,
+    /* Completeness */
+    "skipLibCheck": true /* Skip type checking of declaration files */,
+    "resolveJsonModule": true,
+    /* Allow JS files during gradual migration */
+    "allowJs": true,
+    "checkJs": false /* Don't type-check JS files yet */
+  },
+  "include": ["lib/**/*", "apps/**/*", "server.ts"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts"]
+}

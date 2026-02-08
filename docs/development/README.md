@@ -5,19 +5,25 @@ This directory contains ongoing development work for the Colloquy of Mobiles Vir
 ## Directory Structure
 
 ### `level-of-effort/`
+
 **Feasibility studies and technical exploration for virtual simulation features**
+
 - Demo documentation showing proof-of-concept implementations
 - Level-of-effort studies for implementing specific subsystems
 - Technical feasibility assessments
 
 ### `prototypes/`
+
 **Experimental implementations and prototype code documentation**
+
 - Early-stage prototypes
 - Experimental features
 - Technical spikes
 
 ### `notes/`
+
 **Working notes and development observations**
+
 - Implementation notes
 - Design decisions
 - Development journal
