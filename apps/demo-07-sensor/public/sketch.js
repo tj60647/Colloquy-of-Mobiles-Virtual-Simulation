@@ -1,6 +1,6 @@
-import { Sensor } from '../../lib/Sensor.js';
-import { Transform } from '../../lib/Transform.js';
-import { Render3Dp5 } from '../../lib/Render3Dp5.js';
+import { SensorBase as Sensor } from '../../../dist/lib/components/SensorBase.js';
+import { Transform } from '../../../dist/lib/Transform.js';
+import { Render3Dp5 } from '../../../lib/Render3Dp5.js';
 
 //console.log("Sketch starting..."); // Should appear in the console immediately
 
@@ -108,29 +108,29 @@ function drawHUD() {
   // Root Transform
   text(
     `Root Global Position: (${rootTransform.getGlobalPosition().x.toFixed(2)}, ` +
-      `${rootTransform.getGlobalPosition().y.toFixed(2)}, ` +
-      `${rootTransform.getGlobalPosition().z.toFixed(2)})`,
+    `${rootTransform.getGlobalPosition().y.toFixed(2)}, ` +
+    `${rootTransform.getGlobalPosition().z.toFixed(2)})`,
     20,
     20
   );
   text(
     `Root Local Position: (${rootTransform.x.toFixed(2)}, ` +
-      `${rootTransform.y.toFixed(2)}, ` +
-      `${rootTransform.z.toFixed(2)})`,
+    `${rootTransform.y.toFixed(2)}, ` +
+    `${rootTransform.z.toFixed(2)})`,
     20,
     40
   );
   text(
     `Root Global Orientation: (Yaw: ${rootTransform.getGlobalOrientation().yaw.toFixed(2)}, ` +
-      `Pitch: ${rootTransform.getGlobalOrientation().pitch.toFixed(2)}, ` +
-      `Roll: ${rootTransform.getGlobalOrientation().roll.toFixed(2)})`,
+    `Pitch: ${rootTransform.getGlobalOrientation().pitch.toFixed(2)}, ` +
+    `Roll: ${rootTransform.getGlobalOrientation().roll.toFixed(2)})`,
     20,
     60
   );
   text(
     `Root Local Orientation: (Yaw: ${rootTransform.yaw.toFixed(2)}, ` +
-      `Pitch: ${rootTransform.pitch.toFixed(2)}, ` +
-      `Roll: ${rootTransform.roll.toFixed(2)})`,
+    `Pitch: ${rootTransform.pitch.toFixed(2)}, ` +
+    `Roll: ${rootTransform.roll.toFixed(2)})`,
     20,
     80
   );
@@ -138,41 +138,41 @@ function drawHUD() {
   // Sensor
   text(
     `Sensor Global Position: (${sensor.getGlobalPosition().x.toFixed(2)}, ` +
-      `${sensor.getGlobalPosition().y.toFixed(2)}, ` +
-      `${sensor.getGlobalPosition().z.toFixed(2)})`,
+    `${sensor.getGlobalPosition().y.toFixed(2)}, ` +
+    `${sensor.getGlobalPosition().z.toFixed(2)})`,
     20,
     120
   );
   text(
     `Sensor Local Position: (${sensor.x.toFixed(2)}, ` +
-      `${sensor.y.toFixed(2)}, ` +
-      `${sensor.z.toFixed(2)})`,
+    `${sensor.y.toFixed(2)}, ` +
+    `${sensor.z.toFixed(2)})`,
     20,
     140
   );
   text(
     `Sensor Global Orientation: (Yaw: ${sensor.getGlobalOrientation().yaw.toFixed(2)}, ` +
-      `Pitch: ${sensor.getGlobalOrientation().pitch.toFixed(2)}, ` +
-      `Roll: ${sensor.getGlobalOrientation().roll.toFixed(2)})`,
+    `Pitch: ${sensor.getGlobalOrientation().pitch.toFixed(2)}, ` +
+    `Roll: ${sensor.getGlobalOrientation().roll.toFixed(2)})`,
     20,
     160
   );
   text(
     `Sensor Local Orientation: (Yaw: ${sensor.yaw.toFixed(2)}, ` +
-      `Pitch: ${sensor.pitch.toFixed(2)}, ` +
-      `Roll: ${sensor.roll.toFixed(2)})`,
+    `Pitch: ${sensor.pitch.toFixed(2)}, ` +
+    `Roll: ${sensor.roll.toFixed(2)})`,
     20,
     180
   );
   text(
     `Point In FOV: (${testPoints[0].x.toFixed(2)}, ${testPoints[0].y.toFixed(2)}, ` +
-      `${testPoints[0].z.toFixed(2)})`,
+    `${testPoints[0].z.toFixed(2)})`,
     20,
     220
   );
   text(
     `Point Out FOV: (${testPoints[1].x.toFixed(2)}, ${testPoints[1].y.toFixed(2)}, ` +
-      `${testPoints[1].z.toFixed(2)})`,
+    `${testPoints[1].z.toFixed(2)})`,
     20,
     240
   );

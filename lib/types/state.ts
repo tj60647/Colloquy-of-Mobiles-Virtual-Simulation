@@ -1,7 +1,12 @@
 /**
  * Mobile State Types
  * Based on canonical terminology from docs/terminology.md
+ * 
+ * These types represent the JSON serialization format for network communication
+ * and state snapshots. They should align with the toJSON() output of runtime classes.
  */
+
+import { Vector3 } from '../math/Vector3';
 
 export type MobileType = 'Male' | 'Female' | 'Bar';
 
@@ -17,17 +22,11 @@ export interface DriveValues {
 export interface MobileState {
   id: string;
   type: MobileType;
-  position: Vector3D;
-  orientation: Vector3D;
+  position: { x: number, y: number, z: number }; // Plain object for JSON serialization
+  orientation: { x: number, y: number, z: number }; // Plain object for JSON serialization
   behavioralState: BehavioralState;
   drives?: DriveValues; // Optional: Bar doesn't have drives
   dominantDrive?: 'O' | 'P'; // Which drive is higher
-}
-
-export interface Vector3D {
-  x: number;
-  y: number;
-  z: number;
 }
 
 export interface SimulationState {

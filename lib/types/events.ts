@@ -1,6 +1,15 @@
 /**
  * Sensor Event Types
- * Events published by sensor stations to the simulation server
+ * 
+ * Events published by physical sensor stations to the simulation server via WebSocket.
+ * These represent real-world sensor readings from the museum installation.
+ * 
+ * In the physical system:
+ * - Light sensors detect reflector positions (Female engagement)
+ * - Sound sensors detect speaker output (Male engagement)
+ * 
+ * @see types/websocket.ts - WebSocket message wrappers
+ * @see components/SensorBase.ts - Virtual sensor implementation
  */
 
 export interface LightEvent {

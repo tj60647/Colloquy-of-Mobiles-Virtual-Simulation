@@ -6,10 +6,18 @@ This project is a virtual simulation of Gordon Pask's "Colloquy of Mobiles," mod
 
 - **apps/**: Contains distinct runnable applications and demos.
   - `demo-00-P5` to `demo-08...`: Various implementations and experiments.
+  - `SimulationConfigurationFiles/`: JSON configurations with schema validation.
   - `server.js`: Node.js server for serving the apps.
-- **lib/**: Shared core library containing primitive classes (`Agent`, `Sensor`, `Drive`).
-- **docs/**: Project documentation and system diagrams.
-- **SimulationConfigurationFiles/**: JSON configurations for runtime settings.
+- **lib/**: Shared core library (TypeScript).
+  - `Mobile.ts`, `Environment.ts`, `Transform.ts`: Core simulation classes.
+  - `SceneGraphLoader.ts`: Parses config files and instantiates scene graph.
+  - `subsystems/`: Paskian internal systems (drives, oscillators).
+  - `components/`: External attachments (sensors, actuators).
+  - `visualization/`: THREE.js rendering wrappers.
+  - `legacy/`: Deprecated p5.js code.
+  - `types/`: TypeScript type definitions.
+- **docs/**: Project documentation, system diagrams, and refactoring plan.
+
 
 ## Simulation Philosophy & Architecture
 ### Position Statement: Simulating the 2018 Interpretation

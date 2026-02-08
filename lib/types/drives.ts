@@ -1,6 +1,13 @@
 /**
- * Drive System Types
+ * Drive System Configuration Types
+ * 
  * Based on canonical terminology from docs/terminology.md
+ * 
+ * These types define the configuration schema for the Drive Subsystem,
+ * which models Pask's "Entropy Drives" (Orange and Puce).
+ * 
+ * @see DriveSubsystem.ts - Runtime implementation
+ * @see Drive.ts - Individual drive implementation
  */
 
 export interface DriveConfig {
@@ -26,3 +33,14 @@ export interface DriveHistoryEntry {
   P: number;
   state: string; // Drive state at this point in time
 }
+
+// Temporary compatibility enum for legacy visualization code
+export const LegacyDriveState = {
+  SATISFIED_AND_INDIFFERENT: 'satisfied_and_indifferent',
+  O_SATISFACTION_SEARCH: 'O_satisfaction_search',
+  P_SATISFACTION_SEARCH: 'P_satisfaction_search',
+  EITHER_O_OR_P_SATISFACTION_SEARCH: 'either_O_or_P_satisfaction_search',
+  UNKNOWN: 'unknown',
+} as const;
+
+export type LegacyDriveStateType = typeof LegacyDriveState[keyof typeof LegacyDriveState];

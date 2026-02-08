@@ -1,15 +1,15 @@
 // Import the Three.js library and OrbitControls from a CDN
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
-import { Actuator_THREE } from '../../lib/Actuator_THREE.js';
-import { Sensor_THREE } from '../../lib/Sensor_THREE.js';
-import { Transducer_THREE } from '../../lib/Transducer_THREE.js';
-import { formatValue } from '../../lib/UI_Utilities.js';
-import { hexToRgba } from '../../lib/UI_Utilities.js';
+import { Actuator_THREE } from '../../../dist/lib/Actuator_THREE.js';
+import { Sensor_THREE } from '../../../dist/lib/Sensor_THREE.js';
+import { Transducer_THREE } from '../../../dist/lib/Transducer_THREE.js';
+import { formatValue } from '../../../dist/lib/UI_Utilities.js';
+import { hexToRgba } from '../../../dist/lib/UI_Utilities.js';
 import { createCameraControl } from '../../../lib/cameraUtilities.js';
 
 // Import the oscillatorSystem class from the oscillatorSystem.js file
 // includ the MotionRequest class
-import { OscillatorSystem_THREE } from '../../../lib/OscillatorSystem_THREE.js';
+import { OscillatorSystem_THREE } from '../../../dist/lib/OscillatorSystem_THREE.js';
 
 // variables common to all THREE.js sketches
 let scene, renderer, cameraControl, lightSource;

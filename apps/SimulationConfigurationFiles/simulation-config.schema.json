@@ -1,0 +1,210 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://colloquy-of-mobiles.org/schemas/simulation-config.schema.json",
+    "title": "Colloquy of Mobiles Simulation Configuration",
+    "description": "Configuration schema for the Colloquy of Mobiles physical system, defining the scene graph hierarchy of coordinate systems, mobiles, subsystems, and components.",
+    "type": "object",
+    "required": [
+        "coordinateSystems"
+    ],
+    "properties": {
+        "coordinateSystems": {
+            "type": "array",
+            "description": "Hierarchical coordinate systems defining the spatial structure. Agents (Mobiles) are embedded as 'childElements' within coordinate systems.",
+            "items": {
+                "oneOf": [
+                    {
+                        "$ref": "#/definitions/CoordinateSystem"
+                    },
+                    {
+                        "$ref": "#/definitions/Agent"
+                    }
+                ]
+            }
+        }
+    },
+    "definitions": {
+        "Vector3": {
+            "type": "object",
+            "description": "3D position vector (x, y, z) in centimeters.",
+            "required": [
+                "x",
+                "y",
+                "z"
+            ],
+            "properties": {
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "z": {
+                    "type": "number"
+                }
+            },
+            "additionalProperties": false
+        },
+        "Orientation": {
+            "type": "object",
+            "description": "3D orientation (roll, pitch, yaw) in degrees.",
+            "required": [
+                "roll",
+                "pitch",
+                "yaw"
+            ],
+            "properties": {
+                "roll": {
+                    "type": "number",
+                    "minimum": -180,
+                    "maximum": 180
+                },
+                "pitch": {
+                    "type": "number",
+                    "minimum": -180,
+                    "maximum": 180
+                },
+                "yaw": {
+                    "type": "number",
+                    "minimum": -360,
+                    "maximum": 360
+                }
+            },
+            "additionalProperties": false
+        },
+        "RangeOfMotion": {
+            "type": "object",
+            "description": "Range of motion constraints for oscillators (min/max angles in degrees).",
+            "properties": {
+                "roll": {
+                    "$ref": "#/definitions/AngleRange"
+                },
+                "pitch": {
+                    "$ref": "#/definitions/AngleRange"
+                },
+                "yaw": {
+                    "$ref": "#/definitions/AngleRange"
+                }
+            },
+            "additionalProperties": false
+        },
+        "AngleRange": {
+            "type": "object",
+            "description": "Min/max angle range in degrees.",
+            "required": [
+                "min",
+                "max"
+            ],
+            "properties": {
+                "min": {
+                    "type": "number",
+                    "minimum": -360,
+                    "maximum": 360
+                },
+                "max": {
+                    "type": "number",
+                    "minimum": -360,
+                    "maximum": 360
+                }
+            },
+            "additionalProperties": false
+        },
+        "CoordinateSystem": {
+            "type": "object",
+            "description": "A coordinate system node in the spatial hierarchy.",
+            "required": [
+                "name",
+                "type",
+                "location",
+                "orientation"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Unique identifier for this coordinate system."
+                },
+                "type": {
+                    "type": "string",
+                    "const": "coordinateSystem",
+                    "description": "Type discriminator for coordinate systems."
+                },
+                "parentCoordinateSystem": {
+                    "type": "string",
+                    "description": "Name of the parent coordinate system (omit for root 'world')."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Human-readable description of this coordinate system's purpose."
+                },
+                "location": {
+                    "$ref": "#/definitions/Vector3",
+                    "description": "Position relative to parent coordinate system."
+                },
+                "orientation": {
+                    "$ref": "#/definitions/Orientation",
+                    "description": "Orientation relative to parent coordinate system."
+                },
+                "rangeOfMotion": {
+                    "$ref": "#/definitions/RangeOfMotion",
+                    "description": "Optional range of motion constraints for oscillators."
+                }
+            },
+            "additionalProperties": false
+        },
+        "Agent": {
+            "type": "object",
+            "description": "Top-level agent (Mobile) with hierarchical subsystems and components.",
+            "required": [
+                "name",
+                "type",
+                "thisCoordinateSystem",
+                "parentCoordinateSystem",
+                "location",
+                "orientation"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Unique identifier for this agent (e.g., 'female 1', 'male 1', 'beam')."
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "origin",
+                        "actuator",
+                        "sensor"
+                    ],
+                    "description": "Type of element: 'origin' (Mobile base), 'actuator' (subsystem/component), 'sensor' (component)."
+                },
+                "thisCoordinateSystem": {
+                    "type": "string",
+                    "description": "Name of the coordinate system this element occupies."
+                },
+                "parentCoordinateSystem": {
+                    "type": "string",
+                    "description": "Name of the parent coordinate system."
+                },
+                "location": {
+                    "$ref": "#/definitions/Vector3",
+                    "description": "Position relative to parent coordinate system."
+                },
+                "orientation": {
+                    "$ref": "#/definitions/Orientation",
+                    "description": "Orientation relative to parent coordinate system."
+                },
+                "rangeOfMotion": {
+                    "$ref": "#/definitions/RangeOfMotion",
+                    "description": "Optional range of motion for oscillators (subsystems)."
+                },
+                "childElements": {
+                    "type": "array",
+                    "description": "Child subsystems and components (sensors/actuators).",
+                    "items": {
+                        "$ref": "#/definitions/Agent"
+                    }
+                }
+            },
+            "additionalProperties": false
+        }
+    }
+}
