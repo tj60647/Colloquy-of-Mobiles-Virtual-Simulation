@@ -13,12 +13,12 @@ This project is a virtual simulation of Gordon Pask's "Colloquy of Mobiles," mod
 
 ## System Architecture & Behavior
 
-The simulation follows a rigorous cybernetic model defined in the 2018 Implementation diagrams. The system consists of three primary agent types: Male Mobiles, Female Mobiles, and the central Beam (Bar).
+The simulation follows the system model defined in the 2018 Implementation diagrams. The system consists of three primary agent types: Male Mobiles, Female Mobiles, and the central Beam (Bar).
 
 ### 1. Shared Drive System (Males & Females Only)
-The Male and Female agents are "Driven Agents," governed by a unified homeostatic system that creates internal needs (entropy).
+The Male and Female agents are "Driven Agents," governed by a unified drive system that creates internal needs.
 *   **Variables**: Two internal drives, **Drive O** and **Drive P**.
-*   **Entropy (Increase)**: Drives increment continuously over time (metabolic cost).
+*   **Continuous Increment**: Drives increment continuously over time.
 *   **Thresholds**:
     *   **Satisfied**: Drives < Lower Limit. Agent is inert.
     *   **Unsatisfied**: Drive > Lower Limit. Agent triggers a search.
