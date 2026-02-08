@@ -1,0 +1,21 @@
+@startuml
+class Actor {
+  + receiveMessage(msg: Message)
+  + sendMessage(msg: Message)
+}
+
+class User extends Actor {
+  - name: String
+  + login()
+  + logout()
+}
+
+class Server extends Actor {
+  - address: String
+  + processRequest(request: Request)
+  + sendResponse(response: Response)
+}
+
+Actor <|-- User
+Actor <|-- Server
+@enduml

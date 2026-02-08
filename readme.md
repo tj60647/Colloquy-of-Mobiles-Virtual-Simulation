@@ -25,8 +25,8 @@ The Male and Female agents are "Driven Agents," governed by a unified drive syst
     *   **Dominant Logic**: Agents prioritize the higher drive (e.g., if O > P, search for O-interaction).
 *   **Satisfaction (Reduction)**: Successful engagement with a partner decrements the specific drive until it falls below the threshold.
 *   **Key Diagrams**:
-    *   [Drive Logic & Hierarchy](docs/diagrams/Implementation2018/ARCHIVE_PlantUML_Diagrams/Hierarchical%20State%20Diagram_OP.plantuml)
-    *   [Drive Manager Activity](docs/diagrams/Implementation2018/ARCHIVE_PlantUML_Diagrams/activityDiagram_driveManager_full.plantuml)
+    *   [Drive Logic & Hierarchy](docs/reference/mcleish/system-design/ARCHIVE_PlantUML_Diagrams/Hierarchical%20State%20Diagram_OP.plantuml)
+    *   [Drive Manager Activity](docs/reference/mcleish/system-design/ARCHIVE_PlantUML_Diagrams/activityDiagram_driveManager_full.plantuml)
 
 ### 2. Male Mobiles
 The Male mobile is an autonomous agent utilizing the Shared Drive System to seek satisfaction.
@@ -38,8 +38,8 @@ The Male mobile is an autonomous agent utilizing the Shared Drive System to seek
     *   **Search**: If Unsatisfied, oscillates horizontally.
     *   **Engage**: Locks onto a partner and exchanges signals to reduce drive.
 *   **Key Diagrams**:
-    *   [Interaction Flow](docs/diagrams/Implementation2018/SystemDiagrams_All/Male_System_Sequence_Diagram.plantuml)
-    *   [Behavior Logic](docs/diagrams/Implementation2018/ARCHIVE_PlantUML_Diagrams/stateDiagram_male_behavior_240731.plantuml)
+    *   [Interaction Flow](docs/reference/mcleish/system-design/SystemDiagrams_All/Male_System_Sequence_Diagram.plantuml)
+    *   [Behavior Logic](docs/reference/mcleish/system-design/ARCHIVE_PlantUML_Diagrams/stateDiagram_male_behavior_240731.plantuml)
 
 ### 3. Female Mobiles
 The Female mobile mirrors the Male structure but includes an additional degree of freedom.
@@ -51,8 +51,8 @@ The Female mobile mirrors the Male structure but includes an additional degree o
 *   **Behavior Loop**:
     *   Matches the Male's Search/Engage pattern but uses the Vertical Reflector to negotiate the connection.
 *   **Key Diagrams**:
-    *   [Interaction Flow](docs/diagrams/Implementation2018/SystemDiagrams_All/Female_System_Sequence_Diagram_Full.plantuml)
-    *   [Behavior Logic](docs/diagrams/Implementation2018/ARCHIVE_PlantUML_Diagrams/stateDiagram_female_behavior_240731.plantuml)
+    *   [Interaction Flow](docs/reference/mcleish/system-design/SystemDiagrams_All/Female_System_Sequence_Diagram_Full.plantuml)
+    *   [Behavior Logic](docs/reference/mcleish/system-design/ARCHIVE_PlantUML_Diagrams/stateDiagram_female_behavior_240731.plantuml)
 
 ### 4. The Beam (The Bar)
 The Beam is a **Reactive Agent** that serves as the central arbitrator. Unlike the mobiles, it does **not** have internal entropy drives (O/P).
@@ -63,7 +63,19 @@ The Beam is a **Reactive Agent** that serves as the central arbitrator. Unlike t
     *   **Arbitration**: Compares `Drive I` vs `Drive II` inputs. The mobile with the higher drive controls the beam.
     *   **Motion**: Oscillates back and forth (Searching) or moves to a "Reinforcement Position".
 *   **Key Diagrams**:
-    *   [Beam Sequence & Arbitration](docs/diagrams/Implementation2018/SystemDiagrams_All/Beam_System_Sequence_Diagram.plantuml)
+    *   [Beam Sequence & Arbitration](docs/reference/mcleish/system-design/SystemDiagrams_All/Beam_System_Sequence_Diagram.plantuml)
+
+---
+
+## Reference Documentation
+
+This implementation is based on **canonical documentation** by Gordon Pask and the McLeish 2018 implementation:
+
+*   **`docs/reference/pask/`** - Pask's original writings on the Colloquy of Mobiles (1968) and conversation theory
+*   **`docs/reference/mcleish/`** - Technical implementation specifications from the 2018 reconstruction
+*   **`docs/terminology.md`** - Standardized terminology guide defining Mobiles, Subsystems, Components, and behavioral states
+
+**Note:** All implementation decisions should align with these reference materials. The terminology guide provides the canonical mapping between Pask's concepts and this codebase.
 
 ## Current Implementation Status
 *   **Architecture Gap**: The core library (`lib/`) primarily implements basic geometric agents. The complex "Actor/Subsystem" logic described above is partially implemented in `apps/demo-05-transceiversV2` but not yet unified.
@@ -174,7 +186,7 @@ Sensor Inputs → Virtual Colloquy Simulation (Heroku/Local) → Multiple Viewin
 *   **Purpose**: Educational reference showing technical architecture
 *   **Technology**: Interactive web diagrams or static print/PDF
 *   **Deployment**: Vercel (static content) or physical poster
-*   **Status**: ✅ Diagrams exist in `docs/diagrams/Implementation2018/`
+*   **Status**: ✅ Diagrams exist in `docs/reference/mcleish/system-design/`
 
 #### 8. Contemporary Comparison Interactive
 **Multiplayer experience comparing Pask's agents to modern AI systems**
@@ -183,6 +195,38 @@ Sensor Inputs → Virtual Colloquy Simulation (Heroku/Local) → Multiple Viewin
 *   **Technology**: TBD (multiplayer where all players may be agents)
 *   **Deployment**: TBD (separate from Colloquy simulation)
 *   **Status**: ❌ Design phase
+
+#### 9. Interactive Documentation Interview System
+**Multi-agent RAG application for knowledge capture and gap analysis**
+
+*   **Purpose**: Systematically document the 2018 reconstruction process through AI-guided interviews with McLeish
+*   **Key Features**:
+    *   **Multi-Agent Interview**: Multiple AI agents ask clarifying questions from different perspectives (technical, historical, design rationale)
+    *   **Document Analysis**: Upload existing documents (PDFs, notes, diagrams); AI identifies gaps, ambiguities, contradictions
+    *   **Knowledge Graph Visualization**: Visual map of documented vs. missing knowledge, concept relationships, reconstruction timeline
+    *   **Structured Output**: Generates formatted documentation for `docs/reference/mcleish/`
+*   **Technology Stack** (2026 Best Practices):
+    *   **Vector Store**: Supabase pgvector with HNSW indexing
+    *   **Embeddings**: OpenAI `text-embedding-3-large` or domain-tuned model
+    *   **LLM**: GPT-4 / Claude 3.5 for multi-agent orchestration
+    *   **Knowledge Graph**: PostgreSQL with graph queries or Neo4j integration
+    *   **Real-time Sync**: Supabase Realtime for live document updates
+    *   **Frontend**: Next.js/React with visualization (D3.js, vis.js)
+*   **Workflow**:
+    1. Upload existing reconstruction documents
+    2. AI agents analyze and identify knowledge gaps
+    3. Multi-agent interview session (competing/complementary questions)
+    4. Visualize knowledge structure and coverage
+    5. Generate formatted documentation
+    6. Iterate until comprehensive
+*   **Data Storage**:
+    *   Document chunks + embeddings in Supabase pgvector
+    *   Interview transcripts and metadata
+    *   Knowledge graph relationships
+    *   Generated documentation versions
+*   **Deployment**: Vercel (frontend + serverless API) + Supabase (backend + vector store)
+*   **Repository**: Separate repository (to be created)
+*   **Status**: ❌ Design phase; serves dual purpose as development tool and museum educational component
 
 ---
 
@@ -297,6 +341,172 @@ DB = Dashboard (Ethernet)
 4. Connect all client devices to switch via Ethernet
 5. Configure each client to connect to `ws://192.168.1.1:3000`
 6. (Optional) Connect WiFi router for admin access
+
+---
+
+## Software Architecture
+
+The installation consists of **6 modular components** communicating via WebSocket:
+
+### Component Overview
+
+```
+┌─────────────┐  ┌─────────────┐
+│Light Sensor │  │Sound Sensor │
+│   App       │  │    App      │
+└──────┬──────┘  └──────┬──────┘
+       │                │
+       │ WebSocket      │ WebSocket
+       │ (publish)      │ (publish)
+       └────────┬───────┘
+                ▼
+       ┌────────────────┐
+       │ Core Simulation│
+       │     Server     │
+       │  (This Repo)   │
+       └────────┬───────┘
+                │
+                │ WebSocket (broadcast)
+                │
+    ┌───────────┼───────────┐
+    ▼           ▼           ▼
+┌────────┐ ┌────────┐ ┌──────────┐
+│3D      │ │VR      │ │Time      │
+│Renderer│ │Renderer│ │Series    │
+└────────┘ └────────┘ └──────────┘
+```
+
+---
+
+### 1. Light Sensor App
+**Webcam-based light detection simulating Female Mobile's oscillating vertical reflector**
+
+*   **Purpose**: Detect visitor light interactions (flashlight, phone screen, etc.)
+*   **Input**: Webcam feed (wide-angle lens preferred)
+*   **Processing**:
+    *   Oscillating rectangular zone sweeps across video frame (mimics Female's vertical reflector motion)
+    *   Background subtraction: capture baseline image, compare current frame against it
+    *   Light level detection in active zone vs. background threshold
+    *   Activation trigger when light exceeds threshold
+*   **Output**: WebSocket events
+    ```typescript
+    {type: 'light', intensity: 0.0-1.0, zone: number, timestamp: number}
+    ```
+*   **Technology**: Node.js + TypeScript
+    *   Camera: `node-webcam` or `opencv4nodejs`
+    *   Image processing: `canvas` or `jimp`
+    *   WebSocket: `socket.io-client`
+*   **Repository**: `apps/sensor-light/` (to be created)
+*   **Status**: ❌ Needs prototyping
+
+---
+
+### 2. Sound Sensor App
+**Microphone-based FFT frequency analysis with bandpass filtering**
+
+*   **Purpose**: Detect visitor sound interactions (voice, clapping, whistling, etc.)
+*   **Input**: Microphone audio stream (webcam mic or dedicated microphone)
+*   **Processing**:
+    *   FFT (Fast Fourier Transform) on incoming audio
+    *   Peak detection at different frequency bins
+    *   Bandpass filter (configurable high-pass + low-pass = notch filter)
+    *   Configurable frequency windows for different interaction types
+*   **Output**: WebSocket events
+    ```typescript
+    {type: 'sound', frequencies: Array<{freq: number, amplitude: number}>, timestamp: number}
+    ```
+*   **Technology**: Node.js + TypeScript
+    *   Audio capture: `node-mic` or `node-record-lpcm16`
+    *   FFT processing: `fft.js` or `dsp.js`
+    *   WebSocket: `socket.io-client`
+*   **Repository**: `apps/sensor-sound/` (to be created)
+*   **Status**: ❌ Needs prototyping
+
+---
+
+### 3. Core Simulation Server
+**Stateful agent simulation engine (this repository)**
+
+*   **Purpose**: Single source of truth for all agent behaviors and state
+*   **Input**: Sensor events via WebSocket (light, sound)
+*   **Processing**:
+    *   Agent state machines (Male/Female/Beam behaviors)
+    *   Drive system updates (O/P drives increment over time, decrement on satisfaction)
+    *   Interaction logic (pattern matching, engagement, arbitration)
+    *   Continuous simulation loop (runs independently of sensor input)
+*   **Output**: Steady stream of simulation state via WebSocket broadcast
+    ```javascript
+    {
+      agents: [
+        {id, position, rotation, state, drives: {O, P}, subsystems: {...}}
+      ],
+      interactions: [{agentA, agentB, type, timestamp}],
+      timestamp: ms
+    }
+    ```
+*   **Technology**: Node.js + Express + Socket.io
+*   **Repository**: Root of this repository (`server.js`, `lib/`)
+*   **Status**: ⚠️ Core agent behaviors implemented; WebSocket pub/sub integration needed
+
+---
+
+### 4. 3D Renderer (Screen View)
+**Traditional monitor/projection visualization**
+
+*   **Purpose**: Primary visual display of the Colloquy simulation
+*   **Input**: Simulation state stream (WebSocket subscriber)
+*   **Rendering**: 
+    *   3D scene with agent geometries
+    *   Drive state visualizations
+    *   Interaction effects (light/sound pulses)
+*   **Output**: Real-time 3D graphics on screen/projector
+*   **Technology**: p5.js/THREE.js browser-based 3D
+*   **Repository**: `apps/renderer-3d/` (refactor from `demo-05-transceiversV2`)
+*   **Status**: ✅ Partial implementation exists
+
+---
+
+### 5. VR Renderer (XR View)
+**Immersive headset experience of the same simulation**
+
+*   **Purpose**: Allow visitors to experience the Colloquy in immersive 3D space
+*   **Input**: Same simulation state stream as 3D renderer
+*   **Rendering**: 
+    *   Immersive 3D environment with stereoscopic rendering
+    *   Spatial audio for agent interactions
+    *   Hand tracking for potential interaction (future)
+*   **Output**: WebXR-compatible VR experience
+*   **Technology**: THREE.js + WebXR API or A-Frame
+*   **Repository**: `apps/renderer-vr/` (to be created)
+*   **Status**: ❌ Not yet implemented
+
+---
+
+### 6. Time Series Renderer (Analytics Dashboard)
+**Real-time metrics and analytics visualization**
+
+*   **Purpose**: Display live simulation data like video game stats
+*   **Input**: Same simulation state stream
+*   **Rendering**:
+    *   Drive O/P levels over time (line charts)
+    *   Interaction frequency heatmaps
+    *   Agent state timelines
+    *   Visitor engagement metrics
+*   **Output**: Real-time dashboard with charts and graphs
+*   **Technology**: Chart.js, D3.js, or similar visualization library
+*   **Repository**: `apps/renderer-timeseries/` (to be created)
+*   **Status**: ❌ Not yet implemented
+
+---
+
+### Data Flow Summary
+
+1. **Sensors → Simulation**: Light/sound apps publish events to simulation server
+2. **Simulation Processing**: Server updates agent states, drive levels, interactions
+3. **Simulation → Renderers**: Server broadcasts state to all connected renderers
+4. **Renderers Subscribe**: Each renderer visualizes the same data differently (3D, VR, charts)
+
+All components are **loosely coupled** via WebSocket, allowing independent development, testing, and deployment.
 
 ---
 

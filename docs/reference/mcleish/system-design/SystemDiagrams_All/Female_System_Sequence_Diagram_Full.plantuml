@@ -1,0 +1,83 @@
+@startuml
+
+title Male Female Exchange
+
+box "Female" #f9c6e8
+    participant "Female Horizontal Control Sub-system" as FemaleHorizontalControlSubsystem
+    participant "Female Vertical Reflector Sub-system" as FemaleVerticalReflectorSubsystem
+    participant "Female Drive Sub-system" as FemaleDriveSubsystem
+    participant "Female System" as FemaleSystem
+end box
+
+box "Environment" #fcf6c1
+    participant "Environment" as Environment
+end box
+
+box #e4fcfa
+    Actor "Male or Human" as Actor
+end box
+
+' Agent's behavior based on state managed by Female System
+loop System Running
+
+    FemaleSystem -> FemaleDriveSubsystem : Get Drive State 
+    FemaleDriveSubsystem -> FemaleSystem : Drive State 
+    FemaleSystem -> FemaleDriveSubsystem : Get Drive Values
+    FemaleDriveSubsystem -> FemaleSystem : Drive Values
+
+    FemaleSystem -> FemaleSystem : Display Drive State
+    FemaleSystem -> FemaleSystem : Display Drives
+
+    alt Female System State = Satisfaction Search
+        FemaleSystem -> FemaleHorizontalControlSubsystem : Search [Release]
+        FemaleSystem -> FemaleVerticalReflectorSubsystem : Stop
+        FemaleSystem -> FemaleSystem : Watch for Intermittent Signal
+        Actor --> Environment : Intermittent Signal
+        Environment --> FemaleSystem : Intermittent Signal
+
+        alt Intermittent Signal = This Satisfaction Search
+            FemaleSystem -> FemaleSystem : Put Partner ID and Search into Memory*
+            FemaleSystem -> Environment : Respond (Identifying Sound)
+            Environment -> Actor : Identifying Signal
+            FemaleSystem -> FemaleHorizontalControlSubsystem : Stop
+            FemaleSystem -> FemaleVerticalReflectorSubsystem : Search [Release]
+
+            loop Engaging Partner
+                FemaleSystem -> FemaleSystem : Listen for Reinforcement Signal
+                Actor --> Environment : Reinforcement Signal
+                Environment --> FemaleSystem : Reinforcement Signal
+
+                alt Reinforcement Signal = True
+                    FemaleSystem -> FemaleDriveSubsystem : Decrement Search Drive
+
+                FemaleSystem -> FemaleDriveSubsystem : Get Drive State 
+                FemaleDriveSubsystem --> FemaleSystem : Drive State 
+                FemaleSystem -> FemaleDriveSubsystem : Get Drive Values
+                FemaleDriveSubsystem --> FemaleSystem : Drive Values
+
+                FemaleSystem -> FemaleSystem : Display Drive State
+                FemaleSystem -> FemaleSystem : Display Drives
+
+                alt Drive State = Satisfied and Indifferent
+                    FemaleSystem -> FemaleSystem : Satisfaction Display
+                    FemaleSystem -> FemaleSystem : State = Satisfied and Indifferent
+                else Drive State = This Satisfaction Search
+                    FemaleSystem -> FemaleSystem : Continue Engaging Partner
+                else Drive State = Either O or P Satisfaction Search
+                    FemaleSystem -> FemaleSystem : Continue Engaging Partner
+                else Drive State = Other Satisfaction Search
+                    FemaleSystem -> FemaleSystem : State = Satisfaction Search
+                end
+            else Reinforcement Signal Timeout
+                FemaleSystem -> FemaleSystem : State = Satisfaction Search
+            end
+        end
+    else Intermittent Signal != This Satisfaction Search
+        FemaleSystem -> FemaleSystem : State = Satisfaction Search
+    end
+else Female System State = Satisfied and Indifferent
+    FemaleSystem -> FemaleHorizontalControlSubsystem : Stop
+    FemaleSystem -> FemaleVerticalReflectorSubsystem : Stop
+end
+
+@enduml

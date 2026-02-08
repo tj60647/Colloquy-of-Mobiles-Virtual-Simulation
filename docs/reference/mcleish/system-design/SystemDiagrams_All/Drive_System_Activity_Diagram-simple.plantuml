@@ -1,0 +1,13 @@
+@startuml
+
+start
+:Increment Drive;
+if (drive < lower limit) then (yes)
+  :satisfied and indifferent;
+else (no)
+    :satisfaction search;
+endif
+:Loop Back;
+stop
+
+@enduml

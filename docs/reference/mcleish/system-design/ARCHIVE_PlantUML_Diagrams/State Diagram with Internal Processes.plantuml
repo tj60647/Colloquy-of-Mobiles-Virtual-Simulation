@@ -1,0 +1,21 @@
+@startuml
+[*] --> Satisfied
+
+Satisfied --> Unsatisfied : Drive > Threshold
+
+Unsatisfied --> Searching
+
+Searching --> Engaging : Partner Found
+Searching --> Searching : Partner Not Found
+
+Engaging --> Engaging : Successful Exchange, Drive >= Threshold
+Engaging --> Satisfied : Successful Exchange, Drive < Threshold
+Engaging --> Searching : Unsuccessful Exchange
+
+Satisfied : Drive increments continuously
+Unsatisfied : Drive increments continuously
+Searching : Drive increments continuously
+Engaging : Drive increments continuously
+Engaging : Drive decrements on successful exchange
+
+@enduml

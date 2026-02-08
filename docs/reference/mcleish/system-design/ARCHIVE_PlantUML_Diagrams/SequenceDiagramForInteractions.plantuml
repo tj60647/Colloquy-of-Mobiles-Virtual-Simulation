@@ -1,0 +1,19 @@
+@startuml
+actor User
+participant Server
+
+User -> Server: login()
+activate Server
+Server -> User: acknowledge()
+deactivate Server
+
+User -> Server: requestData()
+activate Server
+Server -> User: sendData()
+deactivate Server
+
+User -> Server: logout()
+activate Server
+Server -> User: goodbye()
+deactivate Server
+@enduml

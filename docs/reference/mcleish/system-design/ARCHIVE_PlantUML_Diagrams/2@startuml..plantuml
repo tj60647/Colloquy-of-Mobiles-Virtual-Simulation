@@ -1,0 +1,95 @@
+@startuml
+[*] --> Environment
+
+state Environment {
+    state Agent1 {
+        [*] --> Satisfied1
+        Satisfied1 --> Unsatisfied1 : Drive > Threshold
+
+        state Unsatisfied1 {
+            [*] --> Searching1
+            Searching1 --> Engaging1 : Partner Found
+            Searching1 --> Searching1 : Partner Not Found
+
+            Engaging1 --> Searching1 : Unsuccessful Exchange
+            Engaging1 --> Engaging1 : Successful Exchange, Drive >= Threshold
+            Engaging1 --> Satisfied1 : Successful Exchange, Drive < Threshold
+
+            Engaging1 : Drive decrements on successful exchange
+        }
+        Agent1 : Drive increments continuously
+    }
+
+    state Agent2 {
+        [*] --> Satisfied2
+        Satisfied2 --> Unsatisfied2 : Drive > Threshold
+
+        state Unsatisfied2 {
+            [*] --> Searching2
+            Searching2 --> Engaging2 : Partner Found
+            Searching2 --> Searching2 : Partner Not Found
+
+            Engaging2 --> Searching2 : Unsuccessful Exchange
+            Engaging2 --> Engaging2 : Successful Exchange, Drive >= Threshold
+            Engaging2 --> Satisfied2 : Successful Exchange, Drive < Threshold
+
+            Engaging2 : Drive decrements on successful exchange
+        }
+        Agent2 : Drive increments continuously
+    }
+
+    state Agent3 {
+        [*] --> Satisfied3
+        Satisfied3 --> Unsatisfied3 : Drive > Threshold
+
+        state Unsatisfied3 {
+            [*] --> Searching3
+            Searching3 --> Engaging3 : Partner Found
+            Searching3 --> Searching3 : Partner Not Found
+
+            Engaging3 --> Searching3 : Unsuccessful Exchange
+            Engaging3 --> Engaging3 : Successful Exchange, Drive >= Threshold
+            Engaging3 --> Satisfied3 : Successful Exchange, Drive < Threshold
+
+            Engaging3 : Drive decrements on successful exchange
+        }
+        Agent3 : Drive increments continuously
+    }
+
+    state Agent4 {
+        [*] --> Satisfied4
+        Satisfied4 --> Unsatisfied4 : Drive > Threshold
+
+        state Unsatisfied4 {
+            [*] --> Searching4
+            Searching4 --> Engaging4 : Partner Found
+            Searching4 --> Searching4 : Partner Not Found
+
+            Engaging4 --> Searching4 : Unsuccessful Exchange
+            Engaging4 --> Engaging4 : Successful Exchange, Drive >= Threshold
+            Engaging4 --> Satisfied4 : Successful Exchange, Drive < Threshold
+
+            Engaging4 : Drive decrements on successful exchange
+        }
+        Agent4 : Drive increments continuously
+    }
+
+    state Agent5 {
+        [*] --> Satisfied5
+        Satisfied5 --> Unsatisfied5 : Drive > Threshold
+
+        state Unsatisfied5 {
+            [*] --> Searching5
+            Searching5 --> Engaging5 : Partner Found
+            Searching5 --> Searching5 : Partner Not Found
+
+            Engaging5 --> Searching5 : Unsuccessful Exchange
+            Engaging5 --> Engaging5 : Successful Exchange, Drive >= Threshold
+            Engaging5 --> Satisfied5 : Successful Exchange, Drive < Threshold
+
+            Engaging5 : Drive decrements on successful exchange
+        }
+        Agent5 : Drive increments continuously
+    }
+}
+@enduml
