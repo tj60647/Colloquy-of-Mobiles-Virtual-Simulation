@@ -26,6 +26,7 @@ export interface MobileConfig {
     drives?: DriveSystemConfig;  // Optional: Defaults applied if missing
     horizontalControl?: OscillatorConfig; // Optional
     verticalControl?: OscillatorConfig;   // Optional (Females only)
+    id?: number; // Optional: For deserialization to preserve IDs
 }
 
 export class Mobile extends Transform {
@@ -57,7 +58,8 @@ export class Mobile extends Transform {
                 yaw: config.initialRotation.y,
                 roll: config.initialRotation.z
             },
-            config.name
+            config.name,
+            config.id // Preserve ID if provided (for deserialization)
         );
 
         this._config = config;
@@ -194,7 +196,8 @@ export class Mobile extends Transform {
             },
             drives: json.drives.config,
             horizontalControl: json.horizontalControl.config,
-            parent: parent
+            parent: parent,
+            id: json.id // Preserve original ID
         };
 
         // Add vertical control config if present in JSON

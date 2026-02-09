@@ -7,7 +7,7 @@ import * as path from 'path';
 
 describe('SceneGraphLoader v2', () => {
     it('should load config_v2.json and create all 6 Mobiles', async () => {
-        const configPath = path.resolve(__dirname, '../apps/SimulationConfigurationFiles/config_v2.json');
+        const configPath = path.resolve(__dirname, '../../apps/SimulationConfigurationFiles/config_v2.json');
 
         const environment = await SceneGraphLoader.loadFromFile(configPath);
 

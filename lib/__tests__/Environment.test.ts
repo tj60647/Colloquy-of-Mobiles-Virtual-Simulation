@@ -39,6 +39,14 @@ describe('Environment Serialization', () => {
 
     it('should deserialize environment from JSON', () => {
         const json = env.toJSON();
+        
+        // DEBUG: Print the JSON to see actual IDs
+        console.log('=== SERIALIZED JSON ===');
+        console.log(JSON.stringify(json, null, 2));
+        console.log('Parent ID:', mobile1.id);
+        console.log('Child ID:', mobile2.id);
+        console.log('===');
+        
         const restored = Environment.fromJSON(json);
 
         expect(restored.mobiles.length).toBe(2);

@@ -13,6 +13,12 @@ export interface Euler {
     roll: number;
 }
 
+// ID generation with counter to prevent collisions
+let nextId = 1;
+function generateId(): number {
+    return Date.now() * 1000 + (nextId++ % 1000);
+}
+
 export class Transform {
     // Private fields backing the properties
     private _position: Vector3;
@@ -40,13 +46,13 @@ export class Transform {
         localPosition: { x: number, y: number, z: number } = { x: 0, y: 0, z: 0 },
         localOrientation: { yaw: number, pitch: number, roll: number } = { yaw: 0, pitch: 0, roll: 0 },
         name: string = 'Unnamed Transform',
-        id: number = Date.now()
+        id?: number  // Optional - generates new ID if not provided
     ) {
         this.parent = parent;
         this._position = new Vector3(localPosition.x, localPosition.y, localPosition.z);
         this._rotation = { ...localOrientation };
         this.name = name;
-        this.id = id;
+        this.id = id !== undefined ? id : generateId();
 
         if (this.parent) {
             this.parent.addChild(this);
@@ -80,11 +86,48 @@ export class Transform {
 
     // Hierarchy
     addChild(child: Transform) {
-        if (child && !this.children.includes(child)) {
-            this.children.push(child);
-            child.parent = this;
-            child.markChildrenForUpdate();
+        if (!child || this.children.includes(child)) {
+            return; // Already a child or null
         }
+
+        // Check for circular reference (would this create a cycle?)
+        if (this.isAncestor(child)) {
+            console.error(`Cannot add child "${child.name}" to "${this.name}": would create circular reference`);
+            return;
+        }
+
+        // Check if child is trying to be its own parent
+        if (child === this) {
+            console.error(`Cannot add "${this.name}" as its own child`);
+            return;
+        }
+
+        this.children.push(child);
+        child.parent = this;
+        child.markChildrenForUpdate();
+    }
+
+    /**
+     * Check if a given transform is an ancestor of this transform.
+     * Used to prevent circular references in the scene graph.
+     */
+    private isAncestor(potentialAncestor: Transform): boolean {
+        let current = this.parent;
+        const visited = new Set<Transform>();
+
+        while (current) {
+            if (visited.has(current)) {
+                // Already visited this node, there's a cycle in the existing hierarchy
+                return true;
+            }
+            visited.add(current);
+
+            if (current === potentialAncestor) {
+                return true;
+            }
+            current = current.parent;
+        }
+        return false;
     }
 
     removeChild(child: Transform) {
@@ -97,10 +140,25 @@ export class Transform {
     }
 
     markChildrenForUpdate() {
-        for (const child of this.children) {
-            child._needsPositionUpdate = true;
-            child._needsOrientationUpdate = true;
-            child.markChildrenForUpdate();
+        // Use iterative approach with visited set to prevent infinite recursion
+        const toVisit: Transform[] = [this];
+        const visited = new Set<Transform>();
+
+        while (toVisit.length > 0) {
+            const current = toVisit.pop()!;
+
+            if (visited.has(current)) {
+                // Cycle detected, skip to prevent infinite loop
+                continue;
+            }
+            visited.add(current);
+
+            // Mark all children of current node
+            for (const child of current.children) {
+                child._needsPositionUpdate = true;
+                child._needsOrientationUpdate = true;
+                toVisit.push(child);
+            }
         }
     }
 
