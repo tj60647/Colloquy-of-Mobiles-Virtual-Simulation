@@ -10,65 +10,61 @@ This directory contains JSON configuration files that define the physical system
 
 | File | Description | Status |
 |------|-------------|--------|
-| `config.json` | Default configuration for standard simulation runs | Legacy |
-| `config_240812.json` | Physical system configuration (August 24, 2012 design) | ✅ Active |
-| `simulation-config.schema.json` | JSON Schema for validation | ✅ New |
+| `config_v2.json` | **Active Config** (v2 format) - 6 Mobiles, full hierarchy | ✅ ACTIVE |
+| `config_v2_example.json` | Example config with Female 1 only | ✅ Example |
+| `simulation-config-v2.schema.json` | JSON Schema for v2 validation | ✅ Active |
+| `config_240812.json` | Legacy config from Aug 2024 | ⚠️ Legacy |
+| `config.json` | Old default config | ❌ Deprecated |
 
 ### **Schema File**
 
-**`simulation-config.schema.json`** - JSON Schema (Draft-07) that validates configuration files.
+**`simulation-config-v2.schema.json`** - JSON Schema (Draft-07) that validates configuration files.
 
 **Features:**
 - ✅ IDE autocomplete and validation
 - ✅ Real-time error checking
 - ✅ Documents expected structure
-- ✅ Type definitions for Vector3, Orientation, RangeOfMotion
+- ✅ Type definitions for Mobile types, drives, subsystems, components
 
-**Usage:** Add `"$schema": "./simulation-config.schema.json"` to the top of config files.
+**Usage:** Add `"$schema": "./simulation-config-v2.schema.json"` to the top of config files.
 
 ---
 
-## Configuration Structure
+## Configuration Structure (v2)
 
-### **Top Level:**
+The v2 format uses a **Hybrid Scene Graph** approach involving two main sections:
+
+### **1. coordinateSystems** (Spatial Hierarchy)
+A flat list of transform nodes with parent references. This defines the physical skeleton.
+
 ```json
 {
-  "$schema": "./simulation-config.schema.json",
   "coordinateSystems": [
-    // Array of coordinate systems and embedded agents
+    {
+      "id": "female1_base",
+      "parent": "armature",
+      "position": { "x": 0, "y": 68, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 0 }
+    }
   ]
 }
 ```
 
-### **Coordinate System:**
-```json
-{
-  "name": "world",
-  "type": "coordinateSystem",
-  "parentCoordinateSystem": "parent_name",  // Optional (omit for root)
-  "description": "Human-readable description",
-  "location": { "x": 0, "y": 0, "z": 0 },
-  "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
-  "rangeOfMotion": {  // Optional (for oscillators)
-    "yaw": { "min": -30, "max": 30 }
-  }
-}
-```
+### **2. mobiles** (Logical Hierarchy)
+Defines autonomous entities and their internal components. This is **Mobile-centric**.
 
-### **Agent (Mobile/Component):**
 ```json
 {
-  "name": "female 1",
-  "type": "origin",  // "origin" | "actuator" | "sensor"
-  "thisCoordinateSystem": "female_1_base",
-  "parentCoordinateSystem": "armature",
-  "location": { "x": 0, "y": 68, "z": 0 },
-  "orientation": { "roll": 0, "pitch": 0, "yaw": 0 },
-  "rangeOfMotion": {  // Optional (for subsystems)
-    "yaw": { "min": -30, "max": 30 }
-  },
-  "childElements": [
-    // Nested sensors, actuators, subsystems
+  "mobiles": [
+    {
+      "id": "female1",
+      "mobileType": "female",
+      "coordinateSystem": "female1_base",  // Links to spatial hierarchy
+      
+      "drives": { ... },      // Internal state
+      "subsystems": [ ... ],  // Oscillators (horizontal/vertical)
+      "components": [ ... ]   // Sensors/Actuators
+    }
   ]
 }
 ```
@@ -77,124 +73,59 @@ This directory contains JSON configuration files that define the physical system
 
 ## How to Use
 
-### **1. Default Configuration**
+### **Loading a Config**
 ```typescript
 import { SceneGraphLoader } from '../lib/SceneGraphLoader';
 
+// Load the default v2 config
 const environment = await SceneGraphLoader.loadFromFile(
-    'apps/SimulationConfigurationFiles/config_240812.json'
+    'apps/SimulationConfigurationFiles/config_v2.json'
 );
 ```
 
-### **2. Custom Configuration**
-1. Create a new `.json` file in this directory
-2. Add `"$schema": "./simulation-config.schema.json"` at the top
-3. Define your coordinate systems and agents
-4. VS Code will validate automatically!
+### **2. Creating Custom Configs**
+1. Create a new `.json` file in this directory.
+2. Add `"$schema": "./simulation-config-v2.schema.json"` at the top.
+3. Define `coordinateSystems` and `mobiles`.
+4. VS Code will auto-suggest fields and valid values!
 
-### **3. Validation**
-The schema validates:
-- Required fields (name, type, location, orientation)
-- Angle ranges (yaw: ±360°, roll/pitch: ±180°)
-- Vector3 structure (x, y, z)
-- Type discriminators ("coordinateSystem", "origin", "actuator", "sensor")
+### **3. Validation Rules**
+The schema enforces:
+- **Mobile Types**: `female`, `male`, `beam`
+- **Subsystem Types**: `horizontal_control`, `vertical_control`
+- **Component Types**: `sound_sensor`, `sound_actuator`, `light_sensor`
+- **Ranges**: Angles (±360), Limits, Field of View (0-360)
 
 ---
 
 ## Physical System Hierarchy
 
-**`config_240812.json`** defines the complete physical system:
+`config_v2.json` defines the complete physical system:
 
 ```
 world
-├── armature
-│   ├── female_1_base
-│   │   └── horizontal control subsystem
-│   │       ├── female speaker (actuator)
-│   │       ├── female microphone (sensor)
-│   │       └── vertical control subsystem
-│   │           └── female light sensor (sensor)
-│   ├── female_2_base (similar structure)
-│   ├── female_3_base (similar structure)
-│   └── beam
-│       ├── beam_horizontal_control
-│       ├── male_1_base
-│       │   └── horizontal control subsystem
-│       │       ├── male speaker (actuator)
-│       │       └── male microphone (sensor)
-│       └── male_2_base (similar structure)
-└── plinth
+└── armature
+    ├── female1
+    │   ├── Horizontal Control (yaw)
+    │   │   ├── Vertical Control (roll)
+    │   │   │   └── Light Sensor
+    │   │   ├── Speaker
+    │   │   └── Microphone
+    ├── female2 (same)
+    ├── female3 (same)
+    └── beam
+        ├── Male 1
+        │   ├── Horizontal Control
+        │   └── Sensors/Actuators
+        └── Male 2
+            ├── Horizontal Control
+            └── Sensors/Actuators
 ```
-
----
-
-## Adding New Configurations
-
-1. **Create File:** `config_custom.json`
-2. **Add Schema Reference:**
-   ```json
-   {
-     "$schema": "./simulation-config.schema.json",
-     "coordinateSystems": []
-   }
-   ```
-3. **Define Hierarchy:** Add coordinate systems and agents
-4. **Validate:** VS Code will show errors in real-time
-5. **Load:** Use `SceneGraphLoader.loadFromFile()`
-
----
-
-## Schema Validation Examples
-
-### ✅ **Valid:**
-```json
-{
-  "$schema": "./simulation-config.schema.json",
-  "coordinateSystems": [
-    {
-      "name": "world",
-      "type": "coordinateSystem",
-      "location": { "x": 0, "y": 0, "z": 0 },
-      "orientation": { "roll": 0, "pitch": 0, "yaw": 0 }
-    }
-  ]
-}
-```
-
-### ❌ **Invalid (missing required field):**
-```json
-{
-  "coordinateSystems": [
-    {
-      "name": "world",
-      "type": "coordinateSystem",
-      "location": { "x": 0, "y": 0 }  // Missing 'z'
-    }
-  ]
-}
-```
-**Error:** "Missing property 'z'"
-
-### ❌ **Invalid (out of range):**
-```json
-{
-  "coordinateSystems": [
-    {
-      "name": "world",
-      "type": "coordinateSystem",
-      "location": { "x": 0, "y": 0, "z": 0 },
-      "orientation": { "roll": 0, "pitch": 0, "yaw": 400 }  // > 360
-    }
-  ]
-}
-```
-**Error:** "Value is above the maximum of 360"
 
 ---
 
 ## Related Documentation
 
-- `../../lib/SceneGraphLoader.ts` - Config file parser
+- `../../lib/SceneGraphLoader.ts` - V2 Config parser
 - `../../lib/Mobile.ts` - Mobile class
-- `../../lib/Transform.ts` - Scene graph base class
-- `../../docs/REFACTORING_PLAN.md` - Phase 7 tracking
+- `../../docs/REFACTORING_PLAN.md` - Phase 7 details

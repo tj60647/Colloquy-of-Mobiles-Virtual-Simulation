@@ -19,7 +19,7 @@ This document tracks the migration from legacy JavaScript/p5.js to a modern Type
 | ✅ | **Phase 4: Components** | Sensors and actuators |
 | ✅ | **Phase 5: Library Reorganization** | Directory structure cleanup |
 | ✅ | **Phase 6: Type Cleanup** | Remove duplicates, add documentation |
-| 🔄 | **Phase 7: Config Loader & Schema** | JSON Schema, SceneGraphLoader (partial) |
+| ✅ | **Phase 7: Config Loader & Schema** | Config V2, SceneGraphLoader, full validation |
 | ⏳ | **Phase 8: Network Layer** | WebSocket server/client |
 | ⏳ | **Phase 9: Visualization Refactor** | Separate rendering from simulation |
 | ⏳ | **Phase 10: Demo Migration** | Update demos to use new architecture |
@@ -165,7 +165,7 @@ lib/
 
 ---
 
-## Phase 7: Config Loader & JSON Schema 🔄 IN PROGRESS
+## Phase 7: Config Loader & JSON Schema ✅ COMPLETE
 
 **Goal:** Create JSON Schema for validation and implement config file parser to instantiate scene graph.
 
@@ -173,30 +173,28 @@ lib/
 
 | Task | Status | Notes |
 | :--- | :--- | :--- |
-| Create JSON Schema | ✅ | `simulation-config.schema.json` with full validation |
-| Add schema reference to configs | ✅ | IDE autocomplete enabled |
-| Create `SceneGraphLoader.ts` | ✅ | Basic structure implemented |
-| Implement coordinate system creation | ✅ | Transform hierarchy works |
-| Implement Mobile instantiation logic | ✅ | Basic logic complete |
-
-### **Remaining:**
-
-| Task | Status | Notes |
-| :--- | :--- | :--- |
-| Implement agent discovery | ⏳ | Parse embedded agents in coordinateSystems |
-| Implement component creation | ⏳ | Sensors and actuators |
-| Implement subsystem attachment | ⏳ | Vertical control, etc. |
-| Add validation and error handling | ⏳ | Graceful failures |
-| Create tests | ⏳ | Unit tests for loader |
+| Create JSON Schema | ✅ | `simulation-config-v2.schema.json` |
+| Add schema reference to configs | ✅ | `config_v2.json` validates |
+| Create `SceneGraphLoader.ts` | ✅ | Config v2 + Hybrid Scene Graph |
+| Implement coordinate system creation | ✅ | Flat transform parsing |
+| Implement Mobile instantiation logic | ✅ | Mobile-centric loader |
+| Implement agent discovery | ✅ | Handled via Mobile definitions |
+| Implement component creation | ✅ | Sensors/actuators attached |
+| Implement subsystem attachment | ✅ | Oscillators linked to transforms |
+| Add validation and error handling | ✅ | Robust lookups |
+| Create tests | ✅ | `test-loader.ts` integration test |
 
 **Files Created:**
-- `apps/SimulationConfigurationFiles/simulation-config.schema.json`
+- `apps/SimulationConfigurationFiles/simulation-config-v2.schema.json`
+- `apps/SimulationConfigurationFiles/config_v2.json`
 - `lib/SceneGraphLoader.ts`
+- `test-loader.ts`
 
-**Files Modified:**
-- `apps/SimulationConfigurationFiles/config_240812.json` (added $schema reference)
-
-**Target File:** `apps/SimulationConfigurationFiles/config_240812.json`
+**Design Decision:**
+Moved to a **Config V2 (Hybrid)** format:
+- Flattened coordinate systems to avoid deep nesting.
+- Explicit `mobileType` and subtypes (`horizontal_control`) for type safety.
+- Complete metadata (drives, FOV, motion profiles) included in config.
 
 
 ---

@@ -1,0 +1,370 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://colloquy-of-mobiles.org/schemas/simulation-config-v2.schema.json",
+    "title": "Colloquy of Mobiles Simulation Configuration v2",
+    "description": "Best-practice configuration schema for the Colloquy of Mobiles physical system",
+    "type": "object",
+    "required": [
+        "version",
+        "coordinateSystems",
+        "mobiles"
+    ],
+    "properties": {
+        "$schema": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string",
+            "const": "2.0"
+        },
+        "metadata": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            }
+        },
+        "world": {
+            "type": "object",
+            "properties": {
+                "gravity": {
+                    "$ref": "#/definitions/Vector3"
+                },
+                "ambientLight": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                }
+            }
+        },
+        "coordinateSystems": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/CoordinateSystem"
+            }
+        },
+        "mobiles": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/Mobile"
+            }
+        }
+    },
+    "definitions": {
+        "Vector3": {
+            "type": "object",
+            "required": [
+                "x",
+                "y",
+                "z"
+            ],
+            "properties": {
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "z": {
+                    "type": "number"
+                }
+            }
+        },
+        "CoordinateSystem": {
+            "type": "object",
+            "required": [
+                "id",
+                "name",
+                "position",
+                "rotation"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "Unique identifier for this coordinate system"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Human-readable name"
+                },
+                "parent": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "ID of parent coordinate system, or null for root"
+                },
+                "position": {
+                    "$ref": "#/definitions/Vector3",
+                    "description": "Position relative to parent"
+                },
+                "rotation": {
+                    "$ref": "#/definitions/Vector3",
+                    "description": "Rotation in degrees (x=pitch, y=yaw, z=roll)"
+                }
+            }
+        },
+        "Mobile": {
+            "type": "object",
+            "required": [
+                "id",
+                "name",
+                "mobileType",
+                "coordinateSystem"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "Unique identifier for this Mobile"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Human-readable name"
+                },
+                "mobileType": {
+                    "type": "string",
+                    "enum": [
+                        "female",
+                        "male",
+                        "beam"
+                    ],
+                    "description": "Type of Mobile"
+                },
+                "coordinateSystem": {
+                    "type": "string",
+                    "description": "ID of the coordinate system this Mobile is attached to"
+                },
+                "drives": {
+                    "$ref": "#/definitions/DriveConfiguration"
+                },
+                "subsystems": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Subsystem"
+                    }
+                },
+                "components": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Component"
+                    }
+                }
+            }
+        },
+        "DriveConfiguration": {
+            "type": "object",
+            "required": [
+                "orange",
+                "puce"
+            ],
+            "properties": {
+                "orange": {
+                    "$ref": "#/definitions/DriveParams"
+                },
+                "puce": {
+                    "$ref": "#/definitions/DriveParams"
+                }
+            }
+        },
+        "DriveParams": {
+            "type": "object",
+            "required": [
+                "initialValue",
+                "lowerLimit",
+                "upperLimit",
+                "maximum"
+            ],
+            "properties": {
+                "initialValue": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "lowerLimit": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "upperLimit": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "maximum": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "incrementRate": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "decrementRate": {
+                    "type": "number",
+                    "minimum": 0
+                }
+            }
+        },
+        "Subsystem": {
+            "type": "object",
+            "required": [
+                "type",
+                "coordinateSystem",
+                "rangeOfMotion",
+                "motionProfile"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "horizontal_control",
+                        "vertical_control"
+                    ],
+                    "description": "Type of subsystem"
+                },
+                "coordinateSystem": {
+                    "type": "string",
+                    "description": "ID of the coordinate system for this subsystem"
+                },
+                "rangeOfMotion": {
+                    "$ref": "#/definitions/RangeOfMotion"
+                },
+                "motionProfile": {
+                    "$ref": "#/definitions/MotionProfile"
+                },
+                "reinforcementPosition": {
+                    "type": "number",
+                    "description": "Target position for reinforcement"
+                },
+                "tolerance": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Tolerance for position matching"
+                }
+            }
+        },
+        "RangeOfMotion": {
+            "type": "object",
+            "required": [
+                "axis",
+                "min",
+                "max"
+            ],
+            "properties": {
+                "axis": {
+                    "type": "string",
+                    "enum": [
+                        "yaw",
+                        "pitch",
+                        "roll"
+                    ],
+                    "description": "Axis of rotation"
+                },
+                "min": {
+                    "type": "number",
+                    "minimum": -360,
+                    "maximum": 360,
+                    "description": "Minimum angle in degrees"
+                },
+                "max": {
+                    "type": "number",
+                    "minimum": -360,
+                    "maximum": 360,
+                    "description": "Maximum angle in degrees"
+                }
+            }
+        },
+        "MotionProfile": {
+            "type": "object",
+            "required": [
+                "maxVelocity",
+                "maxAcceleration"
+            ],
+            "properties": {
+                "maxVelocity": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Maximum velocity in degrees/second"
+                },
+                "maxAcceleration": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Maximum acceleration in degrees/second²"
+                },
+                "maxJerk": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Maximum jerk in degrees/second³"
+                }
+            }
+        },
+        "Component": {
+            "type": "object",
+            "required": [
+                "type",
+                "name",
+                "localPosition",
+                "localRotation"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "sound_actuator",
+                        "sound_sensor",
+                        "light_sensor",
+                        "light_actuator"
+                    ],
+                    "description": "Type of component"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Human-readable name"
+                },
+                "localPosition": {
+                    "$ref": "#/definitions/Vector3",
+                    "description": "Position relative to Mobile"
+                },
+                "localRotation": {
+                    "$ref": "#/definitions/Vector3",
+                    "description": "Rotation relative to Mobile"
+                },
+                "fieldOfView": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 360,
+                    "description": "Field of view in degrees"
+                },
+                "maxIntensity": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Maximum intensity (actuators only)"
+                },
+                "sensitivity": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Sensitivity (sensors only)"
+                },
+                "frequencyRange": {
+                    "type": "object",
+                    "properties": {
+                        "min": {
+                            "type": "number",
+                            "minimum": 0
+                        },
+                        "max": {
+                            "type": "number",
+                            "minimum": 0
+                        }
+                    },
+                    "description": "Frequency range in Hz (sound components only)"
+                }
+            }
+        }
+    }
+}

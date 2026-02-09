@@ -1,0 +1,212 @@
+{
+    "$schema": "./simulation-config-v2.schema.json",
+    "version": "2.0",
+    "metadata": {
+        "name": "Colloquy of Mobiles - Physical System Configuration",
+        "date": "2024-08-12",
+        "description": "Complete configuration for the 2018 reconstruction - Example with Female 1"
+    },
+    "world": {
+        "gravity": {
+            "x": 0,
+            "y": -9.81,
+            "z": 0
+        },
+        "ambientLight": 0.2
+    },
+    "coordinateSystems": [
+        {
+            "id": "world",
+            "name": "World",
+            "parent": null,
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "armature",
+            "name": "Armature",
+            "parent": "world",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "female1_base",
+            "name": "Female 1 Base",
+            "parent": "armature",
+            "position": {
+                "x": 0,
+                "y": 68,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "female1_horizontal",
+            "name": "Female 1 Horizontal Control",
+            "parent": "female1_base",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "female1_vertical",
+            "name": "Female 1 Vertical Control",
+            "parent": "female1_horizontal",
+            "position": {
+                "x": 0,
+                "y": -9.872,
+                "z": -40.5
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        }
+    ],
+    "mobiles": [
+        {
+            "id": "female1",
+            "name": "Female 1",
+            "mobileType": "female",
+            "coordinateSystem": "female1_base",
+            "drives": {
+                "orange": {
+                    "initialValue": 500,
+                    "lowerLimit": 400,
+                    "upperLimit": 600,
+                    "maximum": 1000,
+                    "incrementRate": 1.0,
+                    "decrementRate": 2.0
+                },
+                "puce": {
+                    "initialValue": 500,
+                    "lowerLimit": 400,
+                    "upperLimit": 600,
+                    "maximum": 1000,
+                    "incrementRate": 1.0,
+                    "decrementRate": 2.0
+                }
+            },
+            "subsystems": [
+                {
+                    "type": "horizontal_control",
+                    "coordinateSystem": "female1_horizontal",
+                    "rangeOfMotion": {
+                        "axis": "yaw",
+                        "min": -30,
+                        "max": 30
+                    },
+                    "motionProfile": {
+                        "maxVelocity": 15,
+                        "maxAcceleration": 15,
+                        "maxJerk": 50
+                    },
+                    "reinforcementPosition": 0,
+                    "tolerance": 1.0
+                },
+                {
+                    "type": "vertical_control",
+                    "coordinateSystem": "female1_vertical",
+                    "rangeOfMotion": {
+                        "axis": "roll",
+                        "min": -15,
+                        "max": 15
+                    },
+                    "motionProfile": {
+                        "maxVelocity": 10,
+                        "maxAcceleration": 10,
+                        "maxJerk": 40
+                    },
+                    "reinforcementPosition": 0,
+                    "tolerance": 1.0
+                }
+            ],
+            "components": [
+                {
+                    "type": "sound_actuator",
+                    "name": "Speaker",
+                    "localPosition": {
+                        "x": -2,
+                        "y": -0.25,
+                        "z": -34.75
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 120,
+                    "maxIntensity": 1.0,
+                    "frequencyRange": {
+                        "min": 20,
+                        "max": 20000
+                    }
+                },
+                {
+                    "type": "sound_sensor",
+                    "name": "Microphone",
+                    "localPosition": {
+                        "x": 2,
+                        "y": -0.25,
+                        "z": -34.75
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 90,
+                    "sensitivity": 1.0,
+                    "frequencyRange": {
+                        "min": 20,
+                        "max": 20000
+                    }
+                },
+                {
+                    "type": "light_sensor",
+                    "name": "Light Sensor",
+                    "localPosition": {
+                        "x": 0,
+                        "y": -10,
+                        "z": -40.5
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 90,
+                    "sensitivity": 1.0
+                }
+            ]
+        }
+    ]
+}

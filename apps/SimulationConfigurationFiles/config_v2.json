@@ -1,0 +1,891 @@
+{
+    "$schema": "./simulation-config-v2.schema.json",
+    "version": "2.0",
+    "metadata": {
+        "name": "Colloquy of Mobiles - Physical System Configuration",
+        "date": "2024-08-12",
+        "description": "Complete configuration for the 2018 reconstruction with all 6 Mobiles"
+    },
+    "world": {
+        "gravity": {
+            "x": 0,
+            "y": -9.81,
+            "z": 0
+        },
+        "ambientLight": 0.2
+    },
+    "coordinateSystems": [
+        {
+            "id": "world",
+            "name": "World",
+            "parent": null,
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "armature",
+            "name": "Armature",
+            "parent": "world",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "plinth",
+            "name": "Plinth",
+            "parent": "world",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 2
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "female1_base",
+            "name": "Female 1 Base",
+            "parent": "armature",
+            "position": {
+                "x": 0,
+                "y": 68,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "female1_horizontal",
+            "name": "Female 1 Horizontal Control",
+            "parent": "female1_base",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "female1_vertical",
+            "name": "Female 1 Vertical Control",
+            "parent": "female1_horizontal",
+            "position": {
+                "x": 0,
+                "y": -9.872,
+                "z": -40.5
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "female2_base",
+            "name": "Female 2 Base",
+            "parent": "armature",
+            "position": {
+                "x": 58.5,
+                "y": -34,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 240,
+                "z": 0
+            }
+        },
+        {
+            "id": "female2_horizontal",
+            "name": "Female 2 Horizontal Control",
+            "parent": "female2_base",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "female2_vertical",
+            "name": "Female 2 Vertical Control",
+            "parent": "female2_horizontal",
+            "position": {
+                "x": 0,
+                "y": -9.872,
+                "z": -40.5
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "female3_base",
+            "name": "Female 3 Base",
+            "parent": "armature",
+            "position": {
+                "x": -58.5,
+                "y": -34,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 120,
+                "z": 0
+            }
+        },
+        {
+            "id": "female3_horizontal",
+            "name": "Female 3 Horizontal Control",
+            "parent": "female3_base",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "female3_vertical",
+            "name": "Female 3 Vertical Control",
+            "parent": "female3_horizontal",
+            "position": {
+                "x": 0,
+                "y": -9.872,
+                "z": -40.5
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "beam_base",
+            "name": "Beam Base",
+            "parent": "armature",
+            "position": {
+                "x": 0,
+                "y": -34,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "beam_horizontal",
+            "name": "Beam Horizontal Control",
+            "parent": "beam_base",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "male1_base",
+            "name": "Male 1 Base",
+            "parent": "beam_horizontal",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 51
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "male1_horizontal",
+            "name": "Male 1 Horizontal Control",
+            "parent": "male1_base",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "male2_base",
+            "name": "Male 2 Base",
+            "parent": "beam_horizontal",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": -51
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "id": "male2_horizontal",
+            "name": "Male 2 Horizontal Control",
+            "parent": "male2_base",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        }
+    ],
+    "mobiles": [
+        {
+            "id": "female1",
+            "name": "Female 1",
+            "mobileType": "female",
+            "coordinateSystem": "female1_base",
+            "drives": {
+                "orange": {
+                    "initialValue": 500,
+                    "lowerLimit": 400,
+                    "upperLimit": 600,
+                    "maximum": 1000,
+                    "incrementRate": 1.0,
+                    "decrementRate": 2.0
+                },
+                "puce": {
+                    "initialValue": 500,
+                    "lowerLimit": 400,
+                    "upperLimit": 600,
+                    "maximum": 1000,
+                    "incrementRate": 1.0,
+                    "decrementRate": 2.0
+                }
+            },
+            "subsystems": [
+                {
+                    "type": "horizontal_control",
+                    "coordinateSystem": "female1_horizontal",
+                    "rangeOfMotion": {
+                        "axis": "yaw",
+                        "min": -30,
+                        "max": 30
+                    },
+                    "motionProfile": {
+                        "maxVelocity": 15,
+                        "maxAcceleration": 15,
+                        "maxJerk": 50
+                    },
+                    "reinforcementPosition": 0,
+                    "tolerance": 1.0
+                },
+                {
+                    "type": "vertical_control",
+                    "coordinateSystem": "female1_vertical",
+                    "rangeOfMotion": {
+                        "axis": "roll",
+                        "min": -15,
+                        "max": 15
+                    },
+                    "motionProfile": {
+                        "maxVelocity": 10,
+                        "maxAcceleration": 10,
+                        "maxJerk": 40
+                    },
+                    "reinforcementPosition": 0,
+                    "tolerance": 1.0
+                }
+            ],
+            "components": [
+                {
+                    "type": "sound_actuator",
+                    "name": "Speaker",
+                    "localPosition": {
+                        "x": -2,
+                        "y": -0.25,
+                        "z": -34.75
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 120,
+                    "maxIntensity": 1.0,
+                    "frequencyRange": {
+                        "min": 20,
+                        "max": 20000
+                    }
+                },
+                {
+                    "type": "sound_sensor",
+                    "name": "Microphone",
+                    "localPosition": {
+                        "x": 2,
+                        "y": -0.25,
+                        "z": -34.75
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 90,
+                    "sensitivity": 1.0,
+                    "frequencyRange": {
+                        "min": 20,
+                        "max": 20000
+                    }
+                },
+                {
+                    "type": "light_sensor",
+                    "name": "Light Sensor",
+                    "localPosition": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 90,
+                    "sensitivity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "female2",
+            "name": "Female 2",
+            "mobileType": "female",
+            "coordinateSystem": "female2_base",
+            "drives": {
+                "orange": {
+                    "initialValue": 500,
+                    "lowerLimit": 400,
+                    "upperLimit": 600,
+                    "maximum": 1000,
+                    "incrementRate": 1.0,
+                    "decrementRate": 2.0
+                },
+                "puce": {
+                    "initialValue": 500,
+                    "lowerLimit": 400,
+                    "upperLimit": 600,
+                    "maximum": 1000,
+                    "incrementRate": 1.0,
+                    "decrementRate": 2.0
+                }
+            },
+            "subsystems": [
+                {
+                    "type": "horizontal_control",
+                    "coordinateSystem": "female2_horizontal",
+                    "rangeOfMotion": {
+                        "axis": "yaw",
+                        "min": -30,
+                        "max": 30
+                    },
+                    "motionProfile": {
+                        "maxVelocity": 15,
+                        "maxAcceleration": 15,
+                        "maxJerk": 50
+                    },
+                    "reinforcementPosition": 0,
+                    "tolerance": 1.0
+                },
+                {
+                    "type": "vertical_control",
+                    "coordinateSystem": "female2_vertical",
+                    "rangeOfMotion": {
+                        "axis": "roll",
+                        "min": -15,
+                        "max": 15
+                    },
+                    "motionProfile": {
+                        "maxVelocity": 10,
+                        "maxAcceleration": 10,
+                        "maxJerk": 40
+                    },
+                    "reinforcementPosition": 0,
+                    "tolerance": 1.0
+                }
+            ],
+            "components": [
+                {
+                    "type": "sound_actuator",
+                    "name": "Speaker",
+                    "localPosition": {
+                        "x": -2,
+                        "y": -0.25,
+                        "z": -34.75
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 120,
+                    "maxIntensity": 1.0,
+                    "frequencyRange": {
+                        "min": 20,
+                        "max": 20000
+                    }
+                },
+                {
+                    "type": "sound_sensor",
+                    "name": "Microphone",
+                    "localPosition": {
+                        "x": 2,
+                        "y": -0.25,
+                        "z": -34.75
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 90,
+                    "sensitivity": 1.0,
+                    "frequencyRange": {
+                        "min": 20,
+                        "max": 20000
+                    }
+                },
+                {
+                    "type": "light_sensor",
+                    "name": "Light Sensor",
+                    "localPosition": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 90,
+                    "sensitivity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "female3",
+            "name": "Female 3",
+            "mobileType": "female",
+            "coordinateSystem": "female3_base",
+            "drives": {
+                "orange": {
+                    "initialValue": 500,
+                    "lowerLimit": 400,
+                    "upperLimit": 600,
+                    "maximum": 1000,
+                    "incrementRate": 1.0,
+                    "decrementRate": 2.0
+                },
+                "puce": {
+                    "initialValue": 500,
+                    "lowerLimit": 400,
+                    "upperLimit": 600,
+                    "maximum": 1000,
+                    "incrementRate": 1.0,
+                    "decrementRate": 2.0
+                }
+            },
+            "subsystems": [
+                {
+                    "type": "horizontal_control",
+                    "coordinateSystem": "female3_horizontal",
+                    "rangeOfMotion": {
+                        "axis": "yaw",
+                        "min": -30,
+                        "max": 30
+                    },
+                    "motionProfile": {
+                        "maxVelocity": 15,
+                        "maxAcceleration": 15,
+                        "maxJerk": 50
+                    },
+                    "reinforcementPosition": 0,
+                    "tolerance": 1.0
+                },
+                {
+                    "type": "vertical_control",
+                    "coordinateSystem": "female3_vertical",
+                    "rangeOfMotion": {
+                        "axis": "roll",
+                        "min": -15,
+                        "max": 15
+                    },
+                    "motionProfile": {
+                        "maxVelocity": 10,
+                        "maxAcceleration": 10,
+                        "maxJerk": 40
+                    },
+                    "reinforcementPosition": 0,
+                    "tolerance": 1.0
+                }
+            ],
+            "components": [
+                {
+                    "type": "sound_actuator",
+                    "name": "Speaker",
+                    "localPosition": {
+                        "x": -2,
+                        "y": -0.25,
+                        "z": -34.75
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 120,
+                    "maxIntensity": 1.0,
+                    "frequencyRange": {
+                        "min": 20,
+                        "max": 20000
+                    }
+                },
+                {
+                    "type": "sound_sensor",
+                    "name": "Microphone",
+                    "localPosition": {
+                        "x": 2,
+                        "y": -0.25,
+                        "z": -34.75
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 90,
+                    "sensitivity": 1.0,
+                    "frequencyRange": {
+                        "min": 20,
+                        "max": 20000
+                    }
+                },
+                {
+                    "type": "light_sensor",
+                    "name": "Light Sensor",
+                    "localPosition": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 90,
+                    "sensitivity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "beam",
+            "name": "Beam",
+            "mobileType": "beam",
+            "coordinateSystem": "beam_base",
+            "drives": {
+                "orange": {
+                    "initialValue": 500,
+                    "lowerLimit": 400,
+                    "upperLimit": 600,
+                    "maximum": 1000,
+                    "incrementRate": 1.0,
+                    "decrementRate": 2.0
+                },
+                "puce": {
+                    "initialValue": 500,
+                    "lowerLimit": 400,
+                    "upperLimit": 600,
+                    "maximum": 1000,
+                    "incrementRate": 1.0,
+                    "decrementRate": 2.0
+                }
+            },
+            "subsystems": [
+                {
+                    "type": "horizontal_control",
+                    "coordinateSystem": "beam_horizontal",
+                    "rangeOfMotion": {
+                        "axis": "yaw",
+                        "min": -30,
+                        "max": 30
+                    },
+                    "motionProfile": {
+                        "maxVelocity": 15,
+                        "maxAcceleration": 15,
+                        "maxJerk": 50
+                    },
+                    "reinforcementPosition": 0,
+                    "tolerance": 1.0
+                }
+            ],
+            "components": [
+                {
+                    "type": "sound_actuator",
+                    "name": "Speaker",
+                    "localPosition": {
+                        "x": -2,
+                        "y": -0.25,
+                        "z": 0
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 120,
+                    "maxIntensity": 1.0,
+                    "frequencyRange": {
+                        "min": 20,
+                        "max": 20000
+                    }
+                },
+                {
+                    "type": "sound_sensor",
+                    "name": "Microphone",
+                    "localPosition": {
+                        "x": 2,
+                        "y": -0.25,
+                        "z": 0
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 90,
+                    "sensitivity": 1.0,
+                    "frequencyRange": {
+                        "min": 20,
+                        "max": 20000
+                    }
+                }
+            ]
+        },
+        {
+            "id": "male1",
+            "name": "Male 1",
+            "mobileType": "male",
+            "coordinateSystem": "male1_base",
+            "drives": {
+                "orange": {
+                    "initialValue": 500,
+                    "lowerLimit": 400,
+                    "upperLimit": 600,
+                    "maximum": 1000,
+                    "incrementRate": 1.0,
+                    "decrementRate": 2.0
+                },
+                "puce": {
+                    "initialValue": 500,
+                    "lowerLimit": 400,
+                    "upperLimit": 600,
+                    "maximum": 1000,
+                    "incrementRate": 1.0,
+                    "decrementRate": 2.0
+                }
+            },
+            "subsystems": [
+                {
+                    "type": "horizontal_control",
+                    "coordinateSystem": "male1_horizontal",
+                    "rangeOfMotion": {
+                        "axis": "yaw",
+                        "min": -30,
+                        "max": 30
+                    },
+                    "motionProfile": {
+                        "maxVelocity": 15,
+                        "maxAcceleration": 15,
+                        "maxJerk": 50
+                    },
+                    "reinforcementPosition": 0,
+                    "tolerance": 1.0
+                }
+            ],
+            "components": [
+                {
+                    "type": "sound_actuator",
+                    "name": "Speaker",
+                    "localPosition": {
+                        "x": -2,
+                        "y": -0.25,
+                        "z": -34.75
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 120,
+                    "maxIntensity": 1.0,
+                    "frequencyRange": {
+                        "min": 20,
+                        "max": 20000
+                    }
+                },
+                {
+                    "type": "sound_sensor",
+                    "name": "Microphone",
+                    "localPosition": {
+                        "x": 2,
+                        "y": -0.25,
+                        "z": -34.75
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 90,
+                    "sensitivity": 1.0,
+                    "frequencyRange": {
+                        "min": 20,
+                        "max": 20000
+                    }
+                }
+            ]
+        },
+        {
+            "id": "male2",
+            "name": "Male 2",
+            "mobileType": "male",
+            "coordinateSystem": "male2_base",
+            "drives": {
+                "orange": {
+                    "initialValue": 500,
+                    "lowerLimit": 400,
+                    "upperLimit": 600,
+                    "maximum": 1000,
+                    "incrementRate": 1.0,
+                    "decrementRate": 2.0
+                },
+                "puce": {
+                    "initialValue": 500,
+                    "lowerLimit": 400,
+                    "upperLimit": 600,
+                    "maximum": 1000,
+                    "incrementRate": 1.0,
+                    "decrementRate": 2.0
+                }
+            },
+            "subsystems": [
+                {
+                    "type": "horizontal_control",
+                    "coordinateSystem": "male2_horizontal",
+                    "rangeOfMotion": {
+                        "axis": "yaw",
+                        "min": -30,
+                        "max": 30
+                    },
+                    "motionProfile": {
+                        "maxVelocity": 15,
+                        "maxAcceleration": 15,
+                        "maxJerk": 50
+                    },
+                    "reinforcementPosition": 0,
+                    "tolerance": 1.0
+                }
+            ],
+            "components": [
+                {
+                    "type": "sound_actuator",
+                    "name": "Speaker",
+                    "localPosition": {
+                        "x": -2,
+                        "y": -0.25,
+                        "z": -34.75
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 120,
+                    "maxIntensity": 1.0,
+                    "frequencyRange": {
+                        "min": 20,
+                        "max": 20000
+                    }
+                },
+                {
+                    "type": "sound_sensor",
+                    "name": "Microphone",
+                    "localPosition": {
+                        "x": 2,
+                        "y": -0.25,
+                        "z": -34.75
+                    },
+                    "localRotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "fieldOfView": 90,
+                    "sensitivity": 1.0,
+                    "frequencyRange": {
+                        "min": 20,
+                        "max": 20000
+                    }
+                }
+            ]
+        }
+    ]
+}

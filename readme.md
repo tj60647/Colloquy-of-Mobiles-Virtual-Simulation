@@ -10,7 +10,7 @@ This project is a virtual simulation of Gordon Pask's "Colloquy of Mobiles," mod
   - `server.js`: Node.js server for serving the apps.
 - **lib/**: Shared core library (TypeScript).
   - `Mobile.ts`, `Environment.ts`, `Transform.ts`: Core simulation classes.
-  - `SceneGraphLoader.ts`: Parses config files and instantiates scene graph.
+  - `SceneGraphLoader.ts`: Parses config files (v2) and instantiates scene graph.
   - `subsystems/`: Paskian internal systems (drives, oscillators).
   - `components/`: External attachments (sensors, actuators).
   - `visualization/`: THREE.js rendering wrappers.
@@ -574,6 +574,31 @@ The installation consists of **6 modular components** communicating via WebSocke
 4. **Renderers Subscribe**: Each renderer visualizes the same data differently (3D, VR, charts)
 
 All components are **loosely coupled** via WebSocket, allowing independent development, testing, and deployment.
+
+---
+
+---
+
+## Configuration & Loading
+
+The simulation is data-driven, defined by a strict JSON configuration file.
+
+### **Config Format (v2)**
+We use a **Hybrid Scene Graph** approach where a single config file defines both the spatial hierarchy (Transform nodes) and the logical hierarchy (Mobiles, subsystems, components).
+
+- **Mobiles**: Top-level autonomous entities (Females, Males, Beam).
+- **Coordinate Systems**: Flat list of spatial transforms with parent references (avoiding deep nesting).
+- **Subsystems**: Logical parts of a Mobile (e.g., Horizontal Control) that drive specific coordinate systems.
+- **Components**: Physical attachments (Speakers, Microphones) positioned relative to the Mobile.
+
+**Key File:** `apps/SimulationConfigurationFiles/config_v2.json` (validates against `simulation-config-v2.schema.json`)
+
+### **SceneGraphLoader**
+The `SceneGraphLoader` class parses this config in two phases:
+1.  **Phase 1**: Builds the `Transform` hierarchy from `coordinateSystems`.
+2.  **Phase 2**: Instantiates `Mobile` objects, attaches `Subsystems` (oscillators), and creates `Sensors`/`Actuators`.
+
+See `lib/SceneGraphLoader.ts` for implementation details.
 
 ---
 

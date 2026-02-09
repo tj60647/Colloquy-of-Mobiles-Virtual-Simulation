@@ -1,62 +1,108 @@
 /**
  * SceneGraphLoader.ts
  * 
- * Loads and parses simulation configuration files (JSON) to instantiate
+ * Loads and parses simulation configuration files (v2 format) to instantiate
  * the complete scene graph hierarchy of Mobiles, subsystems, and components.
  * 
- * Validates against simulation-config.schema.json and creates the full
- * Transform hierarchy matching the physical system design.
+ * Config v2 features:
+ * - Flat coordinate systems array with ID references
+ * - Mobile-centric structure with inline subsystems/components
+ * - Clear type discriminators (mobileType, subsystemType, componentType)
+ * - Complete metadata (drives, motion profiles, FOV, etc.)
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'fs/promises';
 import { Mobile, MobileConfig } from './Mobile';
 import { Environment } from './Environment';
 import { Transform } from './Transform';
 import { DriveSystemConfig } from './types/drives';
-import { OscillatorConfig } from './subsystems/HorizontalControlSubsystem';
+import { OscillatorConfig } from './subsystems/Oscillator';
+import { HorizontalControlSubsystem } from './subsystems/HorizontalControlSubsystem';
+import { VerticalControlSubsystem } from './subsystems/VerticalControlSubsystem';
+import { SoundSensor } from './components/SoundSensor';
+import { LightSensor } from './components/LightSensor';
+import { SoundActuator } from './components/SoundActuator';
 
 /**
- * Configuration file structure (matches simulation-config.schema.json)
+ * Configuration file structure (v2 format)
  */
-interface ConfigFile {
-    coordinateSystems: CoordinateSystemConfig[];
+interface ConfigFileV2 {
+    version: string;
+    metadata?: {
+        name: string;
+        date: string;
+        description: string;
+    };
+    world?: {
+        gravity: { x: number; y: number; z: number };
+        ambientLight: number;
+    };
+    coordinateSystems: CoordinateSystemV2[];
+    mobiles: MobileConfigV2[];
 }
 
-interface CoordinateSystemConfig {
+interface CoordinateSystemV2 {
+    id: string;
     name: string;
-    type: string;
-    parentCoordinateSystem?: string;
-    description?: string;
-    location: { x: number; y: number; z: number };
-    orientation: { roll: number; pitch: number; yaw: number };
-    rangeOfMotion?: {
-        roll?: { min: number; max: number };
-        pitch?: { min: number; max: number };
-        yaw?: { min: number; max: number };
-    };
-    childElements?: AgentConfig[];
+    parent: string | null;
+    position: { x: number; y: number; z: number };
+    rotation: { x: number; y: number; z: number };
 }
 
-interface AgentConfig {
+interface MobileConfigV2 {
+    id: string;
     name: string;
-    type: 'origin' | 'actuator' | 'sensor';
-    thisCoordinateSystem: string;
-    parentCoordinateSystem: string;
-    location: { x: number; y: number; z: number };
-    orientation: { roll: number; pitch: number; yaw: number };
-    rangeOfMotion?: {
-        roll?: { min: number; max: number };
-        pitch?: { min: number; max: number };
-        yaw?: { min: number; max: number };
+    mobileType: 'female' | 'male' | 'beam';
+    coordinateSystem: string;
+    drives: {
+        orange: DriveParams;
+        puce: DriveParams;
     };
-    childElements?: AgentConfig[];
+    subsystems: SubsystemConfigV2[];
+    components: ComponentConfigV2[];
+}
+
+interface DriveParams {
+    initialValue: number;
+    lowerLimit: number;
+    upperLimit: number;
+    maximum: number;
+    incrementRate: number;
+    decrementRate: number;
+}
+
+interface SubsystemConfigV2 {
+    type: 'horizontal_control' | 'vertical_control';
+    coordinateSystem: string;
+    rangeOfMotion: {
+        axis: 'yaw' | 'pitch' | 'roll';
+        min: number;
+        max: number;
+    };
+    motionProfile: {
+        maxVelocity: number;
+        maxAcceleration: number;
+        maxJerk?: number;
+    };
+    reinforcementPosition: number;
+    tolerance: number;
+}
+
+interface ComponentConfigV2 {
+    type: 'sound_actuator' | 'sound_sensor' | 'light_sensor' | 'light_actuator';
+    name: string;
+    localPosition: { x: number; y: number; z: number };
+    localRotation: { x: number; y: number; z: number };
+    fieldOfView: number;
+    maxIntensity?: number;
+    sensitivity?: number;
+    frequencyRange?: { min: number; max: number };
 }
 
 /**
- * Scene Graph Loader
+ * Scene Graph Loader (v2)
  * 
- * Parses configuration files and instantiates the scene graph.
+ * Parses config v2 files and instantiates the scene graph.
  */
 export class SceneGraphLoader {
     private coordinateSystemMap: Map<string, Transform> = new Map();
@@ -78,17 +124,26 @@ export class SceneGraphLoader {
      */
     private async load(configPath: string): Promise<Environment> {
         // Read and parse config file
-        const configData = fs.readFileSync(configPath, 'utf-8');
-        const config: ConfigFile = JSON.parse(configData);
+        const configData = await fs.readFile(configPath, 'utf-8');
+        const config: ConfigFileV2 = JSON.parse(configData);
+
+        // Validate version
+        if (config.version !== '2.0') {
+            throw new Error(`Unsupported config version: ${config.version}. Expected 2.0`);
+        }
 
         // Create environment
         const environment = new Environment();
 
-        // Phase 1: Create all coordinate systems as Transforms
+        // Phase 1: Create coordinate system hierarchy
         this.createCoordinateSystems(config.coordinateSystems);
 
-        // Phase 2: Find and instantiate Mobiles (agents with type='origin')
-        this.instantiateMobiles(config.coordinateSystems, environment);
+        // Phase 2: Create Mobiles
+        for (const mobileConfig of config.mobiles) {
+            const mobile = this.createMobile(mobileConfig);
+            environment.addMobile(mobile);
+            this.mobileMap.set(mobileConfig.id, mobile);
+        }
 
         return environment;
     }
@@ -97,154 +152,184 @@ export class SceneGraphLoader {
      * Phase 1: Create all coordinate systems as Transform nodes.
      * This establishes the spatial hierarchy.
      */
-    private createCoordinateSystems(systems: CoordinateSystemConfig[]): void {
-        for (const system of systems) {
-            // Find parent Transform
-            const parent = system.parentCoordinateSystem
-                ? this.coordinateSystemMap.get(system.parentCoordinateSystem)
-                : null;
+    private createCoordinateSystems(systems: CoordinateSystemV2[]): void {
+        for (const cs of systems) {
+            const parent = cs.parent ? this.coordinateSystemMap.get(cs.parent) : null;
 
-            // Create Transform for this coordinate system
+            if (cs.parent && !parent) {
+                throw new Error(`Parent coordinate system not found: ${cs.parent} for ${cs.id}`);
+            }
+
             const transform = new Transform(
                 parent,
-                system.location,
+                cs.position,
                 {
-                    pitch: system.orientation.pitch,
-                    yaw: system.orientation.yaw,
-                    roll: system.orientation.roll
+                    yaw: cs.rotation.y,
+                    pitch: cs.rotation.x,
+                    roll: cs.rotation.z
                 },
-                system.name
+                cs.name
             );
 
-            this.coordinateSystemMap.set(system.name, transform);
+            this.coordinateSystemMap.set(cs.id, transform);
         }
     }
 
     /**
-     * Phase 2: Instantiate Mobiles from agent configurations.
-     * Agents with type='origin' become Mobiles.
+     * Phase 2: Create a Mobile from config.
      */
-    private instantiateMobiles(systems: CoordinateSystemConfig[], environment: Environment): void {
-        // Search through coordinate systems for embedded agents
-        for (const system of systems) {
-            // Coordinate systems don't directly have childElements in this schema
-            // We need to look for agents in a separate pass or different structure
-            // For now, let's implement a helper to search the hierarchy
+    private createMobile(config: MobileConfigV2): Mobile {
+        // Get coordinate system Transform
+        const coordinateSystem = this.coordinateSystemMap.get(config.coordinateSystem);
+        if (!coordinateSystem) {
+            throw new Error(`Coordinate system not found: ${config.coordinateSystem} for Mobile ${config.id}`);
         }
-
-        // TODO: Implement agent discovery and Mobile instantiation
-        // This requires understanding the actual structure of config_240812.json
-        // where agents are embedded within the coordinateSystems array
-    }
-
-    /**
-     * Create a Mobile from an agent configuration.
-     */
-    private createMobile(
-        agentConfig: AgentConfig,
-        parentTransform: Transform | null
-    ): Mobile {
-        // Determine Mobile type from name
-        const isFemale = agentConfig.name.toLowerCase().includes('female');
-        const isMale = agentConfig.name.toLowerCase().includes('male');
-        const isBeam = agentConfig.name.toLowerCase().includes('beam');
 
         // Create Mobile configuration
+        const globalOrientation = coordinateSystem.getGlobalOrientation();
         const mobileConfig: MobileConfig = {
-            name: agentConfig.name,
-            parent: parentTransform,
-            initialPosition: agentConfig.location,
+            name: config.name,
+            parent: coordinateSystem,
+            initialPosition: coordinateSystem.localPosition,
             initialRotation: {
-                x: agentConfig.orientation.pitch,
-                y: agentConfig.orientation.yaw,
-                z: agentConfig.orientation.roll
-            }
+                x: globalOrientation.pitch,
+                y: globalOrientation.yaw,
+                z: globalOrientation.roll
+            },
+            drives: this.createDriveConfig(config.drives)
         };
 
-        // Add drive configuration (default for now)
-        if (isFemale || isMale) {
-            mobileConfig.drives = this.createDefaultDriveConfig();
-        }
-
-        // Add horizontal control (all Mobiles have this)
-        if (agentConfig.rangeOfMotion?.yaw) {
-            mobileConfig.horizontalControl = {
-                minPosition: agentConfig.rangeOfMotion.yaw.min,
-                maxPosition: agentConfig.rangeOfMotion.yaw.max,
-                reinforcementPosition: 0,
-                maxVelocity: 15,
-                maxAcceleration: 15
-            };
-        }
-
-        // Add vertical control (Females only)
-        if (isFemale && agentConfig.rangeOfMotion?.roll) {
-            mobileConfig.verticalControl = {
-                minPosition: agentConfig.rangeOfMotion.roll.min,
-                maxPosition: agentConfig.rangeOfMotion.roll.max,
-                reinforcementPosition: 0,
-                maxVelocity: 10,
-                maxAcceleration: 10
-            };
-        }
-
+        // Create Mobile
         const mobile = new Mobile(mobileConfig);
 
-        // Process child elements (sensors, actuators, subsystems)
-        if (agentConfig.childElements) {
-            this.processChildElements(mobile, agentConfig.childElements);
+        // Attach subsystems
+        for (const subsystemConfig of config.subsystems) {
+            this.attachSubsystem(mobile, subsystemConfig);
+        }
+
+        // Attach components
+        for (const componentConfig of config.components) {
+            this.attachComponent(mobile, componentConfig);
         }
 
         return mobile;
     }
 
     /**
-     * Process child elements (sensors, actuators, subsystems).
+     * Create drive configuration from config.
      */
-    private processChildElements(mobile: Mobile, children: AgentConfig[]): void {
-        for (const child of children) {
-            if (child.type === 'sensor') {
-                // TODO: Create sensor based on name
-                // e.g., "female light sensor" -> LightSensor
-                // e.g., "female microphone" -> SoundSensor
-            } else if (child.type === 'actuator') {
-                // TODO: Create actuator based on name
-                // e.g., "female speaker" -> SoundActuator
-                // e.g., "vertical control subsystem" -> VerticalControlSubsystem
-            }
+    private createDriveConfig(drives: { orange: DriveParams; puce: DriveParams }): DriveSystemConfig {
+        return {
+            O: {
+                initialValue: drives.orange.initialValue,
+                floor: 0,
+                lowerLimit: drives.orange.lowerLimit,
+                upperLimit: drives.orange.upperLimit,
+                max: drives.orange.maximum,
+                increment: drives.orange.incrementRate,
+                decrement: drives.orange.decrementRate
+            },
+            P: {
+                initialValue: drives.puce.initialValue,
+                floor: 0,
+                lowerLimit: drives.puce.lowerLimit,
+                upperLimit: drives.puce.upperLimit,
+                max: drives.puce.maximum,
+                increment: drives.puce.incrementRate,
+                decrement: drives.puce.decrementRate
+            },
+            interval: 100,
+            maxHistorySamples: 100
+        };
+    }
 
-            // Recursively process nested children
-            if (child.childElements) {
-                this.processChildElements(mobile, child.childElements);
-            }
+    /**
+     * Attach a subsystem to a Mobile.
+     */
+    private attachSubsystem(mobile: Mobile, config: SubsystemConfigV2): void {
+        // Get coordinate system for this subsystem
+        const coordinateSystem = this.coordinateSystemMap.get(config.coordinateSystem);
+        if (!coordinateSystem) {
+            throw new Error(`Coordinate system not found: ${config.coordinateSystem} for subsystem ${config.type}`);
+        }
+
+        // Create oscillator config
+        const oscillatorConfig: OscillatorConfig = {
+            minPosition: config.rangeOfMotion.min,
+            maxPosition: config.rangeOfMotion.max,
+            reinforcementPosition: config.reinforcementPosition,
+            tolerance: config.tolerance,
+            maxVelocity: config.motionProfile.maxVelocity,
+            maxAcceleration: config.motionProfile.maxAcceleration,
+            maxJerk: config.motionProfile.maxJerk
+        };
+
+        // Create and attach subsystem
+        if (config.type === 'horizontal_control') {
+            mobile.horizontalControlSubsystem = new HorizontalControlSubsystem(oscillatorConfig);
+            // Store reference to Transform for updates
+            (mobile as any).horizontalTransform = coordinateSystem;
+        } else if (config.type === 'vertical_control') {
+            mobile.verticalControlSubsystem = new VerticalControlSubsystem(oscillatorConfig);
+            // Store reference to Transform for updates
+            (mobile as any).verticalTransform = coordinateSystem;
         }
     }
 
     /**
-     * Create default drive configuration.
+     * Attach a component to a Mobile.
      */
-    private createDefaultDriveConfig(): DriveSystemConfig {
-        return {
-            O: {
-                initialValue: 500,
-                floor: 0,
-                lowerLimit: 400,
-                upperLimit: 600,
-                max: 1000,
-                increment: 1,
-                decrement: 10
-            },
-            P: {
-                initialValue: 500,
-                floor: 0,
-                lowerLimit: 400,
-                upperLimit: 600,
-                max: 1000,
-                increment: 1,
-                decrement: 10
-            },
-            interval: 1000,
-            maxHistorySamples: 100
-        };
+    private attachComponent(mobile: Mobile, config: ComponentConfigV2): void {
+        switch (config.type) {
+            case 'sound_sensor':
+                const soundSensor = new SoundSensor(
+                    mobile,
+                    config.localPosition,
+                    {
+                        yaw: config.localRotation.y,
+                        pitch: config.localRotation.x,
+                        roll: config.localRotation.z
+                    },
+                    config.fieldOfView
+                );
+                mobile.addSensor(soundSensor);
+                break;
+
+            case 'light_sensor':
+                const lightSensor = new LightSensor(
+                    mobile,
+                    config.localPosition,
+                    {
+                        yaw: config.localRotation.y,
+                        pitch: config.localRotation.x,
+                        roll: config.localRotation.z
+                    },
+                    config.fieldOfView
+                );
+                mobile.addSensor(lightSensor);
+                break;
+
+            case 'sound_actuator':
+                const soundActuator = new SoundActuator(
+                    mobile,
+                    config.localPosition,
+                    {
+                        yaw: config.localRotation.y,
+                        pitch: config.localRotation.x,
+                        roll: config.localRotation.z
+                    },
+                    config.fieldOfView
+                );
+                mobile.addActuator(soundActuator);
+                break;
+
+            case 'light_actuator':
+                // TODO: Implement LightActuator
+                console.warn(`Light actuator not yet implemented: ${config.name}`);
+                break;
+
+            default:
+                throw new Error(`Unknown component type: ${(config as any).type}`);
+        }
     }
 }
