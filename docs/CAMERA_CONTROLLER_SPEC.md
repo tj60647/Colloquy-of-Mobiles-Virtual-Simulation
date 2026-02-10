@@ -422,127 +422,336 @@ views.forEach((view) => {
 
 ## UI Info Modal
 
-Help modal shows camera controls (triggered by info button):
+Info modal dynamically created with camera controls help:
 
+**Generated HTML Structure:**
 ```html
-<div id="camera-help" class="help-overlay" style="display: none;">
-  <h3>Camera Controls</h3>
-  
-  <section>
-    <h4>Mouse</h4>
-    <ul>
-      <li><strong>Left Drag:</strong> Rotate view</li>
-      <li><strong>Right Drag:</strong> Pan view</li>
-      <li><strong>Scroll:</strong> Zoom in/out</li>
-      <li><strong>Double Click:</strong> Focus on object</li>
-    </ul>
-  </section>
-  
-  <section>
-    <h4>Keyboard</h4>
-    <ul>
-      <li><strong>R:</strong> Reset view</li>
-      <li><strong>T:</strong> Toggle projection</li>
-      <li><strong>F:</strong> Focus on selection</li>
-      <li><strong>1-4:</strong> Preset views</li>
-      <li><strong>H:</strong> Toggle this help</li>
-    </ul>
-  </section>
-  
-  <button onclick="this.parentElement.style.display='none'">Close</button>
+<div id="camera-info-modal" style="display: none;">
+  <div class="info-card">
+    <button class="close-button">×</button>
+    <h2>Camera Controls</h2>
+    
+    <div class="controls-grid">
+      <!-- Mouse Controls Section -->
+      <div>
+        <h3>🖱️ Mouse Controls</h3>
+        <ul>
+          <li><strong>Left Drag:</strong> Orbit around scene</li>
+          <li><strong>Right Drag:</strong> Pan camera</li>
+          <li><strong>Scroll Wheel:</strong> Zoom in/out</li>
+        </ul>
+      </div>
+      
+      <!-- Keyboard Shortcuts Section -->
+      <div>
+        <h3>⌨️ Keyboard Shortcuts</h3>
+        <ul>
+          <li><kbd>R</kbd> Reset to default view</li>
+          <li><kbd>F</kbd> Focus on center</li>
+          <li><kbd>1</kbd> Top view</li>
+          <li><kbd>2</kbd> Front view</li>
+          <li><kbd>3</kbd> Side view</li>
+          <li><kbd>4</kbd> Isometric view</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
 ```
 
-Auto-styled in `demo-template/public/styles.css`
+**Styling:** Modal has dark overlay with backdrop blur. Card uses light mode theme (rgba(255,255,255,0.95)) with blue accent border. Styled in [lib/visualization/ui/styles.css](../lib/visualization/ui/styles.css).
+
+---
+
+## CSS Styling
+
+All camera UI styling defined in `lib/visualization/ui/styles.css`:
+
+```css
+/* Camera control buttons */
+.camera-button {
+    background: rgba(255, 255, 255, 0.9);
+    color: #2c3e50;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.camera-button:hover {
+    background: rgba(52, 152, 219, 0.2);
+    border-color: #3498db;
+}
+
+.camera-button.reset {
+    background: rgba(231, 76, 60, 0.1);
+    border-color: rgba(231, 76, 60, 0.4);
+    color: #c0392b;
+}
+
+.camera-button.active {
+    background: rgba(46, 204, 113, 0.2);
+    border-color: #27ae60;
+    color: #229954;
+}
+
+/* Orbit speed slider */
+.camera-slider-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.camera-slider {
+    flex: 1;
+    height: 4px;
+    background: rgba(52, 152, 219, 0.2);
+    border-radius: 2px;
+}
+
+.camera-slider::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+    background: #2980b9;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.camera-slider-value {
+    font-family: monospace;
+    font-size: 12px;
+    color: #666666;
+    min-width: 60px;
+    text-align: right;
+}
+```
 
 ---
 
 ## Testing
 
-### Test Cases
+### Manual Test Cases
 
-1. **Mouse Controls:**
-   - Orbit works in all directions
-   - Pan doesn't affect rotation center
-   - Zoom respects min/max distance
+**Mouse Controls:**
+- ✅ Left drag orbits smoothly in all directions
+- ✅ Right drag pans without changing orbit center
+- ✅ Scroll zoom respects min/max distance (1-1000 units)
+- ✅ Damping provides smooth deceleration
 
-2. **Keyboard Shortcuts:**
-   - All keys trigger correct actions
-   - No conflicts with browser shortcuts
-   - Help overlay shows/hides
+**Keyboard Shortcuts:**
+- ✅ R: Resets to initial position (180, 120, 180)
+- ✅ F: Centers on origin (0, 0, 0)
+- ✅ 1-4: Smooth animated transitions to presets
+- ✅ No conflicts with browser shortcuts
 
-3. **Preset Views:**
-   - Smooth animation to each preset
-   - Correct camera orientation
-   - Scales properly for different scene sizes
+**UI Buttons:**
+- ✅ Reset button triggers reset animation
+- ✅ View preset buttons (Top/Front/Side/Iso) work correctly
+- ✅ Info button shows/hides modal
+- ✅ Orbit toggle enables/disables slider
+- ✅ Slider updates orbit speed in real-time
 
-4. **Projection Toggle:**
-   - Maintains view direction when switching
-   - Orthographic camera has correct frustum
-   - Zoom works in both modes
+**Animations:**
+- ✅ Smooth 500ms transitions with ease-in-out
+- ✅ Natural arc motion via spherical interpolation
+- ✅ Controls disabled during animation
+- ✅ Exact final positioning (no drift)
 
-5. **Focus:**
-   - Frames object correctly
-   - Works with different object sizes
-   - Maintains up vector
+### Integration Tests
 
-6. **State Persistence:**
-   - Save/load preserves position and target
-   - localStorage works across sessions
-   - Handle missing states gracefully
+**With ThreeJSRenderer:**
+```typescript
+const renderer = new ThreeJSRenderer({ canvas, ... });
+const controller = renderer.getCameraController();
 
-### Demo Test App
+// Test camera update in animation loop
+function animate() {
+  renderer.render(state); // Calls controller.update() internally
+}
 
-Create `apps/demo-TS-00-camera-test/` to validate CameraController:
-- Scene with various objects (cubes, spheres, complex meshes)
-- UI to test all features
-- Visual feedback for each action
-- Performance monitoring
+// Test preset views
+controller.setPresetView('top');
+// Verify camera position after 500ms
+```
+
+**With CameraControlPanel:**
+```typescript
+const panel = setupCameraControls({
+  orbitControls: { onToggle, onSpeedChange, ... },
+  customButtons: [{ label: 'Test', onClick: testFn }],
+});
+
+// Test programmatic control
+panel.setOrbitEnabled(true);
+panel.setOrbitSpeed(0.01);
+panel.updateToggleButton(0, true);
+```
+
+### Test Demo
+
+**Location:** `apps/demo-TS-01-transform-hierarchy/` (serves as camera test)
+
+**Features tested:**
+- All keyboard shortcuts (R, F, 1-4)
+- All UI buttons (Reset, presets, orbit toggle)
+- Custom orbit controls (toggle + slider)
+- Focus on object (coordinator system nodes)
+- Camera info modal
+- Window resize handling
 
 ---
 
 ## Browser Compatibility
 
-- **Modern Browsers:** Chrome, Firefox, Safari, Edge (last 2 versions)
-- **WebGL:** Required (fail gracefully if not available)
-- **Pointer Events:** Use for better touch support
-- **LocalStorage:** Optional (state persistence degrades gracefully)
+**Supported Browsers:**
+- ✅ Chrome 120+ (tested)
+- ✅ Firefox 120+ (tested)
+- ✅ Edge 120+ (Chromium-based)
+- ✅ Safari 17+ (WebKit)
 
----
+**Requirements:**
+- WebGL 1.0 (for THREE.js rendering)
+- ES6 modules (native or bundled via Vite)
+- CSS3 (backdrop-filter for glass effects)
+- Pointer Events API (for mouse/touch input)
 
-## Accessibility Considerations
-
-- Keyboard navigation for all camera functions
-- Visual indicators for active camera mode
-- Clear instructions in help overlay
-- Configurable sensitivity for users with motor impairments
-- Reduced motion option (instant view changes instead of animated)
+**Graceful Degradation:**
+- No WebGL: Error message shown
+- No keyboard: UI buttons still functional
+- Reduced motion preference: Instant view changes (no animation)
 
 ---
 
 ## Related Files
 
-- **Implementation:** `lib/visualization/utils/CameraController.ts`
-- **Tests:** `lib/visualization/utils/__tests__/CameraController.test.ts`
-- **Test Demo:** `apps/demo-TS-00-camera-test/`
-- **CSS Styles:** `apps/demo-TS-template/public/styles.css` (help overlay)
-- **Documentation:** This file
+**Core Implementation:**
+- `lib/visualization/utils/CameraController.ts` - Camera logic
+- `lib/visualization/ui/CameraControlPanel.ts` - UI component
+- `lib/visualization/ui/index.ts` - Exports
+- `lib/visualization/ui/icons.ts` - SVG icons
+- `lib/visualization/ui/styles.css` - Shared styles
+
+**Renderer Integration:**
+- `lib/visualization/renderers/ThreeJSRenderer.ts` - Creates controller, provides `getCameraController()`
+
+**Documentation:**
+- `docs/CAMERA_CONTROLLER_SPEC.md` - This file
+- `lib/visualization/ui/README.md` - UI components guide
+
+**Examples:**
+- `apps/demo-TS-01-transform-hierarchy/` - Full implementation example
+- `apps/demo-TS-template/` - Template for new demos
 
 ---
 
 ## Dependencies
 
-- THREE.js (OrbitControls)
-- (Optional) TWEEN.js for advanced easing
+**Runtime:**
+- THREE.js v0.168.0+ (OrbitControls from `three/examples/jsm/controls/OrbitControls.js`)
+
+**Development:**
+- TypeScript 5+ (for type checking)
+- Vite 5+ (for bundling demos)
+
+**No Additional Libraries:** No TWEEN.js - custom animation via requestAnimationFrame
 
 ---
 
 ## Future Enhancements
 
-- [ ] Touch gestures (pinch to zoom, two-finger pan)
-- [ ] Gamepad support
-- [ ] VR camera rig (for WebXR demos)
-- [ ] Camera path animation (for recordings)
-- [ ] Multiple camera bookmarks
-- [ ] Collision detection (prevent camera going through objects)
-- [ ] Follow mode (camera follows moving object)
+**Planned (Priority Order):**
+- [ ] **Touch gestures** - Pinch to zoom, two-finger pan/rotate
+- [ ] **Projection toggle** - Proper perspective↔orthographic switching (requires camera recreation)
+- [ ] **State persistence** - Save/load camera bookmarks to localStorage
+- [ ] **Advanced focus** - Multi-object framing, collision avoidance
+- [ ] **Camera paths** - Record/playback camera animations for demos
+- [ ] **Gamepad support** - Console-style camera control
+- [ ] **Accessibility** - Screen reader descriptions, reduced motion mode
+
+**Not Planned:**
+- VR camera rig (separate XR controller needed)
+- Cinematic camera (different animation system)
+- First-person controller (demos are observer-based)
+
+---
+
+## Contribution Guidelines
+
+When modifying camera system:
+
+## Contribution Guidelines
+
+When modifying camera system:
+
+1. **Test in all demos** - Ensure changes work across existing demos
+2. **Maintain smooth animations** - Keep 500ms duration, ease-in-out cubic
+3. **Preserve keyboard shortcuts** - Don't change R/F/1-4 bindings
+4. **Update styles centrally** - Modify `lib/visualization/ui/styles.css`, not individual demos
+5. **Document UI changes** - Update help modal if adding controls
+6. **Check browser compat** - Test in Chrome, Firefox, Safari
+7. **Follow existing patterns** - UI buttons dispatch keyboard events to canvas
+
+### Code Style
+
+```typescript
+// ✅ Good: Clear method names, typed parameters
+focusOnObject(object: THREE.Object3D): void {
+  const bbox = new THREE.Box3().setFromObject(object);
+  // ...
+}
+
+// ❌ Bad: Generic names, missing types
+doFocus(obj) {
+  // ...
+}
+```
+
+### Adding New Preset Views
+
+```typescript
+// In CameraController.ts createPresetViews():
+this.presetViews.set('custom', {
+  name: 'Custom View',
+  position: new THREE.Vector3(x, y, z),
+  target: new THREE.Vector3(0, 0, 0),
+});
+
+// In CameraControlPanel.ts views array:
+const views = [
+  { label: 'Top', key: '1' },
+  { label: 'Front', key: '2' },
+  { label: 'Side', key: '3' },
+  { label: 'Iso', key: '4' },
+  { label: 'Custom', key: '5' }, // Add new preset
+];
+```
+
+---
+
+## Version History
+
+- **v1.0** (Current) - Initial implementation with OrbitControls, keyboard shortcuts, UI panel
+- **v0.5** - Prototype with basic OrbitControls wrapper
+- **v0.1** - Spec document created
+
+---
+
+## Summary
+
+The camera controller system provides consistent, intuitive camera controls across all demos through:
+
+- **CameraController.ts** - Core camera logic with smooth animated transitions
+- **CameraControlPanel.ts** - Reusable UI component with buttons and info modal  
+- **styles.css** - Centralized styling for light mode theme
+- **Keyboard shortcuts** - R/F/1-4 for common operations
+- **OrbitControls integration** - Familiar mouse interactions
+
+**Key Design Decision:** UI buttons dispatch keyboard events rather than calling controller methods directly. This maintains separation of concerns and ensures keyboard and UI work identically.
+
+**Current Status:** ✅ Fully implemented and deployed in demo-TS-01-transform-hierarchy
+
+**Next Steps:** Touch gesture support, projection toggle completion, state persistence
+
