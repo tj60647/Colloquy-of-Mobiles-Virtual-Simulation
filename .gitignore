@@ -38,3 +38,5 @@ Thumbs.db
 coverage/
 
 apps/php-unserialize.js
+.vercel
+.env*.local
