@@ -1,39 +1,3 @@
-# Exclude source files (only deploy built dist/)
-apps/*/src/
-apps/*/node_modules/
-apps/*/package.json
-apps/*/tsconfig.json
-apps/*/vite.config.ts
-apps/*/public/
-
-# Exclude lib source and tests
-lib/
-test-*.ts
-jest.config.js
-tsconfig.json
-
-# Exclude documentation
-docs/
-TODO.md
-readme.md
-
-# Exclude legacy demos
-apps/demo-00-P5/
-apps/demo-01-actuator-THREE/
-apps/demo-01-sense-act-osc/
-apps/demo-01-sensor-actuator/
-apps/demo-02-oscillator/
-apps/demo-02-oscillator-THREE/
-apps/demo-03-transform-THREE/
-apps/demo-04-drives/
-apps/demo-05-transceiversV2/
-apps/demo-06-assets-test/
-apps/demo-07-sensor/
-apps/demo-08-sensor-THREE/
-
-# Exclude config files (only in SimulationConfigurationFiles/)
-# But keep apps/*/dist/config.json that was built
-
 # Exclude Node modules and build artifacts  
 node_modules/
 *.log
@@ -49,6 +13,7 @@ node_modules/
 .idea/
 
 # Exclude test files
-**/__tests__/
-*.test.ts
-*.spec.ts
+coverage/
+
+# Exclude legacy demos that we don't build
+# (None present)
