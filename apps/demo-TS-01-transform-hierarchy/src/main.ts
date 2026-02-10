@@ -100,6 +100,11 @@ class Demo1App {
     this.labelRenderer.domElement.style.pointerEvents = 'none';
     document.body.appendChild(this.labelRenderer.domElement);
 
+    // Handle window resize for CSS2D renderer
+    window.addEventListener('resize', () => {
+      this.labelRenderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
     // Add grid for reference
     // Use darker grid for white background
     const grid = new THREE.PolarGridHelper(120, 8, 10, 128, 0x888888, 0xcccccc);
