@@ -202,21 +202,21 @@ class Demo1App {
   private formatJsonWithColors(config: DemoConfig): string {
     let json = JSON.stringify(config, null, 2);
     
-    // Color rotation values: x=red, y=green, z=blue (matching axis helper)
+    // Color rotation values: x=red, y=green, z=blue (using CSS classes)
     json = json.replace(/"x":\s*(-?\d+\.?\d*)/g, (match, value) => {
       if (match.includes('"x"')) {
         // Check if this is in a rotation context by looking ahead in the string
-        return `"x": <span style="color: #ff8080">${value}</span>`;
+        return `"x": <span class="rotation-x">${value}</span>`;
       }
       return match;
     });
     
     json = json.replace(/"y":\s*(-?\d+\.?\d*)/g, (match, value) => {
-      return `"y": <span style="color: #80ff80">${value}</span>`;
+      return `"y": <span class="rotation-y">${value}</span>`;
     });
     
     json = json.replace(/"z":\s*(-?\d+\.?\d*)/g, (match, value) => {
-      return `"z": <span style="color: #8080ff">${value}</span>`;
+      return `"z": <span class="rotation-z">${value}</span>`;
     });
     
     return json;
@@ -247,9 +247,9 @@ class Demo1App {
       group.add(axes);
 
       // Add axis labels
-      this.createAxisLabel(group, 'X', new THREE.Vector3(axesSize + 2, 0, 0), '#ff4444');
-      this.createAxisLabel(group, 'Y', new THREE.Vector3(0, axesSize + 2, 0), '#44ff44');
-      this.createAxisLabel(group, 'Z', new THREE.Vector3(0, 0, axesSize + 2), '#4444ff');
+      this.createAxisLabel(group, 'X', new THREE.Vector3(axesSize + 2, 0, 0));
+      this.createAxisLabel(group, 'Y', new THREE.Vector3(0, axesSize + 2, 0));
+      this.createAxisLabel(group, 'Z', new THREE.Vector3(0, 0, axesSize + 2));
 
       // Add text label
       const labelDiv = document.createElement('div');
@@ -332,16 +332,12 @@ class Demo1App {
   }
 
   /**
-   * Helper to create colored axis labels
+   * Helper to create colored axis labels using CSS classes from styles.css
    */
-  private createAxisLabel(parent: THREE.Group, text: string, position: THREE.Vector3, color: string): void {
+  private createAxisLabel(parent: THREE.Group, text: string, position: THREE.Vector3): void {
     const div = document.createElement('div');
-    div.className = 'axis-label';
+    div.className = `axis-label axis-label-${text.toLowerCase()}`;
     div.textContent = text;
-    div.style.color = color;
-    div.style.fontFamily = 'monospace';
-    div.style.fontSize = '12px';
-    div.style.fontWeight = 'bold';
     
     const label = new CSS2DObject(div);
     label.position.copy(position);

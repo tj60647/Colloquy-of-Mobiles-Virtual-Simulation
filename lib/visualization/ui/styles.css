@@ -15,7 +15,7 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     overflow: hidden;
-    background: #0a0a0a;
+    background: #f5f5f5;
 }
 
 #canvas {
@@ -30,14 +30,14 @@ body {
 
 /* Base panel styling - apply to all custom panels */
 .panel {
-    background: rgba(13, 17, 30, 0.92);
-    color: #e0e0e0;
+    background: rgba(255, 255, 255, 0.5);
+    color: #2c3e50;
     padding: 16px 20px;
     border-radius: 8px;
-    border: 1px solid rgba(52, 152, 219, 0.3);
+    border: 1px solid rgba(0, 0, 0, 0.12);
     z-index: 100;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     min-width: 220px;
 }
 
@@ -51,7 +51,7 @@ body {
 .panel-header {
     font-size: 0.85em;
     font-weight: 600;
-    color: #5dade2;
+    color: #2980b9;
     margin-bottom: 12px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -70,17 +70,37 @@ body {
 }
 
 .control-label {
-    color: #b8b8b8;
+    color: #666666;
 }
 
 .control-hint {
-    color: #e0e0e0;
+    color: #2c3e50;
     font-weight: 500;
 }
 
 .control-hint kbd {
     margin-left: 2px;
 }
+
+/* ============================================================
+   AXIS COLORS (Consistent RGB convention)
+   ============================================================ */
+
+/* Axis label colors for CSS2D overlays */
+.axis-label {
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.axis-label-x { color: #ff4444; }
+.axis-label-y { color: #44ff44; }
+.axis-label-z { color: #4444ff; }
+
+/* Rotation value colors for JSON display (lighter for readability) */
+.rotation-x { color: #cc6666; }
+.rotation-y { color: #66cc66; }
+.rotation-z { color: #6666cc; }
 
 /* ============================================================
    DESCRIPTION PANEL (Top Left)
@@ -95,14 +115,14 @@ body {
 #description-panel h1 {
     font-size: 1.3em;
     margin-bottom: 10px;
-    color: #3498db;
+    color: #2980b9;
     font-weight: 600;
 }
 
 #description-panel p {
     font-size: 0.95em;
     line-height: 1.5;
-    color: #b8b8b8;
+    color: #5a6c7d;
     margin: 0;
 }
 
@@ -132,10 +152,10 @@ body {
     width: 100%;
     padding: 8px 16px;
     margin-bottom: 8px;
-    background: rgba(52, 152, 219, 0.2);
-    border: 1px solid rgba(52, 152, 219, 0.4);
+    background: rgba(52, 152, 219, 0.12);
+    border: 1px solid rgba(52, 152, 219, 0.3);
     border-radius: 6px;
-    color: #5dade2;
+    color: #2980b9;
     font-size: 0.9em;
     font-weight: 600;
     cursor: pointer;
@@ -152,9 +172,9 @@ body {
 }
 
 .camera-button:hover:not(:disabled) {
-    background: rgba(52, 152, 219, 0.3);
-    border-color: rgba(52, 152, 219, 0.6);
-    color: #7fc8f8;
+    background: rgba(52, 152, 219, 0.2);
+    border-color: rgba(52, 152, 219, 0.5);
+    color: #1f6391;
     transform: translateY(-1px);
 }
 
@@ -168,21 +188,21 @@ body {
 }
 
 .camera-button.active {
-    background: rgba(46, 204, 113, 0.25);
-    border-color: rgba(46, 204, 113, 0.5);
-    color: #2ecc71;
+    background: rgba(46, 204, 113, 0.15);
+    border-color: rgba(46, 204, 113, 0.4);
+    color: #27ae60;
 }
 
 .camera-button.reset {
-    background: rgba(231, 76, 60, 0.2);
-    border-color: rgba(231, 76, 60, 0.4);
-    color: #e74c3c;
+    background: rgba(231, 76, 60, 0.12);
+    border-color: rgba(231, 76, 60, 0.3);
+    color: #c0392b;
 }
 
 .camera-button.reset:hover:not(:disabled) {
-    background: rgba(231, 76, 60, 0.3);
-    border-color: rgba(231, 76, 60, 0.6);
-    color: #ec7063;
+    background: rgba(231, 76, 60, 0.2);
+    border-color: rgba(231, 76, 60, 0.5);
+    color: #a93226;
 }
 
 /* Camera slider container */
@@ -199,7 +219,7 @@ body {
 
 .camera-slider-label {
     font-size: 0.85em;
-    color: #5dade2;
+    color: #2980b9;
     margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -222,14 +242,14 @@ body {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: #3498db;
+    background: #2980b9;
     cursor: pointer;
-    border: 2px solid rgba(13, 17, 30, 0.95);
+    border: 2px solid #ffffff;
     transition: all 0.2s;
 }
 
 .camera-slider::-webkit-slider-thumb:hover {
-    background: #5dade2;
+    background: #3498db;
     transform: scale(1.1);
 }
 
@@ -237,21 +257,21 @@ body {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: #3498db;
+    background: #2980b9;
     cursor: pointer;
-    border: 2px solid rgba(13, 17, 30, 0.95);
+    border: 2px solid #ffffff;
     transition: all 0.2s;
 }
 
 .camera-slider::-moz-range-thumb:hover {
-    background: #5dade2;
+    background: #3498db;
     transform: scale(1.1);
 }
 
 .camera-slider-value {
     text-align: center;
     font-size: 0.9em;
-    color: #5dade2;
+    color: #2980b9;
     font-weight: 600;
     margin-top: 4px;
 }
@@ -282,13 +302,13 @@ body {
    ============================================================ */
 
 kbd {
-    background: rgba(52, 152, 219, 0.2);
-    border: 1px solid rgba(52, 152, 219, 0.4);
+    background: rgba(52, 152, 219, 0.12);
+    border: 1px solid rgba(52, 152, 219, 0.3);
     border-radius: 3px;
     padding: 2px 6px;
     font-family: 'Courier New', monospace;
     font-size: 0.85em;
-    color: #5dade2;
+    color: #2980b9;
     font-weight: 600;
 }
 
@@ -308,7 +328,7 @@ input[type="range"] {
 .slider-value {
     text-align: center;
     font-size: 0.9em;
-    color: #5dade2;
+    color: #2980b9;
     font-weight: 600;
     font-family: 'Courier New', monospace;
 }
