@@ -376,6 +376,31 @@ renderer.render(environment.toJSON());
 
 ---
 
+## Deployment Strategy: Hybrid Evolution
+
+To support both rapid development (now) and complex networking (future), the project utilizes a hybrid deployment strategy.
+
+### Stage A: Component Validation (Visual Demos)
+**Target:** Vercel / Netlify (Static Hosting)
+- **Architecture:** Client-Side Simulation. The entire logical loop (`Environment.ts`, `Mobile.ts`) runs in the user's browser.
+- **Goal:** Unit validation of physics, rotational hierarchies, and sensor logic.
+- **Why:** Zero latency, zero cost, instant preview builds.
+- **Artifact:** `dist/` (Static HTML/JS/CSS).
+
+### Stage B: Networked Simulation (Multiplayer)
+**Target:** Heroku / Render (Containerized Node.js)
+- **Architecture:** Authoritative Server. The logical loop moves to `server.js` (Node.js), synchronization happens via WebSockets.
+- **Goal:** Shared state "Colloquy" where multiple users interact in the same universe (e.g., User A is a Male, User B is a Female).
+- **Why:** Required for persistent connections and shared ground-truth state.
+- **Artifact:** `server.js` (Node.js Process, `npm start`).
+
+**Infrastructure Readiness:**
+The project maintains both configurations simultaneously:
+1. `vite build` generates the Stage A static site.
+2. `server.js` and `Procfile` are pre-configured for Stage B server deployment.
+
+---
+
 ## Glossary of Changes
 
 | Legacy Term | New Term | Rationale |
