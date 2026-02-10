@@ -108,7 +108,8 @@ async function init() {
   setupCameraControls(); // Standard camera controls (no custom buttons)
 
   try {
-    await app.loadConfig('/config.json');
+    // Load config (use relative path for deployment compatibility)
+    await app.loadConfig('config.json');
     app.start();
     console.log('Demo started');
   } catch (error) {

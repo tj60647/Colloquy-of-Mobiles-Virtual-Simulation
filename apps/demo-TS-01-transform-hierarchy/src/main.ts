@@ -570,7 +570,8 @@ async function init() {
   });
 
   try {
-    await app.loadConfig('/config.json');
+    // Load relative to the current path (essential for subdirectory deployment)
+    await app.loadConfig('config.json');
     app.start();
     console.log('Demo 1: Transform Hierarchy started');
     console.log('Watch the hierarchy rotate - children inherit parent transformations!');
