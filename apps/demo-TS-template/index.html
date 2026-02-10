@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo ##: [Name] - Colloquy of Mobiles</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <!-- Info Icon -->
+    <button id="info-icon" aria-label="Show information">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+    </button>
+    
+    <!-- Demo Description Panel -->
+    <div id="description-panel" class="panel large">
+        <h1>Demo ##: [Name]</h1>
+        <p>[Brief description of what this demo demonstrates]</p>
+    </div>
+    
+    <!-- Info Modal -->
+    <div id="info-modal">
+        <div id="info-card">
+            <button id="info-close" aria-label="Close">&times;</button>
+            <h2>Demo ##: [Name]</h2>
+            <p class="description">[Brief description of what this demo demonstrates]</p>
+            
+            <div class="help-section">
+                <h3>Mouse Controls</h3>
+                <div class="help-item">
+                    <span class="help-key">Left Click + Drag</span>
+                    <span>Orbit camera around the scene</span>
+                </div>
+                <div class="help-item">
+                    <span class="help-key">Right Click + Drag</span>
+                    <span>Pan camera</span>
+                </div>
+                <div class="help-item">
+                    <span class="help-key">Mouse Wheel</span>
+                    <span>Zoom in/out</span>
+                </div>
+            </div>
+            
+            <div class="help-section">
+                <h3>Keyboard Shortcuts</h3>
+                <div class="help-item">
+                    <span class="help-key"><kbd>R</kbd></span>
+                    <span>Reset to default view</span>
+                </div>
+                <div class="help-item">
+                    <span class="help-key"><kbd>1</kbd> / <kbd>2</kbd> / <kbd>3</kbd> / <kbd>4</kbd></span>
+                    <span>Preset views (Top / Front / Side / Isometric)</span>
+                </div>
+                <div class="help-item">
+                    <span class="help-key"><kbd>F</kbd></span>
+                    <span>Focus on center</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Camera Controls Panel -->
+    <div id="controls-panel" class="panel">
+        <div class="panel-header">Camera Controls</div>
+        <div class="control-row">
+            <span class="control-label">Orbit</span>
+            <span class="control-hint">Left Drag</span>
+        </div>
+        <div class="control-row">
+            <span class="control-label">Pan</span>
+            <span class="control-hint">Right Drag</span>
+        </div>
+        <div class="control-row">
+            <span class="control-label">Zoom</span>
+            <span class="control-hint">Scroll</span>
+        </div>
+        <div class="control-row">
+            <span class="control-label">Reset</span>
+            <span class="control-hint"><kbd>R</kbd></span>
+        </div>
+        <div class="control-row">
+            <span class="control-label">Views</span>
+            <span class="control-hint"><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd></span>
+        </div>
+    </div>
+    
+    <canvas id="canvas"></canvas>
+    
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

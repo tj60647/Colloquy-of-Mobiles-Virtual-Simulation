@@ -1,0 +1,16 @@
+/**
+ * Demo 1: Transform Hierarchy - Demo-Specific Styles
+ * 
+ * Shared UI styles imported from lib/visualization/ui/styles.css
+ * This file only contains demo-specific positioning and layout.
+ */
+
+/* Transform Control Panel - Positioning Only */
+#transform-panel {
+    position: absolute;
+    top: 180px;  /* Below description panel */
+    left: 20px;
+}
+
+/* Note: Panel styling (.panel class) is shared via lib/visualization/ui/styles.css */
+/* Note: Slider styling is shared via lib/visualization/ui/styles.css */

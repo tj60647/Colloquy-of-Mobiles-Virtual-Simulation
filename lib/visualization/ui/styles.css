@@ -1,0 +1,314 @@
+/**
+ * Shared UI Component Styles
+ * 
+ * Common styling for all demo UI components.
+ * Import this in your demo's main.ts or index.html.
+ */
+
+/* Reset and Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    background: #0a0a0a;
+}
+
+#canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* ============================================================
+   PANELS (Shared Base Styling)
+   ============================================================ */
+
+/* Base panel styling - apply to all custom panels */
+.panel {
+    background: rgba(13, 17, 30, 0.92);
+    color: #e0e0e0;
+    padding: 16px 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    min-width: 220px;
+}
+
+/* Larger padding for description/title panels */
+.panel.large {
+    padding: 20px 24px;
+    max-width: 420px;
+}
+
+/* Panel Shared Styles */
+.panel-header {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #5dade2;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.control-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+}
+
+.control-row:last-child {
+    margin-bottom: 0;
+}
+
+.control-label {
+    color: #b8b8b8;
+}
+
+.control-hint {
+    color: #e0e0e0;
+    font-weight: 500;
+}
+
+.control-hint kbd {
+    margin-left: 2px;
+}
+
+/* ============================================================
+   DESCRIPTION PANEL (Top Left)
+   ============================================================ */
+
+#description-panel {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+#description-panel h1 {
+    font-size: 1.3em;
+    margin-bottom: 10px;
+    color: #3498db;
+    font-weight: 600;
+}
+
+#description-panel p {
+    font-size: 0.95em;
+    line-height: 1.5;
+    color: #b8b8b8;
+    margin: 0;
+}
+
+/* ============================================================
+   CAMERA CONTROLS PANEL (Bottom Left)
+   ============================================================ */
+
+#controls-panel {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    width: 220px; /* Fixed width prevents resize when button text changes */
+}
+
+/* ============================================================
+   CAMERA BUTTONS
+   ============================================================ */
+
+/* View buttons row container */
+.camera-view-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.camera-button {
+    width: 100%;
+    padding: 8px 16px;
+    margin-bottom: 8px;
+    background: rgba(52, 152, 219, 0.2);
+    border: 1px solid rgba(52, 152, 219, 0.4);
+    border-radius: 6px;
+    color: #5dade2;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* View buttons in row have no bottom margin and flex to fill */
+.camera-view-button {
+    margin-bottom: 0;
+    flex: 1;
+    padding: 6px 4px;
+    font-size: 0.85em;
+}
+
+.camera-button:hover:not(:disabled) {
+    background: rgba(52, 152, 219, 0.3);
+    border-color: rgba(52, 152, 219, 0.6);
+    color: #7fc8f8;
+    transform: translateY(-1px);
+}
+
+.camera-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.camera-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.camera-button.active {
+    background: rgba(46, 204, 113, 0.25);
+    border-color: rgba(46, 204, 113, 0.5);
+    color: #2ecc71;
+}
+
+.camera-button.reset {
+    background: rgba(231, 76, 60, 0.2);
+    border-color: rgba(231, 76, 60, 0.4);
+    color: #e74c3c;
+}
+
+.camera-button.reset:hover:not(:disabled) {
+    background: rgba(231, 76, 60, 0.3);
+    border-color: rgba(231, 76, 60, 0.6);
+    color: #ec7063;
+}
+
+/* Camera slider container */
+.camera-slider-container {
+    margin-top: 8px;
+}
+
+/* Camera slider container in camera controls panel (needs separator) */
+#controls-panel .camera-slider-container {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+.camera-slider-label {
+    font-size: 0.85em;
+    color: #5dade2;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.camera-slider {
+    width: 100%;
+    margin: 8px 0;
+    accent-color: #3498db;
+    cursor: pointer;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(52, 152, 219, 0.2);
+    outline: none;
+}
+
+.camera-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #3498db;
+    cursor: pointer;
+    border: 2px solid rgba(13, 17, 30, 0.95);
+    transition: all 0.2s;
+}
+
+.camera-slider::-webkit-slider-thumb:hover {
+    background: #5dade2;
+    transform: scale(1.1);
+}
+
+.camera-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #3498db;
+    cursor: pointer;
+    border: 2px solid rgba(13, 17, 30, 0.95);
+    transition: all 0.2s;
+}
+
+.camera-slider::-moz-range-thumb:hover {
+    background: #5dade2;
+    transform: scale(1.1);
+}
+
+.camera-slider-value {
+    text-align: center;
+    font-size: 0.9em;
+    color: #5dade2;
+    font-weight: 600;
+    margin-top: 4px;
+}
+
+/* Disabled slider state */
+.camera-slider:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: rgba(52, 152, 219, 0.1);
+}
+
+.camera-slider:disabled::-webkit-slider-thumb {
+    background: #555;
+    cursor: not-allowed;
+}
+
+.camera-slider:disabled::-moz-range-thumb {
+    background: #555;
+    cursor: not-allowed;
+}
+
+.camera-slider:disabled + .camera-slider-value {
+    opacity: 0.4;
+}
+
+/* ============================================================
+   KEYBOARD SHORTCUTS
+   ============================================================ */
+
+kbd {
+    background: rgba(52, 152, 219, 0.2);
+    border: 1px solid rgba(52, 152, 219, 0.4);
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85em;
+    color: #5dade2;
+    font-weight: 600;
+}
+
+/* ============================================================
+   SLIDERS & INPUT CONTROLS
+   ============================================================ */
+
+/* Standard slider styling */
+input[type="range"] {
+    width: 100%;
+    margin: 8px 0;
+    accent-color: #3498db;
+    cursor: pointer;
+}
+
+/* Slider value display */
+.slider-value {
+    text-align: center;
+    font-size: 0.9em;
+    color: #5dade2;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}

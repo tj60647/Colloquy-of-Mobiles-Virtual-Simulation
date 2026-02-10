@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo 1: Transform Hierarchy - Colloquy of Mobiles</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .transform-label {
+            color: white;
+            font-family: monospace;
+            font-size: 14px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            user-select: none;
+        }
+        #json-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 400px;
+            max-height: 80vh;
+            background-color: rgba(26, 26, 46, 0.95);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            display: none;
+            z-index: 1000;
+        }
+        #json-panel.visible {
+            display: block;
+        }
+        #json-content {
+            font-family: monospace;
+            font-size: 12px;
+            color: #e0e0e0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: calc(80vh - 100px);
+            overflow-y: auto;
+            margin: 0;
+        }
+        #json-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 999;
+            padding: 10px 15px;
+            background-color: rgba(26, 26, 46, 0.9);
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        #json-toggle:hover {
+            background-color: rgba(40, 40, 60, 0.9);
+        }
+        #json-panel h3 {
+            margin: 0;
+            color: white;
+            font-size: 16px;
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        #json-live-toggle {
+            cursor: pointer;
+            font-size: 12px;
+            color: #888;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        #json-live-toggle input {
+            cursor: pointer;
+        }
+        #json-live-toggle.active {
+            color: #4caf50;
+        }
+        #json-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 24px;
+            line-height: 1;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+        }
+        #json-close:hover {
+            color: #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo Description Panel -->
+    <div id="description-panel" class="panel large">
+        <h1>Demo 1: Transform Hierarchy</h1>
+        <p>Demonstrates parent-child transform relationships in the scene graph. Watch how child objects inherit their parent's transformations (position and rotation).</p>
+    </div>
+    
+    <!-- Animation Speed Panel -->
+    <div id="transform-panel" class="panel">
+        <div class="panel-header" style="margin-bottom: 10px;">Visualization</div>
+        
+        <!-- Labels Toggle -->
+        <div class="control-row" style="margin-bottom: 15px; display: flex; align-items: center;">
+            <input type="checkbox" id="labels-toggle" style="margin-right: 8px;">
+            <label for="labels-toggle" style="color: #ccc; font-size: 14px; cursor: pointer;">Show Node Labels</label>
+        </div>
+
+        <div class="panel-header" style="font-size: 12px; opacity: 0.7; margin-bottom: 5px;">Animation Speed</div>
+        <div class="camera-slider-container">
+            <input type="range" id="rotation-slider" class="camera-slider" min="-0.005" max="0.005" step="0.0005" value="0.0025">
+            <div class="camera-slider-value" id="rotation-value">0.0025</div>
+        </div>
+    </div>
+    
+    <!-- Camera Controls Panel -->
+    <div id="controls-panel" class="panel">
+        <div class="panel-header">Camera Controls</div>
+        <!-- Buttons will be added dynamically -->
+    </div>
+    
+    <!-- JSON Toggle Button -->
+    <button id="json-toggle">Show JSON</button>
+    
+    <!-- JSON Display Panel -->
+    <div id="json-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #444;">
+            <h3>
+                <span>Model Configuration</span>
+                <label id="json-live-toggle">
+                    <input type="checkbox" id="json-live-checkbox">
+                    <span>Live</span>
+                </label>
+            </h3>
+            <button id="json-close">&times;</button>
+        </div>
+        <pre id="json-content"></pre>
+    </div>
+    
+    <canvas id="canvas"></canvas>
+    
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

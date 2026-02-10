@@ -1,11 +1,11 @@
 /**
  * Drive System Configuration Types
- * 
+ *
  * Based on canonical terminology from docs/terminology.md
- * 
+ *
  * These types define the configuration schema for the Drive Subsystem,
  * which models Pask's "Entropy Drives" (Orange and Puce).
- * 
+ *
  * @see DriveSubsystem.ts - Runtime implementation
  * @see Drive.ts - Individual drive implementation
  */
@@ -43,4 +43,4 @@ export const LegacyDriveState = {
   UNKNOWN: 'unknown',
 } as const;
 
-export type LegacyDriveStateType = typeof LegacyDriveState[keyof typeof LegacyDriveState];
+export type LegacyDriveStateType = (typeof LegacyDriveState)[keyof typeof LegacyDriveState];

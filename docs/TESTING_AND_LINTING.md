@@ -83,9 +83,23 @@ npm run lint
 npm run lint:fix
 ```
 
+### Current Linting Status
+
+✅ **0 errors** - All critical issues resolved  
+⚠️ **~29 warnings** - Mostly unused variables (acceptable during development)
+
 ### ESLint Configuration
 
-Located in `eslint.config.mjs` (ESLint 9+ flat config format).
+Located in [eslint.config.mjs](../eslint.config.mjs) (ESLint 9+ flat config format).
+
+**Configured environments:**
+- ✅ Browser globals (`window`, `document`, `HTMLElement`, etc.)
+- ✅ Node.js globals (`console`, `process`, `require`, etc.)
+- ✅ Jest globals (`describe`, `it`, `expect`, etc.) for test files
+
+**File patterns:**
+- Included: `**/*.ts`, `**/*.js`, `**/*.mjs`
+- Ignored: `dist/**`, `node_modules/**`, `coverage/**`, `lib/legacy/**`
 
 **Current settings** (lenient during migration):
 

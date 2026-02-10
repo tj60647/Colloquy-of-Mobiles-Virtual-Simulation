@@ -18,6 +18,30 @@ This project is a virtual simulation of Gordon Pask's "Colloquy of Mobiles," mod
   - `types/`: TypeScript type definitions.
 - **docs/**: Project documentation, system diagrams, and refactoring plan.
 
+## Technology Stack
+
+### Core
+- **TypeScript** - Type-safe simulation logic and visualization
+- **Three.js** (v0.168.0) - 3D rendering and scene graph
+- **Vite** - Fast build tool and dev server
+- **Node.js** - Runtime for scripts and future WebSocket server
+
+### Demos & Visualization
+- **Vanilla TypeScript** - No UI frameworks (React, Vue, etc.)
+- **Custom CSS** - No CSS frameworks (Tailwind, Bootstrap, etc.)
+- **Reason:** Demos prioritize 3D simulation over UI complexity (~50 lines of UI code per demo doesn't warrant framework overhead)
+
+### Testing & Quality
+- **Jest** - Unit testing
+- **ESLint + Prettier** - Code quality and formatting
+- **TypeScript** - Compile-time type checking
+
+### Deployment
+- **Vercel** - Static site hosting for gallery + demos
+- **GitHub** - Version control and CI/CD
+
+**Philosophy:** Minimal dependencies, maximum control. Frameworks add weight and complexity where they're not needed. See [docs/UI_STANDARDS.md](docs/UI_STANDARDS.md) for detailed rationale.
+
 
 ## Simulation Philosophy & Architecture
 ### Position Statement: Simulating the 2018 Interpretation
@@ -123,16 +147,64 @@ This implementation is based on **canonical documentation** by Gordon Pask and t
 
 ## Current Implementation Status
 
-- **Architecture Gap**: The core library (`lib/`) primarily implements basic geometric agents. The complex "Actor/Subsystem" logic described above is partially implemented in `apps/demo-05-transceiversV2` but not yet unified.
-- **Refactoring Goal**: To migrate the advanced behavior from `demo-05` into the core `lib/`, strictly following the diagrams referenced above.
+### TypeScript Core (Phases 1-7): ✅ Complete
+- Spatial positioning and scene graph (`Transform`)
+- Drive accumulation system (`DriveSubsystem`)
+- Motion control (`HorizontalControlSubsystem`, `VerticalControlSubsystem`)
+- Sensors and actuators with field-of-view detection
+- Configuration loading and JSON schema validation
+- 35 passing tests across 9 test suites
 
-## Museum Installation Architecture
+### Communication System (Phase 7.5): ⏳ Critical Gap
+**Missing Infrastructure:**
+- Pulse transmission (temporal binary patterns)
+- Pattern vocabulary (I_O, I_P, II_O, II_P, etc.)
+- Circular buffers for pulse sequences
+- Message passing between Mobiles
+- Pattern matching framework
 
-This project is the **core simulation engine** for a multi-component museum installation exploring Gordon Pask's cybernetic art. The installation features a **single virtual Colloquy simulation** with multiple **viewing lenses** (3D screen, VR, analytics) and **input interfaces** (sensor stations), all connected via WebSocket on a local network.
+**Current State:** Demo `apps/demo-05-transceiversV2` implements pulse communication using Actor model with `PulseTransmitter`/`PulseReceiver`, but it's in legacy JavaScript. This infrastructure must be migrated to TypeScript before Complete Mobile demos can be implemented.
+
+**Documentation:** See `docs/PULSE_COMMUNICATION_ARCHITECTURE.md` and `docs/DEMO_REFACTORING_PLAN.md`.
+
+### Network Layer (Phase 8): ⏳ Planned
+- WebSocket server for distributed simulation
+- Sensor event handling
+- State broadcasting to viewing lenses
+
+**Refactoring Status:** See `docs/REFACTORING_PLAN.md` for complete migration roadmap.
 
 ---
 
-## Core Architecture: Single Simulation, Multiple Lenses
+## Project Scope & Architecture
+
+### Current Development: Standalone Browser Demos
+
+**Status:** ✅ Active development (Phases 1-7 complete, Phase A-F in progress)
+
+This repository currently implements **standalone browser demonstrations** of the Colloquy simulation:
+- Each demo runs completely in the browser (no server required)
+- Simulation and visualization together in one application
+- Educational and development focus
+- Can be deployed as static files (GitHub Pages, Vercel, etc.)
+
+**See:** `docs/DEMO_REFACTORING_PLAN.md` for the 16-demo implementation plan
+
+### Future: Museum Installation Architecture
+
+**Status:** ⏳ Planned for Phase 8 (NOT YET IMPLEMENTED)
+
+The project will eventually support a **distributed museum installation** architecture:
+
+The project will eventually support a **distributed museum installation** architecture:
+
+This is the **core simulation engine** for a multi-component museum installation exploring Gordon Pask's cybernetic art. The installation will feature a **single virtual Colloquy simulation** with multiple **viewing lenses** (3D screen, VR, analytics) and **input interfaces** (sensor stations), all connected via WebSocket on a local network.
+
+**⚠️ IMPORTANT:** This distributed architecture is PLANNED but NOT BUILT. Current focus is on standalone browser demos.
+
+---
+
+## Museum Installation Design (Phase 8 - Future)
 
 ```
 Sensor Inputs → Virtual Colloquy Simulation (Heroku/Local) → Multiple Viewing Lenses
@@ -149,7 +221,7 @@ Sensor Inputs → Virtual Colloquy Simulation (Heroku/Local) → Multiple Viewin
   - Updates drive states, manages agent interactions
   - Generates all simulation data
   - Broadcasts state updates to all connected viewing lenses
-- **Technology**: Node.js + Express + Socket.io (WebSocket hub)
+- **Technology⏳ Core simulation complete; ⚠️ WebSocket integration (Phase 8) not start
 - **Deployment**:
   - **Primary**: Local server on museum network (laptop/mini PC running `npm start`)
   - **Optional**: Heroku for remote demos and development

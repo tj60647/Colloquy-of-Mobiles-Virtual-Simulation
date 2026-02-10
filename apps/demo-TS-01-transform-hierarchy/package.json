@@ -1,0 +1,19 @@
+{
+  "name": "demo-ts-01-transform-hierarchy",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Demo 1: Transform Hierarchy - Colloquy of Mobiles",
+  "scripts": {
+    "dev": "powershell -ExecutionPolicy Bypass -File ./dev-start.ps1",
+    "dev:vite": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.168.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11"
+  }
+}

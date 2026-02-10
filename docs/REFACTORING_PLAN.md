@@ -20,6 +20,7 @@ This document tracks the migration from legacy JavaScript/p5.js to a modern Type
 | ✅ | **Phase 5: Library Reorganization** | Directory structure cleanup |
 | ✅ | **Phase 6: Type Cleanup** | Remove duplicates, add documentation |
 | ✅ | **Phase 7: Config Loader & Schema** | Config V2, SceneGraphLoader, full validation |
+| ⏳ | **Phase 7.5: Communication System** | Pulse transmission, pattern vocabulary, message passing |
 | ⏳ | **Phase 8: Network Layer** | WebSocket server/client |
 | ⏳ | **Phase 9: Visualization Refactor** | Separate rendering from simulation |
 | ⏳ | **Phase 10: Demo Migration** | Update demos to use new architecture |
@@ -199,6 +200,38 @@ Moved to a **Config V2 (Hybrid)** format:
 
 ---
 
+## Phase 7.5: Communication System ⏳ PLANNED
+
+**Goal:** Implement pulse transmission infrastructure for social behavior (sense-logic-act loop).
+
+**Critical Gap:** The TypeScript core (Phases 1-7) implements spatial positioning, drives, and motion control, but lacks the **temporal pulse patterns** that enable Mobiles to communicate socially. This infrastructure must exist before Complete Mobile demos (Tier 3/4).
+
+| Task | Status | Notes |
+| :--- | :--- | :--- |
+| Create `lib/types/messages.ts` | ⏳ | `PulseMessage` interface |
+| Create `lib/components/PulseTransmitter.ts` | ⏳ | Binary pattern transmission |
+| Create `lib/components/PulseReceiver.ts` | ⏳ | Circular buffer, pattern matching |
+| Create `lib/communication/PaskPatterns.ts` | ⏳ | Communication vocabulary (I_O, I_P, II_O, etc.) |
+| Update `lib/Environment.ts` | ⏳ | Add message broker functionality |
+| Update `lib/Mobile.ts` | ⏳ | Integrate transmitters/receivers |
+| Create Demo 5.5 | ⏳ | Pulse communication visualization |
+
+**Architecture Pattern:**
+```
+SENSE Phase:    Receivers populate circular buffer from incoming pulses
+LOGIC Phase:    Pattern recognition → Drive evaluation → Pattern selection
+                (Full logic implemented in Tier 3/4 demos)
+ACT Phase:      Send pulses from transmit buffer
+```
+
+**Scope:** Implements infrastructure (buffers, transmission mechanics, pattern constants, visualization). Higher-order logic (drive-based pattern selection, behavioral responses) comes in Complete Mobile demos.
+
+**Reference:** Based on `apps/demo-05-transceiversV2` (Actor model with pulse patterns)
+
+**Documentation:** See `docs/PULSE_COMMUNICATION_ARCHITECTURE.md` for complete analysis.
+
+---
+
 ## Phase 8: Network Layer ⏳ PLANNED
 
 **Goal:** WebSocket server/client for distributed simulation.
@@ -244,6 +277,23 @@ Moved to a **Config V2 (Hybrid)** format:
 1. **Pure Adapters** - Renderers only **read** simulation state, never modify
 2. **State Snapshots** - Consume `toJSON()` output, not direct object references
 3. **Client-Only** - Visualization code never runs on server
+
+### **UI Technology Decision:**
+**Decision:** Demos use **vanilla TypeScript** with **custom CSS** (no React, Vue, Tailwind, etc.)
+
+**Rationale:**
+- Current UI complexity (~50 lines per demo) doesn't justify framework overhead
+- React alone adds ~45KB to bundle size
+- Direct DOM manipulation is faster for 60fps 3D animations
+- Maintains minimal dependencies philosophy
+- Shared components implemented as TypeScript modules (e.g., `CameraControlPanel.ts`)
+
+**Reconsideration triggers:**
+- Complex data visualization dashboards required
+- Multi-step forms or advanced state management needs
+- UI code complexity exceeds 500+ lines per demo
+
+See [docs/UI_STANDARDS.md](UI_STANDARDS.md) for full rationale and implementation patterns.
 
 ---
 

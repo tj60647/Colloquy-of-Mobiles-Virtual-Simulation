@@ -1,0 +1,39 @@
+{
+  "$schema": "../../SimulationConfigurationFiles/simulation-config-v2.schema.json",
+  "version": "2.0",
+  "name": "Transform Hierarchy Demo",
+  "description": "Demonstrates parent-child transform relationships with rotating hierarchy",
+  
+  "coordinateSystems": [
+    {
+      "id": "root",
+      "name": "Root",
+      "parent": null,
+      "position": { "x": 0, "y": 0, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 0 }
+    },
+    {
+      "id": "child",
+      "name": "Child",
+      "parent": "root",
+      "position": { "x": 0, "y": 96, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 1.5708 }
+    },
+    {
+      "id": "grandchild",
+      "name": "Grandchild",
+      "parent": "child",
+      "position": { "x": 0, "y": 96, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 1.5708 }
+    },
+    {
+      "id": "great-grandchild",
+      "name": "Great-grandchild",
+      "parent": "grandchild",
+      "position": { "x": 0, "y": 96, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 1.5708 }
+    }
+  ],
+  
+  "mobiles": []
+}

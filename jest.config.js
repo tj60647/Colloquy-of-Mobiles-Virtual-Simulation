@@ -5,11 +5,14 @@ module.exports = {
   roots: ['<rootDir>/lib', '<rootDir>/apps'],
   testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
   transform: {
-    '^.+\\.ts$': ['ts-jest', {
-      isolatedModules: true,  // Faster compilation
-    }],
+    '^.+\\.ts$': [
+      'ts-jest',
+      {
+        isolatedModules: true, // Faster compilation
+      },
+    ],
   },
-  cache: false,  // Disable Jest cache completely
+  cache: false, // Disable Jest cache completely
   collectCoverageFrom: [
     'lib/**/*.{js,ts}',
     '!lib/**/*.d.ts',

@@ -16,12 +16,17 @@ describe('Type Definitions', () => {
   describe('MobileState', () => {
     it('should create a valid Male mobile state', () => {
       const mobile: MobileState = {
-        id: 'male-1',
-        type: 'Male',
-        position: { x: 0, y: 0, z: 0 },
-        orientation: { x: 1, y: 0, z: 0 },
-        behavioralState: 'SatisfactionSearch',
+        id: 1,
+        name: 'Male-1',
+        localPosition: { x: 0, y: 0, z: 0 },
+        localOrientation: { yaw: 0, pitch: 0, roll: 0 },
+        parentId: null,
         drives: { O: 75, P: 50 },
+        horizontalControl: {},
+        sensors: [],
+        actuators: [],
+        type: 'Male',
+        behavioralState: 'SatisfactionSearch',
         dominantDrive: 'O',
       };
 
@@ -32,16 +37,20 @@ describe('Type Definitions', () => {
 
     it('should create a valid Bar mobile state without drives', () => {
       const bar: MobileState = {
-        id: 'bar-1',
+        id: 2,
+        name: 'Bar-1',
+        localPosition: { x: 0, y: 0, z: 0 },
+        localOrientation: { yaw: 0, pitch: 0, roll: 0 },
+        parentId: null,
+        drives: {},
+        horizontalControl: {},
+        sensors: [],
+        actuators: [],
         type: 'Bar',
-        position: { x: 0, y: 0, z: 0 },
-        orientation: { x: 1, y: 0, z: 0 },
         behavioralState: 'SatisfactionSearch',
       };
 
       expect(bar.type).toBe('Bar');
-      expect(bar.drives).toBeUndefined();
-      expect(bar.dominantDrive).toBeUndefined();
     });
   });
 });

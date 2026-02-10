@@ -1,12 +1,21 @@
 /**
  * Mobile State Types
  * Based on canonical terminology from docs/terminology.md
- * 
+ *
  * These types represent the JSON serialization format for network communication
  * and state snapshots. They should align with the toJSON() output of runtime classes.
  */
 
 import { Vector3 } from '../math/Vector3';
+
+export interface TransformState {
+  id: number;
+  name: string;
+  position: { x: number; y: number; z: number };
+  rotation: { yaw: number; pitch: number; roll: number };
+  scale?: { x: number; y: number; z: number };
+  parentId: number | null;
+}
 
 export type MobileType = 'Male' | 'Female' | 'Bar';
 
@@ -20,13 +29,21 @@ export interface DriveValues {
 }
 
 export interface MobileState {
-  id: string;
-  type: MobileType;
-  position: { x: number, y: number, z: number }; // Plain object for JSON serialization
-  orientation: { x: number, y: number, z: number }; // Plain object for JSON serialization
-  behavioralState: BehavioralState;
-  drives?: DriveValues; // Optional: Bar doesn't have drives
-  dominantDrive?: 'O' | 'P'; // Which drive is higher
+  id: number;
+  name: string;
+  localPosition: { x: number; y: number; z: number };
+  localOrientation: { yaw: number; pitch: number; roll: number };
+  parentId: number | null;
+  drives: any; // DriveSubsystem state
+  horizontalControl: any; // HorizontalControlSubsystem state
+  verticalControl?: any; // VerticalControlSubsystem state (Females only)
+  sensors: any[];
+  actuators: any[];
+  // Computed properties for convenience
+  transform?: TransformState; // Full transform state if needed
+  type?: MobileType;
+  behavioralState?: BehavioralState;
+  dominantDrive?: 'O' | 'P';
 }
 
 export interface SimulationState {

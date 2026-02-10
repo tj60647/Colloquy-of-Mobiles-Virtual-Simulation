@@ -3,7 +3,9 @@
     /* Language and Environment */
     "target": "ES2020",
     "lib": [
-      "ES2020"
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
     ],
     "types": [
       "node",
@@ -11,6 +13,7 @@
     ],
     "module": "commonjs",
     "moduleResolution": "node",
+    "composite": true,
     /* Emit */
     "outDir": "./dist",
     "rootDir": "./",

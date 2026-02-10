@@ -1,14 +1,18 @@
 /**
  * HorizontalControlSubsystem.ts
- * 
+ *
  * Specialized Oscillator for Horizontal Control (Rotation).
  * Extending the generic Oscillator component.
  */
 
-import { Oscillator, OscillatorConfig, IOscillatorLogger, MotionRequest, MotionRequestType } from './Oscillator';
+import { Oscillator } from './Oscillator';
+import type { OscillatorConfig, IOscillatorLogger, MotionRequestType } from './Oscillator';
+import { MotionRequest } from './Oscillator';
 
-export { OscillatorConfig, IOscillatorLogger, MotionRequest, MotionRequestType };
+// Re-export types used by consumers
+export type { OscillatorConfig, IOscillatorLogger, MotionRequestType };
+export { MotionRequest };
 
 export class HorizontalControlSubsystem extends Oscillator {
-    // Inherit constructor overloads from Oscillator
+  // Inherit constructor overloads from Oscillator
 }

@@ -7,16 +7,16 @@ import { Environment } from './lib/Environment';
 
 // Create parent and child
 const parent = new Mobile({
-    name: 'Parent',
-    initialPosition: { x: 0, y: 0, z: 0 },
-    initialRotation: { x: 0, y: 0, z: 0 }
+  name: 'Parent',
+  initialPosition: { x: 0, y: 0, z: 0 },
+  initialRotation: { x: 0, y: 0, z: 0 },
 });
 
 const child = new Mobile({
-    name: 'Child',
-    initialPosition: { x: 10, y: 0, z: 0 },
-    initialRotation: { x: 0, y: 45, z: 0 },
-    parent: parent
+  name: 'Child',
+  initialPosition: { x: 10, y: 0, z: 0 },
+  initialRotation: { x: 0, y: 45, z: 0 },
+  parent: parent,
 });
 
 console.log(`\n=== BEFORE SERIALIZATION ===`);
@@ -36,7 +36,7 @@ console.log(JSON.stringify(json, null, 2));
 
 console.log(`\n=== IDs IN JSON ===`);
 for (const m of json.mobiles) {
-    console.log(`${m.name}: id=${m.id}, parentId=${m.parentId}`);
+  console.log(`${m.name}: id=${m.id}, parentId=${m.parentId}`);
 }
 
 // Deserialize
@@ -45,12 +45,14 @@ const restored = Environment.fromJSON(json);
 
 console.log(`\n=== AFTER DESERIALIZATION ===`);
 for (const m of restored.mobiles) {
-    console.log(`${m.name}: id=${m.id}, parent=${m.parent?.name} (parent.id=${m.parent?.id})`);
+  console.log(`${m.name}: id=${m.id}, parent=${m.parent?.name} (parent.id=${m.parent?.id})`);
 }
 
-const restoredParent = restored.mobiles.find(m => m.name === 'Parent');
-const restoredChild = restored.mobiles.find(m => m.name === 'Child');
+const restoredParent = restored.mobiles.find((m) => m.name === 'Parent');
+const restoredChild = restored.mobiles.find((m) => m.name === 'Child');
 
 console.log(`\n=== HIERARCHY CHECK ===`);
 console.log(`Child's parent === Parent? ${restoredChild?.parent === restoredParent}`);
-console.log(`Parent's children include Child? ${restoredParent?.children.includes(restoredChild!)}`);
+console.log(
+  `Parent's children include Child? ${restoredParent?.children.includes(restoredChild!)}`
+);

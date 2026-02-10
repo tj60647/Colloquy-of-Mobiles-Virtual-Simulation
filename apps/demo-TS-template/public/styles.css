@@ -1,0 +1,23 @@
+/**
+ * Demo Template - Demo-Specific Styles
+ * 
+ * Shared UI styles imported from lib/visualization/ui/styles.css
+ * 
+ * This file is for demo-specific positioning and layout only.
+ * Common panel styling (.panel class) is already defined in shared CSS.
+ */
+
+/* Example: Custom Control Panel (positioning only)
+#my-control-panel {
+    position: absolute;
+    top: 180px;   /* Below description panel 
+    left: 20px;
+}
+*/
+
+/* Then in HTML, add class="panel" to get shared styling:
+<div id="my-control-panel" class="panel">
+    <div class="panel-header">My Controls</div>
+    <!-- content -->
+</div>
+*/
