@@ -1,154 +1,157 @@
 # Camera Controller Specification
 
 **Location:** `lib/visualization/utils/CameraController.ts`  
-**Phase:** Phase A (Foundation)  
+**UI Component:** `lib/visualization/ui/CameraControlPanel.ts`  
+**Phase:** Phase A (Foundation) - **IMPLEMENTED**  
 **Purpose:** Standardized camera controls across all 3D demos
 
 ---
 
 ## Overview
 
-The `CameraController` provides a consistent camera interface for all THREE.js-based demos. It wraps OrbitControls and adds standardized keybindings, preset views, and smooth transitions.
+The camera control system provides consistent camera interaction across all THREE.js-based demos. It consists of two main components:
+
+1. **CameraController** - Core camera logic wrapping THREE.js OrbitControls
+2. **CameraControlPanel** - Shared UI component for camera buttons and controls
 
 ## Design Goals
 
-1. **Consistency:** Same controls across all demos
-2. **Intuitive:** Common patterns (orbit, pan, zoom)
-3. **Accessible:** Keyboard and mouse support
-4. **Smooth:** Animated transitions between views
-5. **Flexible:** Configurable for demo-specific needs
+1. **Consistency:** Same controls across all demos ✅
+2. **Intuitive:** Common patterns (orbit, pan, zoom) ✅
+3. **Accessible:** Keyboard and mouse support ✅
+4. **Smooth:** Animated transitions between views ✅
+5. **Flexible:** Configurable for demo-specific needs ✅
 
 ---
 
 ## Features
 
-### Mouse Controls
+### Mouse Controls (OrbitControls)
 - **Left Drag:** Orbit camera around target
 - **Right Drag:** Pan camera (translate)
-- **Middle Drag:** Dolly (zoom alternative)
 - **Scroll Wheel:** Zoom in/out
-- **Double Click:** Focus on object under cursor
+- **Damping:** Smooth camera motion with configurable inertia
 
-### Keyboard Controls
+### Keyboard Shortcuts
 - **R:** Reset to default view
-- **T:** Toggle perspective/orthographic projection
-- **F:** Focus on selected object
+- **F:** Focus on center point
 - **1:** Top view (looking down Y-axis)
 - **2:** Front view (looking along Z-axis)
 - **3:** Side view (looking along X-axis)  
-- **4:** Isometric view (default 45° angles)
-- **H:** Show/hide help overlay
+- **4:** Isometric view (45° angles)
+
+### UI Controls
+- **Reset View Button:** Red button to reset camera (triggers 'R' key)
+- **View Preset Buttons:** Top/Front/Side/Iso buttons (triggers '1/2/3/4' keys)
+- **Custom Buttons:** Demos can add custom buttons (e.g., Orbit toggle)
+- **Info Modal:** Displays camera controls help (triggered by info icon)
 
 ### Preset Views
 
-Each preset smoothly animates camera to standard position:
+Each preset smoothly animates camera to standard position using spherical interpolation:
 
-| Key | View | Camera Position | Look At |
-|-----|------|----------------|---------|
-| 1 | Top | (0, 100, 0) | (0, 0, 0) |
-| 2 | Front | (0, 0, 100) | (0, 0, 0) |
-| 3 | Side | (100, 0, 0) | (0, 0, 0) |
-| 4 | Isometric | (70, 70, 70) | (0, 0, 0) |
+| Key | View | Position Formula | Look At |
+|-----|------|------------------|---------|
+| 1 | Top | (0, distance, 0) | (0, 0, 0) |
+| 2 | Front | (0, 0, distance) | (0, 0, 0) |
+| 3 | Side | (distance, 0, 0) | (0, 0, 0) |
+| 4 | Isometric | (0.7d, 0.7d, 0.7d) | (0, 0, 0) |
 
-All positions scaled based on scene bounds.
+Distance = length of initial camera position (e.g., 216 units for [180, 120, 180]).
 
-### Projection Toggle
+### Animation System
 
-Switch between perspective and orthographic:
-- **Perspective:** Natural 3D view with depth
-- **Orthographic:** Technical view, no perspective distortion
-
-Useful for:
-- Perspective: General viewing, engaging visualization
-- Orthographic: Technical analysis, precise measurements
+Camera transitions use:
+- **Spherical Interpolation:** Natural arc motion between positions
+- **Ease-in-out Cubic:** Smooth acceleration/deceleration
+- **Duration:** 500ms default (configurable)
+- **Control Disable:** OrbitControls disabled during animation
 
 ---
 
-## API
+## API Reference
 
-### Constructor
+### CameraController Class
+
+**File:** `lib/visualization/utils/CameraController.ts`
+
+#### Constructor
 
 ```typescript
-interface CameraControllerOptions {
+interface CameraControllerConfig {
   camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
   domElement: HTMLElement;
+  initialPosition?: THREE.Vector3;
+  initialTarget?: THREE.Vector3;
   enableDamping?: boolean; // default: true
   dampingFactor?: number; // default: 0.05
-  enableZoom?: boolean; // default: true
-  enablePan?: boolean; // default: true
-  enableRotate?: boolean; // default: true
-  minDistance?: number; // default: 10
+  minDistance?: number; // default: 1
   maxDistance?: number; // default: 1000
-  autoRotate?: boolean; // default: false
-  autoRotateSpeed?: number; // default: 2.0
 }
 
-class CameraController {
-  constructor(options: CameraControllerOptions);
-}
+const controller = new CameraController(config);
 ```
 
-### Methods
+#### Methods
 
 ```typescript
 // Required in animation loop
 update(): void;
 
-// View presets (smooth animated transitions)
-setTopView(duration?: number): Promise<void>;
-setFrontView(duration?: number): Promise<void>;
-setSideView(duration?: number): Promise<void>;
-setIsometricView(duration?: number): Promise<void>;
-resetView(duration?: number): Promise<void>;
+// View presets (smooth animated transitions, 500ms duration)
+reset(): void;
+setPresetView(viewName: 'top' | 'front' | 'side' | 'isometric'): void;
 
-// Custom view
-setView(position: Vector3, target: Vector3, duration?: number): Promise<void>;
+// Camera control
+focusOnCenter(): void;
+focusOnObject(object: THREE.Object3D): void; // Frames object in view
 
-// Focus on object (zoom to fit bounds)
-focusOnObject(object: THREE.Object3D, fitOffset?: number): Promise<void>;
-
-// Projection
+// Projection toggle (not fully implemented - requires camera swap)
 toggleProjection(): void;
-setPerspective(): void;
-setOrthographic(): void;
 
-// Target
-setTarget(target: Vector3): void;
-getTarget(): Vector3;
+// Control state
+setEnabled(enabled: boolean): void;
+getControls(): OrbitControls; // Access underlying OrbitControls
 
-// State
-getState(): CameraState;
-setState(state: CameraState): void;
-saveState(name: string): void;
-loadState(name: string): boolean;
-
-// Enable/disable specific controls
-enableControls(enable: boolean): void;
-enableAutoRotate(enable: boolean): void;
+// Help text
+getHelpText(): string; // Returns formatted help text
 
 // Cleanup
 dispose(): void;
 ```
 
-### Events
+### CameraControlPanel Component
+
+**File:** `lib/visualization/ui/CameraControlPanel.ts`
+
+#### Setup Function
 
 ```typescript
-controller.addEventListener('change', () => {
-  // Camera has moved
-});
+interface CameraControlPanelOptions {
+  panelId?: string; // default: 'controls-panel'
+  canvasId?: string; // default: 'canvas'
+  customButtons?: CustomCameraButton[];
+  orbitControls?: OrbitControlsConfig;
+}
 
-controller.addEventListener('start', () => {
-  // User started interacting
-});
+interface CustomCameraButton {
+  label: string;
+  onClick: () => void;
+  className?: string;
+  isToggle?: boolean;
+  toggleStates?: { on: string; off: string };
+}
 
-controller.addEventListener('end', () => {
-  // User stopped interacting
-});
+interface OrbitControlsConfig {
+  onToggle: (enabled: boolean) => void;
+  onSpeedChange: (speed: number) => void;
+  initialSpeed?: number; // default: 0.002
+  minSpeed?: number; // default: -0.01
+  maxSpeed?: number; // default: 0.01
+}
 
-controller.addEventListener('viewchange', (event) => {
-  // View preset activated
-  console.log(event.view); // 'top' | 'front' | 'side' | 'isometric'
-});
+const panel = setupCameraControls(options);
+// Returns: { updateToggleButton, setOrbitEnabled, setOrbitSpeed }
 ```
 
 ---
@@ -159,83 +162,92 @@ controller.addEventListener('viewchange', (event) => {
 
 ```typescript
 import * as THREE from 'three';
-import { CameraController } from './lib/visualization/utils/CameraController';
+import { ThreeJSRenderer } from '../../../lib/visualization/renderers/ThreeJSRenderer';
 
-// Create camera
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
-camera.position.set(70, 70, 70);
-
-// Create controller
-const controller = new CameraController({
-  camera,
-  domElement: renderer.domElement,
-  enableDamping: true
+// ThreeJSRenderer creates CameraController automatically
+const renderer = new ThreeJSRenderer({
+  canvas: document.getElementById('canvas') as HTMLCanvasElement,
+  width: window.innerWidth,
+  height: window.innerHeight,
+  backgroundColor: 0xffffff,
 });
 
-// Animation loop
+// Access controller
+const controller = renderer.getCameraController();
+
+// Animation loop  
 function animate() {
   requestAnimationFrame(animate);
-  controller.update(); // Required!
-  renderer.render(scene, camera);
+  renderer.render(simulationState);
 }
 ```
 
-### With Preset Views
+### Adding UI Controls
 
 ```typescript
-// Smoothly transition to top view
-await controller.setTopView(1000); // 1 second animation
+import { setupCameraControls } from '../../../lib/visualization/ui';
 
-// Focus on a specific Mobile
-const mobile = scene.getObjectByName('Mobile_1');
-await controller.focusOnObject(mobile);
-
-// Custom view
-await controller.setView(
-  new THREE.Vector3(50, 50, 50),
-  new THREE.Vector3(10, 0, 0),
-  1500 // 1.5 seconds
-);
+setupCameraControls({
+  panelId: 'controls-panel',
+  canvasId: 'canvas',
+});
 ```
 
-### Save/Restore Views
+HTML structure:
+HTML structure:
 
-```typescript
-// Save current camera position
-controller.saveState('my_favorite_view');
-
-// Later, restore it
-controller.loadState('my_favorite_view');
-
-// States stored in localStorage (persists across sessions)
+```html
+<div id="controls-panel" class="panel">
+  <div class="panel-header">Camera Controls</div>
+  <!-- Buttons added dynamically -->
+</div>
 ```
 
-### For Demo-Specific Customization
+### Custom Orbit Controls
 
 ```typescript
-// Disable pan for this demo
-const controller = new CameraController({
-  camera,
-  domElement: renderer.domElement,
-  enablePan: false
+import { setupCameraControls } from '../../../lib/visualization/ui';
+
+const cameraPanel = setupCameraControls({
+  orbitControls: {
+    onToggle: (enabled: boolean) => {
+      app.isOrbiting = enabled;
+      if (enabled) {
+        app.startOrbit();
+      } else {
+        app.stopOrbit();
+      }
+    },
+    onSpeedChange: (speed: number) => {
+      app.orbitSpeed = speed;
+    },
+    initialSpeed: 0.005,
+    minSpeed: -0.005,
+    maxSpeed: 0.005,
+  },
 });
+```
 
-// Enable auto-rotate
-controller.enableAutoRotate(true);
+### Custom Buttons
 
-// Pause auto-rotate on user interaction
-controller.addEventListener('start', () => {
-  controller.enableAutoRotate(false);
-});
-
-controller.addEventListener('end', () => {
-  // Resume auto-rotate after 2 seconds of inactivity
-  setTimeout(() => controller.enableAutoRotate(true), 2000);
+```typescript
+setupCameraControls({
+  customButtons: [
+    {
+      label: 'Focus',
+      onClick: () => {
+        controller.focusOnObject(selectedObject);
+      },
+    },
+    {
+      label: 'Auto-Rotate',
+      isToggle: true,
+      toggleStates: { on: 'Auto: On', off: 'Auto: Off' },
+      onClick: () => {
+        // Toggle auto-rotate logic
+      },
+    },
+  ],
 });
 ```
 
@@ -243,96 +255,174 @@ controller.addEventListener('end', () => {
 
 ## Implementation Details
 
-### Smooth Transitions
+### Smooth Camera Transitions
 
-Uses TWEEN.js or custom interpolation for smooth camera movements:
-
-```typescript
-private animateCamera(
-  targetPosition: Vector3,
-  targetLookAt: Vector3,
-  duration: number
-): Promise<void> {
-  return new Promise((resolve) => {
-    const startPosition = this.camera.position.clone();
-    const startLookAt = this.controls.target.clone();
-    const startTime = performance.now();
-
-    const animate = () => {
-      const elapsed = performance.now() - startTime;
-      const t = Math.min(elapsed / duration, 1);
-      
-      // Ease-in-out interpolation
-      const eased = t < 0.5
-        ? 2 * t * t
-        : -1 + (4 - 2 * t) * t;
-
-      this.camera.position.lerpVectors(startPosition, targetPosition, eased);
-      this.controls.target.lerpVectors(startLookAt, targetLookAt, eased);
-      
-      if (t < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        resolve();
-      }
-    };
-    
-    animate();
-  });
-}
-```
-
-### Auto-calculated Bounds
-
-Preset view distances adjust to scene size:
+Uses spherical interpolation for natural arc motion:
 
 ```typescript
-private calculateSceneBounds(): Box3 {
-  const box = new Box3();
-  this.scene.traverse((object) => {
-    if (object.isMesh) {
-      box.expandByObject(object);
+private animateCameraTo(
+  newPosition: THREE.Vector3,
+  newTarget: THREE.Vector3,
+  duration: number = 500
+): void {
+  const startPosition = this.camera.position.clone();
+  const startTarget = this.controls.target.clone();
+  const startTime = Date.now();
+
+  // Disable controls during animation
+  const wasEnabled = this.controls.enabled;
+  this.controls.enabled = false;
+
+  // Convert to spherical coordinates for smooth arc interpolation
+  const startRelative = startPosition.clone().sub(startTarget);
+  const endRelative = newPosition.clone().sub(newTarget);
+  
+  const startSpherical = new THREE.Spherical().setFromVector3(startRelative);
+  const endSpherical = new THREE.Spherical().setFromVector3(endRelative);
+
+  const animate = () => {
+    const elapsed = Date.now() - startTime;
+    const t = Math.min(elapsed / duration, 1);
+
+    // Ease in-out cubic: slower at start/end, faster in middle
+    const eased = t < 0.5 
+      ? 4 * t * t * t 
+      : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+    // Interpolate spherical coordinates (radius, phi, theta)
+    const interpolatedSpherical = new THREE.Spherical(
+      THREE.MathUtils.lerp(startSpherical.radius, endSpherical.radius, eased),
+      THREE.MathUtils.lerp(startSpherical.phi, endSpherical.phi, eased),
+      THREE.MathUtils.lerp(startSpherical.theta, endSpherical.theta, eased)
+    );
+
+    // Interpolate target position
+    const interpolatedTarget = new THREE.Vector3()
+      .lerpVectors(startTarget, newTarget, eased);
+
+    // Convert back to Cartesian and apply
+    const interpolatedPosition = new THREE.Vector3()
+      .setFromSpherical(interpolatedSpherical)
+      .add(interpolatedTarget);
+      
+    this.camera.position.copy(interpolatedPosition);
+    this.controls.target.copy(interpolatedTarget);
+    this.controls.update();
+
+    if (t < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      // Ensure exact final position
+      this.camera.position.copy(newPosition);
+      this.controls.target.copy(newTarget);
+      this.controls.update();
+      this.controls.enabled = wasEnabled;
     }
-  });
-  return box;
-}
+  };
 
-private getPresetDistance(): number {
-  const bounds = this.calculateSceneBounds();
-  const size = bounds.getSize(new Vector3());
-  const maxDim = Math.max(size.x, size.y, size.z);
-  return maxDim * 2; // 2x scene size for good framing
+  animate();
 }
 ```
 
-### Focus on Object
+**Why spherical interpolation?**
+- Linear interpolation moves in straight line (unnatural)
+- Spherical creates smooth arc around target point
+- Consistent speed throughout (via ease-in-out function)
 
-Automatically frames an object in view:
+### Focus on Object Algorithm
+
+Automatically calculates camera distance to frame objects:
 
 ```typescript
-focusOnObject(object: THREE.Object3D, fitOffset: number = 1.2): Promise<void> {
-  const box = new Box3().setFromObject(object);
-  const center = box.getCenter(new Vector3());
-  const size = box.getSize(new Vector3());
-  
+focusOnObject(object: THREE.Object3D): void {
+  // Calculate bounding box
+  const bbox = new THREE.Box3().setFromObject(object);
+  const center = bbox.getCenter(new THREE.Vector3());
+  const size = bbox.getSize(new THREE.Vector3());
+
+  // Use largest dimension
   const maxDim = Math.max(size.x, size.y, size.z);
-  const fov = this.camera.fov * (Math.PI / 180);
-  const distance = maxDim / (2 * Math.tan(fov / 2)) * fitOffset;
-  
+  const distance = maxDim * 2; // 2x for proper framing
+
+  // Keep current view direction
   const direction = this.camera.position.clone()
     .sub(this.controls.target)
     .normalize();
-  const targetPosition = center.clone().add(direction.multiplyScalar(distance));
-  
-  return this.animateCamera(targetPosition, center, 1000);
+    
+  // Calculate new position along same direction
+  const newPosition = center.clone()
+    .add(direction.multiplyScalar(distance));
+
+  this.animateCameraTo(newPosition, center);
 }
 ```
 
+### Keyboard Event Handling
+
+Events attached to canvas element to avoid browser conflicts:
+
+```typescript
+private setupKeyboardControls(): void {
+  const handleKeyDown = (event: KeyboardEvent) => {
+    switch (event.key.toLowerCase()) {
+      case 'r': this.reset(); break;
+      case 't': this.toggleProjection(); break;
+      case 'f': this.focusOnCenter(); break;
+      case '1': this.setPresetView('top'); break;
+      case '2': this.setPresetView('front'); break;
+      case '3': this.setPresetView('side'); break;
+      case '4': this.setPresetView('isometric'); break;
+    }
+  };
+
+  this.domElement.addEventListener('keydown', handleKeyDown);
+  
+  // Ensure canvas can receive keyboard events
+  if (this.domElement instanceof HTMLCanvasElement) {
+    this.domElement.tabIndex = 1;
+  }
+}
+```
+
+### UI Button Creation
+
+CameraControlPanel dynamically creates buttons:
+
+```typescript
+// Info button with help modal
+const infoButton = document.createElement('button');
+infoButton.className = 'camera-info-button';
+infoButton.innerHTML = icons.info; // SVG icon
+infoButton.addEventListener('click', () => modal.style.display = 'flex');
+
+// Reset button
+const resetButton = document.createElement('button');
+resetButton.className = 'camera-button reset';
+resetButton.textContent = 'Reset View';
+resetButton.addEventListener('click', () => {
+  // Dispatch 'r' key event to canvas
+  canvas.dispatchEvent(new KeyboardEvent('keydown', { key: 'r' }));
+});
+
+// View preset buttons (Top, Front, Side, Iso)
+views.forEach((view) => {
+  const button = document.createElement('button');
+  button.className = 'camera-button camera-view-button';
+  button.textContent = view.label;
+  button.addEventListener('click', () => {
+    canvas.dispatchEvent(new KeyboardEvent('keydown', { key: view.key }));
+  });
+  viewsRow.appendChild(button);
+});
+```
+
+**Design Pattern:** UI buttons dispatch keyboard events to canvas, triggering CameraController's keyboard handlers. This maintains separation between UI and camera logic.
+
 ---
 
-## UI Help Overlay
+## UI Info Modal
 
-When user presses 'H', show help overlay:
+Help modal shows camera controls (triggered by info button):
 
 ```html
 <div id="camera-help" class="help-overlay" style="display: none;">
