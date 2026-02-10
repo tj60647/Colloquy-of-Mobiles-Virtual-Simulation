@@ -3,7 +3,7 @@
   "buildCommand": "npm run build:demos",
   "outputDirectory": "dist",
   "cleanUrls": true,
-  "trailingSlash": false,
+  "trailingSlash": true,
   "headers": [
     {
       "source": "/(.*)",
