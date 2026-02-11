@@ -2,15 +2,17 @@
 
 ## Overview
 
-This document outlines the plan to refactor all demonstration applications to use the new TypeScript architecture (Phases 1-7 complete). The current demos use legacy code and mix concerns inappropriately. The refactored demos will demonstrate specific aspects of the virtual Colloquy system using clean, typed components.
+This document outlines the plan to build a comprehensive demonstration suite using the new TypeScript architecture (Phases 1-7 complete). The demos will demonstrate specific aspects of the virtual Colloquy system using clean, typed components.
 
 **Goals:**
-- Align demos with completed TypeScript architecture
+- Build demos that showcase the completed TypeScript architecture
 - Separate simulation logic from visualization
 - Create focused, educational demonstrations
 - Use Config V2 format for scene setup
-- Eliminate legacy JavaScript dependencies
+- Use only TypeScript (no legacy JavaScript dependencies)
 - Establish patterns for future demo development
+
+**Current Status:** Building from scratch - Demo 1 complete, Demos 2-17 planned
 
 ---
 
@@ -46,22 +48,63 @@ The SAME simulation code (`lib/Mobile.ts`, `lib/Environment.ts`, etc.) works for
 
 ## Current Demo Inventory
 
-### Legacy Demos (To Be Refactored/Replaced)
+**Actual State of Codebase (February 2026):**
 
-| Demo | Technology | Purpose | Status | Issues |
-|------|-----------|---------|--------|--------|
-| **demo-00-P5** | p5.js + EasyCam | Basic 3D setup test | ⚠️ | Minimal value, ancient tech |
-| **demo-01-sensor-actuator** | THREE.js | Sensors/actuators detecting each other | ⚠️ | Uses legacy visualization classes |
-| **demo-01-actuator-THREE** | THREE.js | Actuator field of effect | ⚠️ | Uses `Actuator_THREE` (legacy) |
-| **demo-01-sense-act-osc** | Mixed | Unknown (need verification) | ❌ | Unclear purpose |
-| **demo-02-oscillator** | p5.js | Oscillator subsystem | ⚠️ | Uses legacy `Agent.js` |
-| **demo-02-oscillator-THREE** | THREE.js | 3D oscillator | ⚠️ | Uses legacy classes |
-| **demo-03-transform-THREE** | THREE.js | Transform hierarchy | ⚠️ | Uses `Transform_THREE` (legacy) |
-| **demo-04-drives** | p5.js | Drive system visualization | ⚠️ | Uses legacy `Agent_DriveManager.js` |
-| **demo-05-transceiversV2** | Mixed | Actor model + pulse communication | ⚠️ | Most advanced but not using TS core |
-| **demo-06-assets-test** | THREE.js | GLB model loader | ✅ | Keep as-is (pure asset test) |
-| **demo-07-sensor** | p5.js | Sensor field of view | ⚠️ | Mixed TS/legacy |
-| **demo-08-sensor-THREE** | THREE.js | 3D sensor visualization | ⚠️ | Uses `Sensor_THREE` (legacy) |
+### Existing Demos
+- ✅ `demo-TS-01-transform-hierarchy/` - **COMPLETE & DEPLOYED**
+  - Transform hierarchy with parent-child relationships
+  - Uses TypeScript core, Config V2, CameraController
+  - Validates scene graph foundation
+
+- ✅ `demo-TS-template/` - **Template for new demos**
+  - Boilerplate structure for TypeScript demos
+  - Vite build configuration
+  - Standard camera controls
+
+- ✅ `public/` - **Gallery landing page**
+  - Demo index and navigation
+  - Currently displays Demo 1
+
+- ✅ `SimulationConfigurationFiles/` - **Config V2 schemas**
+  - JSON schema validation
+  - Example configurations
+
+### Planned Demos (Not Yet Implemented)
+
+**Tier 1: Core Components**
+- ⏳ Demo 2: Sensor Field of View
+- ⏳ Demo 3: Actuator Field of Effect  
+- ⏳ Demo 4: Sensor-Actuator Interaction
+- ⏳ Demo 5: External Sensor Inputs
+
+**Tier 2: Subsystems**
+- ⏳ Demo 6: Drive System
+- ⏳ Demo 7: Pulse Communication (Phase 7.5)
+- ⏳ Demo 8: Horizontal Control
+- ⏳ Demo 9: Vertical Control
+
+**Tier 3: Complete Mobiles** (Blocked by Phase 7.5)
+- ❌ Demo 10: Male Mobile Behavior
+- ❌ Demo 11: Female Mobile Behavior
+- ❌ Demo 12: Beam Arbitration
+
+**Tier 4: Social Interaction** (Future)
+- ❌ Demo 13: Simple Colloquy (3 Mobiles)
+- ❌ Demo 14: Full Colloquy (6 Mobiles)
+
+**Tier 5: Tools** (Future)
+- ❌ Demo 15: Config Editor
+- ❌ Demo 16: Serialization Test
+- ❌ Demo 17: Performance Benchmark
+
+### Legacy Demos Status
+
+**Note:** Previous versions of this document referenced legacy demos (demo-00-P5, demo-01-sensor-actuator, etc.) that do not exist in the current repository. Those demos either:
+- Never existed in this codebase (may have been in separate branch/repo)
+- Were removed before current planning phase
+- Were aspirational references
+
+**Current reality:** We are building the demo suite from scratch using the TypeScript core (Phases 1-7 complete). This is a clean implementation, not a migration.
 
 ---
 
@@ -303,7 +346,7 @@ class ClientViewer {
 
 **Tech:** TypeScript + THREE.js
 
-**Replaces:** demo-03-transform-THREE
+**Status:** ✅ Complete & Deployed
 
 ---
 
@@ -323,7 +366,7 @@ class ClientViewer {
 
 **Tech:** TypeScript + THREE.js
 
-**Replaces:** demo-07-sensor, demo-08-sensor-THREE
+**Validates:** Core sensor detection system
 
 ---
 
@@ -343,7 +386,7 @@ class ClientViewer {
 
 **Tech:** TypeScript + THREE.js
 
-**Replaces:** demo-01-actuator-THREE
+**Validates:** Core actuator emission system
 
 ---
 
@@ -363,12 +406,12 @@ class ClientViewer {
 
 **Tech:** TypeScript + THREE.js
 
-**Replaces:** demo-01-sensor-actuator
+**Validates:** Bidirectional component detection
 
 ---
 
-#### Demo 4.5: External Sensor Inputs ✨ NEW
-**Path:** `apps/demo-TS-04.5-external-sensors/`
+#### Demo 5: External Sensor Inputs ✨ NEW
+**Path:** `apps/demo-TS-05-external-sensors/`
 
 **Purpose:** Demonstrate sensors responding to external stimuli (visitor interaction)
 
@@ -392,8 +435,8 @@ class ClientViewer {
 
 ### Tier 2: Subsystem Demos (Behavior)
 
-#### Demo 5: Drive System ✨ NEW
-**Path:** `apps/demo-TS-05-drive-system/`
+#### Demo 6: Drive System ✨ NEW
+**Path:** `apps/demo-TS-06-drive-system/`
 
 **Purpose:** Demonstrate entropy accumulation and drive states
 
@@ -408,12 +451,12 @@ class ClientViewer {
 
 **Tech:** TypeScript + Canvas 2D API (for charts)
 
-**Replaces:** demo-04-drives
+**Validates:** Paskian drive system with entropy accumulation
 
 ---
 
-#### Demo 5.5: Pulse Communication ✨ NEW
-**Path:** `apps/demo-TS-05.5-pulse-communication/`
+#### Demo 7: Pulse Communication ✨ NEW
+**Path:** `apps/demo-TS-07-pulse-communication/`
 
 **Purpose:** Demonstrate pulse transmission/reception infrastructure and circular buffer operation
 
@@ -429,7 +472,7 @@ class ClientViewer {
 
 **Tech:** TypeScript + THREE.js + Canvas 2D (buffer visualization)
 
-**Replaces/Modernizes:** demo-05-transceiversV2 (infrastructure only)
+**Reference:** Inspired by pulse patterns concept, but clean implementation
 
 **Scope:** Implements the **communication infrastructure** (SENSE and ACT phases) - circular buffers, pulse transmission mechanics, pattern vocabulary constants, and message passing. Does NOT implement LOGIC phase (drive-based pattern selection, behavioral responses) - that comes in Complete Mobile demos (Tier 3/4).
 
@@ -437,8 +480,8 @@ class ClientViewer {
 
 ---
 
-#### Demo 6: Horizontal Control Subsystem ✨ NEW
-**Path:** `apps/demo-TS-06-horizontal-control/`
+#### Demo 8: Horizontal Control Subsystem ✨ NEW
+**Path:** `apps/demo-TS-08-horizontal-control/`
 
 **Purpose:** Demonstrate oscillator-based yaw rotation
 
@@ -453,12 +496,12 @@ class ClientViewer {
 
 **Tech:** TypeScript + THREE.js + Canvas 2D (charts)
 
-**Replaces:** demo-02-oscillator, demo-02-oscillator-THREE
+**Validates:** Oscillator subsystem with motion profiles
 
 ---
 
-#### Demo 7: Vertical Control Subsystem ✨ NEW
-**Path:** `apps/demo-TS-07-vertical-control/`
+#### Demo 9: Vertical Control Subsystem ✨ NEW
+**Path:** `apps/demo-TS-09-vertical-control/`
 
 **Purpose:** Demonstrate Female Mobile's roll rotation
 
@@ -478,8 +521,8 @@ class ClientViewer {
 
 ### Tier 3: Complete Mobile Demos (Integration)
 
-#### Demo 8: Male Mobile Behavior ✨ NEW
-**Path:** `apps/demo-TS-08-male-mobile/`
+#### Demo 10: Male Mobile Behavior ✨ NEW
+**Path:** `apps/demo-TS-10-male-mobile/`
 
 **Purpose:** Demonstrate complete Male Mobile with drives + oscillators + sensors/actuators
 
@@ -494,12 +537,12 @@ class ClientViewer {
 
 **Tech:** TypeScript + THREE.js
 
-**Integration:** Combines demos 5 + 6 + sensors
+**Integration:** Combines demos 6 + 8 + sensors
 
 ---
 
-#### Demo 9: Female Mobile Behavior ✨ NEW
-**Path:** `apps/demo-TS-09-female-mobile/`
+#### Demo 11: Female Mobile Behavior ✨ NEW
+**Path:** `apps/demo-TS-11-female-mobile/`
 
 **Purpose:** Demonstrate complete Female Mobile with two-axis control
 
@@ -518,8 +561,8 @@ class ClientViewer {
 
 ---
 
-#### Demo 10: Beam (Bar) Arbitration ✨ NEW
-**Path:** `apps/demo-TS-10-beam-arbitration/`
+#### Demo 12: Beam (Bar) Arbitration ✨ NEW
+**Path:** `apps/demo-TS-12-beam-arbitration/`
 
 **Purpose:** Demonstrate Beam arbitration between two Males
 
@@ -540,8 +583,8 @@ class ClientViewer {
 
 ### Tier 4: Social Interaction Demos (The Colloquy)
 
-#### Demo 11: Simple Colloquy (3 Mobiles) ✨ NEW
-**Path:** `apps/demo-TS-11-simple-colloquy/`
+#### Demo 13: Simple Colloquy (3 Mobiles) ✨ NEW
+**Path:** `apps/demo-TS-13-simple-colloquy/`
 
 **Purpose:** Demonstrate basic social interaction between 3 Mobiles
 
@@ -560,8 +603,8 @@ class ClientViewer {
 
 ---
 
-#### Demo 12: Full Colloquy (6 Mobiles) ✨ NEW
-**Path:** `apps/demo-TS-12-full-colloquy/`
+#### Demo 14: Full Colloquy (6 Mobiles) ✨ NEW
+**Path:** `apps/demo-TS-14-full-colloquy/`
 
 **Purpose:** Complete simulation with all agent types
 
@@ -577,14 +620,14 @@ class ClientViewer {
 
 **Tech:** TypeScript + THREE.js
 
-**Replaces/Enhances:** demo-05-transceiversV2
+**Validates:** Complete Colloquy system with all agent types
 
 ---
 
 ### Tier 5: Special Purpose Demos
 
-#### Demo 13: Config Editor/Visualizer ✨ NEW
-**Path:** `apps/demo-TS-13-config-editor/`
+#### Demo 15: Config Editor/Visualizer ✨ NEW
+**Path:** `apps/demo-TS-15-config-editor/`
 
 **Purpose:** Interactive tool for creating/editing Config V2 files
 
@@ -601,8 +644,8 @@ class ClientViewer {
 
 ---
 
-#### Demo 14: Serialization Test ✨ NEW
-**Path:** `apps/demo-TS-14-serialization/`
+#### Demo 16: Serialization Test ✨ NEW
+**Path:** `apps/demo-TS-16-serialization/`
 
 **Purpose:** Demonstrate save/load functionality
 
@@ -621,8 +664,8 @@ class ClientViewer {
 
 ---
 
-#### Demo 15: Performance Benchmark ✨ NEW
-**Path:** `apps/demo-TS-15-performance/`
+#### Demo 17: Performance Benchmark ✨ NEW
+**Path:** `apps/demo-TS-17-performance/`
 
 **Purpose:** Test simulation performance with many Mobiles
 
@@ -641,24 +684,15 @@ class ClientViewer {
 
 ---
 
-## Legacy Demo Disposition
+## Reference Materials
 
-### Keep As-Is
-- **demo-06-assets-test** - Pure asset loading test, doesn't use simulation classes
+**Note:** If legacy demo code exists elsewhere (separate branches, repositories, or documentation), it can serve as conceptual reference for:
+- Actor model patterns
+- Pulse transmission mechanics  
+- Pattern matching approaches
+- Visualization techniques
 
-### Preserve (Archive with Documentation)
-- **demo-05-transceiversV2** - **CRITICAL REFERENCE** for pulse communication
-  - Move to `apps/archive-reference/demo-05-transceiversV2/`
-  - This demonstrates the Actor model, PulseTransmitter, PulseReceiver, and pattern matching
-  - Essential reference for implementing Phase 7.5 (Communication System)
-  - Will be modernized as Demo 5.5
-
-### Deprecate (Move to archive/)
-- **demo-00-P5** - No value, just p5.js boilerplate
-- **demo-01-sense-act-osc** - Purpose unclear, likely superseded
-
-### Archive After Refactoring
-All other demos will be moved to `apps/archive-legacy/` once new versions are complete
+However, the current implementation is a **clean TypeScript rebuild**, not a migration.
 
 ---
 
@@ -717,9 +751,9 @@ All other demos will be moved to `apps/archive-legacy/` once new versions are co
 
 #### Demo 4: Sensor-Actuator Interaction
 - **Dependencies:** Demos 2, 3
-- **Blocks:** Demos 11, 12
+- **Blocks:** Demos 13, 14
 
-#### Demo 4.5: External Sensor Inputs
+#### Demo 5: External Sensor Inputs
 - **Dependencies:** Demo 2 (sensor FOV understanding)
 - **Blocks:** None (validates sensor stations for installation)
 
@@ -729,23 +763,23 @@ All other demos will be moved to `apps/archive-legacy/` once new versions are co
 
 **Sequence:** Can be implemented in parallel after Phase A
 
-#### Demo 5: Drive System
+#### Demo 6: Drive System
 - **Dependencies:** Phase A only (no scene graph needed)
-- **Blocks:** Demos 5.5, 8, 9, 10, 11, 12
+- **Blocks:** Demos 7, 10, 11, 12, 13, 14
 
-#### Demo 6: Horizontal Control
+#### Demo 8: Horizontal Control
 - **Dependencies:** Demo 1 (needs transforms)
-- **Blocks:** Demos 8, 9, 10, 11, 12
+- **Blocks:** Demos 9, 10, 11, 12, 13, 14
 
-#### Demo 7: Vertical Control
-- **Dependencies:** Demo 6 (builds on horizontal control)
-- **Blocks:** Demos 9, 11, 12
+#### Demo 9: Vertical Control
+- **Dependencies:** Demo 8 (builds on horizontal control)
+- **Blocks:** Demos 11, 13, 14
 
 ---
 
 ### Phase 7.5: Communication System (CRITICAL - NEW)
 
-**Sequence:** Must complete AFTER Demos 5-7, BEFORE Phase D
+**Sequence:** Must complete AFTER Demos 6-9, BEFORE Phase D
 
 **Why:** Mobiles need communication infrastructure (buffers, transmission mechanics, pattern vocabulary) as the foundation for social behavior. This implements the SENSE and ACT phases; the LOGIC phase (pattern recognition → decision → behavior) comes in Complete Mobile demos.
 
@@ -759,7 +793,7 @@ All other demos will be moved to `apps/archive-legacy/` once new versions are co
 3. Implement `PaskPatterns` (communication vocabulary constants)
 4. Update `Environment` to broker messages (actor model)
 5. Update `Mobile` to integrate transmitters/receivers (basic hooks only)
-6. Create Demo 5.5 to validate communication infrastructure
+6. Create Demo 7 to validate communication infrastructure
 
 **Deliverables:**
 - `lib/components/PulseTransmitter.ts`
@@ -776,9 +810,9 @@ All other demos will be moved to `apps/archive-legacy/` once new versions are co
 
 **See:** [Pulse Communication Architecture](PULSE_COMMUNICATION_ARCHITECTURE.md) for complete specification
 
-#### Demo 5.5: Pulse Communication
-- **Dependencies:** Demos 1, 5 (Transform + Drive system)
-- **Blocks:** Demos 8, 9, 10, 11, 12 (ALL complete Mobiles need communication)
+#### Demo 7: Pulse Communication
+- **Dependencies:** Demos 1, 6 (Transform + Drive system)
+- **Blocks:** Demos 10, 11, 12, 13, 14 (ALL complete Mobiles need communication)
 - **Validates:** The reference impl in demo-05-transceiversV2
 
 ---
@@ -787,17 +821,17 @@ All other demos will be moved to `apps/archive-legacy/` once new versions are co
 
 **Sequence:** Must complete Phases B, C, AND 7.5 first
 
-#### Demo 8: Male Mobile
-- **Dependencies:** Demos 1, 2, 3, 5, 5.5, 6
-- **Blocks:** Demos 10, 11, 12
+#### Demo 10: Male Mobile
+- **Dependencies:** Demos 1, 2, 3, 6, 7, 8
+- **Blocks:** Demos 12, 13, 14
 
-#### Demo 9: Female Mobile
-- **Dependencies:** Demos 1, 2, 3, 5, 5.5, 6, 7
-- **Blocks:** Demos 11, 12
+#### Demo 11: Female Mobile
+- **Dependencies:** Demos 1, 2, 3, 6, 7, 8, 9
+- **Blocks:** Demos 13, 14
 
-#### Demo 10: Beam Arbitration
-- **Dependencies:** Demo 8 (needs Male Mobile behavior)
-- **Blocks:** Demo 12
+#### Demo 12: Beam Arbitration
+- **Dependencies:** Demo 10 (needs Male Mobile behavior)
+- **Blocks:** Demo 14
 
 ---
 
@@ -805,12 +839,12 @@ All other demos will be moved to `apps/archive-legacy/` once new versions are co
 
 **Sequence:** Must complete Phases B, C, D first
 
-#### Demo 11: Simple Colloquy
-- **Dependencies:** Demos 1-9 (all components and Mobiles)
-- **Blocks:** Demo 12 (simplified version as test)
+#### Demo 13: Simple Colloquy
+- **Dependencies:** Demos 1-11 (all components and Mobiles)
+- **Blocks:** Demo 14 (simplified version as test)
 
-#### Demo 12: Full Colloquy
-- **Dependencies:** Demos 1-11 (complete system)
+#### Demo 14: Full Colloquy
+- **Dependencies:** Demos 1-13 (complete system)
 - **Blocks:** None (final integration)
 
 ---
@@ -819,16 +853,16 @@ All other demos will be moved to `apps/archive-legacy/` once new versions are co
 
 **Sequence:** Can be implemented anytime after Phase A
 
-#### Demo 13: Config Editor
+#### Demo 15: Config Editor
 - **Dependencies:** Phase A, Demo 1 (scene graph visualization)
 - **Blocks:** None (development tool)
 
-#### Demo 14: Serialization Test
+#### Demo 16: Serialization Test
 - **Dependencies:** Phase A
 - **Blocks:** None (testing tool)
 
-#### Demo 15: Performance Benchmark
-- **Dependencies:** Demo 12 (needs complete system)
+#### Demo 17: Performance Benchmark
+- **Dependencies:** Demo 14 (needs complete system)
 - **Blocks:** None (optimization tool)
 
 ---
@@ -840,41 +874,41 @@ Phase A (Foundation + CameraController)
     │
     ├──► Demo 1 (Transform) ──┬──► Demo 2 (Sensor) ──┬──► Demo 4 (Interaction)
     │                          │                       │
-    │                          │                       ├──► Demo 4.5 (External Sensors)
+    │                          │                       ├──► Demo 5 (External Sensors)
     │                          │                       │
     │                          └──► Demo 3 (Actuator) ─┘
     │
-    ├──► Demo 5 (Drives) ──────────────────────────────┐
+    ├──► Demo 6 (Drives) ──────────────────────────────┐
     │           │                                       │
     │           └──► Phase 7.5 (Communication System)  │
     │                    │                              │
-    │                    └──► Demo 5.5 (Pulse Comm) ───┤
+    │                    └──► Demo 7 (Pulse Comm) ─────┤
     │                                                   │
-    ├──► Demo 6 (Horizontal) ──► Demo 7 (Vertical)     │
+    ├──► Demo 8 (Horizontal) ──► Demo 9 (Vertical)     │
     │           │                      │                │
     │           └──────────────────────┼────────────────┤
     │                                  │                │
-    └──► (Demos 1-7 + 5.5) ──► Demo 8 (Male) ──────────┤
+    └──► (Demos 1-9) ──► Demo 10 (Male) ───────────────┤
                               │                         │
-                              ├──► Demo 10 (Beam)       │
+                              ├──► Demo 12 (Beam)       │
                               │                         │
-                       Demo 9 (Female) ─────────────────┤
+                       Demo 11 (Female) ────────────────┤
                                                         │
-                                    Demo 11 (Simple Colloquy)
+                                    Demo 13 (Simple Colloquy)
                                                         │
-                                    Demo 12 (Full Colloquy)
+                                    Demo 14 (Full Colloquy)
 
 Parallel Track:
-Phase A ──► Demo 13 (Config Editor)
-        ──► Demo 14 (Serialization)
-        ──► Demo 15 (Performance) [after Demo 12]
+Phase A ──► Demo 15 (Config Editor)
+        ──► Demo 16 (Serialization)
+        ──► Demo 17 (Performance) [after Demo 14]
 
 Special:
-Demo 4.5 validates sensor station interface (museum visitor interaction)
-Demo 5.5 validates pulse communication (CRITICAL for social behavior)
+Demo 5 validates sensor station interface (museum visitor interaction)
+Demo 7 validates pulse communication (CRITICAL for social behavior)
 
 IMPORTANT: Phase 7.5 (Communication System) is REQUIRED before any
-           Complete Mobile demos (8-12). Without pulse communication,
+           Complete Mobile demos (10-14). Without pulse communication,
            Mobiles cannot exhibit social behavior.
 ```
 
@@ -1189,33 +1223,32 @@ function updateUI(environment: Environment) {
 
 ---
 
-## Migration from Legacy
+## Building New Demos
 
 ### Step-by-Step Process
 
-1. **Choose Legacy Demo** from inventory
-2. **Identify Core Concept** being demonstrated
+1. **Identify Core Concept** to demonstrate
+2. **Check Dependencies** - What demos must exist first?
 3. **Design New Demo** following template
 4. **Create Config V2** file for scene
 5. **Implement Simulation** using TypeScript classes
 6. **Add Visualization** using pure renderer
 7. **Create UI** for interaction/display
 8. **Test Thoroughly**
-9. **Document** in README
-10. **Archive Legacy** demo
+9. **Document** in README and DEMO_CARD.md
+10. **Update TODO.md** and demo gallery index
 
-### Example: Migrating demo-04-drives
+### Example: Building Demo 6 (Drive System)
 
-**Legacy Code:**
-```javascript
-// apps/demo-04-drives/public/sketch.js
-import { Agent_DriveManager } from '../lib/Agent_DriveManager.js';
-agents.push(new Agent_DriveManager(50, 50, 250));
-```
+**Requirements:**
+- TypeScript core complete (Phase 7 ✅)
+- `DriveSubsystem` class available
+- Config V2 schema for drive parameters
 
-**New Code:**
+**Implementation:**
+
 ```typescript
-// apps/demo-TS-05-drive-system/src/main.ts
+// apps/demo-TS-06-drive-system/src/main.ts
 import { SceneGraphLoader } from '../../../lib/SceneGraphLoader';
 import { DriveSystemRenderer } from './renderer';
 
@@ -1292,7 +1325,7 @@ Demonstrates bidirectional detection between multiple sensors and actuators. Sho
 
 ---
 
-### Demo 4.5: External Sensor Inputs
+### Demo 5: External Sensor Inputs
 
 **Category:** Core Component | **Complexity:** Intermediate | **Dependencies:** Demo 2
 
@@ -1310,7 +1343,7 @@ Demonstrates sensors responding to external stimuli from visitors - webcam (ligh
 
 ---
 
-### Demo 5: Drive System
+### Demo 6: Drive System
 
 **Category:** Subsystem | **Complexity:** Intermediate | **Dependencies:** Phase A
 
@@ -1326,9 +1359,9 @@ Demonstrates Paskian drive system with entropy accumulation and state transition
 
 ---
 
-### Demo 5.5: Pulse Communication
+### Demo 7: Pulse Communication
 
-**Category:** Subsystem (Infrastructure) | **Complexity:** Advanced | **Dependencies:** Demos 1, 5
+**Category:** Subsystem (Infrastructure) | **Complexity:** Advanced | **Dependencies:** Demos 1, 6
 
 Demonstrates pulse transmission/reception **infrastructure** - the communication "channel" that enables social behavior in later demos. Shows circular buffers, pattern transmission, and message passing mechanics.
 
@@ -1353,7 +1386,7 @@ Demonstrates pulse transmission/reception **infrastructure** - the communication
 
 ---
 
-### Demo 6: Horizontal Control Subsystem
+### Demo 8: Horizontal Control Subsystem
 
 **Category:** Subsystem | **Complexity:** Intermediate | **Dependencies:** Demo 1
 
@@ -1369,9 +1402,9 @@ Demonstrates oscillator-based yaw rotation used by all Mobiles. Shows motion pro
 
 ---
 
-### Demo 7: Vertical Control Subsystem
+### Demo 9: Vertical Control Subsystem
 
-**Category:** Subsystem | **Complexity:** Intermediate | **Dependencies:** Demo 6
+**Category:** Subsystem | **Complexity:** Intermediate | **Dependencies:** Demo 8
 
 Demonstrates Female Mobile's independent roll rotation. Shows two-axis control with vertical reflector oscillation while horizontal rotation operates independently.
 
@@ -1385,9 +1418,9 @@ Demonstrates Female Mobile's independent roll rotation. Shows two-axis control w
 
 ---
 
-### Demo 8: Male Mobile Behavior
+### Demo 10: Male Mobile Behavior
 
-**Category:** Complete Mobile | **Complexity:** Advanced | **Dependencies:** Demos 1, 2, 3, 5, 6
+**Category:** Complete Mobile | **Complexity:** Advanced | **Dependencies:** Demos 1, 2, 3, 6, 8
 
 Demonstrates complete Male Mobile with integrated drive system, horizontal control, and sensors/actuators. Shows search behavior when unsatisfied, return to reinforcement when satisfied.
 
@@ -1401,9 +1434,9 @@ Demonstrates complete Male Mobile with integrated drive system, horizontal contr
 
 ---
 
-### Demo 9: Female Mobile Behavior
+### Demo 11: Female Mobile Behavior
 
-**Category:** Complete Mobile | **Complexity:** Advanced | **Dependencies:** Demos 1, 2, 3, 5, 6, 7
+**Category:** Complete Mobile | **Complexity:** Advanced | **Dependencies:** Demos 1, 2, 3, 6, 8, 9
 
 Demonstrates complete Female Mobile with drive system and two-axis control. Shows coordinated horizontal and vertical oscillation with independent reflector scanning.
 
@@ -1417,9 +1450,9 @@ Demonstrates complete Female Mobile with drive system and two-axis control. Show
 
 ---
 
-### Demo 10: Beam Arbitration
+### Demo 12: Beam Arbitration
 
-**Category:** Complete Mobile | **Complexity:** Advanced | **Dependencies:** Demo 8
+**Category:** Complete Mobile | **Complexity:** Advanced | **Dependencies:** Demo 10
 
 Demonstrates the Beam (Bar) as a reactive agent that arbitrates between two Male Mobiles. Shows dominant-drive selection logic and beam positioning based on competition.
 
@@ -1433,9 +1466,9 @@ Demonstrates the Beam (Bar) as a reactive agent that arbitrates between two Male
 
 ---
 
-### Demo 11: Simple Colloquy (3 Mobiles)
+### Demo 13: Simple Colloquy (3 Mobiles)
 
-**Category:** Social Interaction | **Complexity:** Advanced | **Dependencies:** Demos 1-9
+**Category:** Social Interaction | **Complexity:** Advanced | **Dependencies:** Demos 1-11
 
 Demonstrates basic social interaction between 3 Mobiles. Shows emergent behavior through sensor/actuator communication, drive-based searching, and mutual satisfaction.
 
@@ -1449,9 +1482,9 @@ Demonstrates basic social interaction between 3 Mobiles. Shows emergent behavior
 
 ---
 
-### Demo 12: Full Colloquy (6 Mobiles)
+### Demo 14: Full Colloquy (6 Mobiles)
 
-**Category:** Social Interaction | **Complexity:** Advanced | **Dependencies:** Demos 1-11
+**Category:** Social Interaction | **Complexity:** Advanced | **Dependencies:** Demos 1-13
 
 Demonstrates complete Colloquy of Mobiles simulation with all agent types. The full museum installation behavior with emergent social dynamics.
 
@@ -1467,7 +1500,7 @@ Demonstrates complete Colloquy of Mobiles simulation with all agent types. The f
 
 ---
 
-### Demo 13: Config Editor/Visualizer
+### Demo 15: Config Editor/Visualizer
 
 **Category:** Tool | **Complexity:** Intermediate | **Dependencies:** Demo 1
 
@@ -1499,9 +1532,9 @@ Demonstrates save/load functionality for simulation state. Tests the complete se
 
 ---
 
-### Demo 15: Performance Benchmark
+### Demo 17: Performance Benchmark
 
-**Category:** Tool | **Complexity:** Advanced | **Dependencies:** Demo 12
+**Category:** Tool | **Complexity:** Advanced | **Dependencies:** Demo 14
 
 Tests simulation performance with variable Mobile counts. Identifies bottlenecks and validates museum installation requirements.
 
@@ -1688,33 +1721,32 @@ function animate() {
 
 ---
 
-## Migration from Legacy
+## Building New Demos
 
 ### Step-by-Step Process
 
-1. **Choose Legacy Demo** from inventory
-2. **Identify Core Concept** being demonstrated
-3. **Check Dependencies** - What must exist first?
-4. **Design New Demo** following template
-5. **Create Config V2** file for scene
-6. **Implement Simulation** using TypeScript classes only
-7. **Add Visualization** using pure renderer
-8. **Create UI** for interaction/display
-9. **Write Documentation** (README + Card)
-10. **Test Thoroughly**
-11. **Archive Legacy** demo to `apps/archive-legacy/`
+1. **Identify Core Concept** to demonstrate
+2. **Check Dependencies** - What demos must exist first?
+3. **Design New Demo** following template
+4. **Create Config V2** file for scene
+5. **Implement Simulation** using TypeScript classes only
+6. **Add Visualization** using pure renderer
+7. **Create UI** for interaction/display
+8. **Write Documentation** (README + Card)
+9. **Test Thoroughly**
+10. **Deploy and update gallery index**
 
-### Example: Migrating demo-04-drives → Demo 5
+### Example: Building Demo 6 (Drive System)
 
-**Legacy Issues:**
-- Uses `Agent_DriveManager.js` (old JavaScript)
-- Direct p5.js rendering mixed with logic
-- No config file
-- No separation of concerns
+**Design Goals:**
+- Visualize entropy accumulation in O and P drives
+- Show state transitions (Satisfied → Unsatisfied → Dominant)
+- Real-time charts for multiple drive subsystems
+- Interactive controls for testing
 
-**New Approach:**
+**Implementation:**
 ```typescript
-// demo-TS-05-drive-system/src/main.ts
+// demo-TS-06-drive-system/src/main.ts
 import { SceneGraphLoader } from '../../../lib/SceneGraphLoader';
 import { DashboardRenderer } from './renderer';
 
@@ -1752,11 +1784,12 @@ function animate() {
 ## Next Steps
 
 1. **Review and Approve** this plan
-2. **Implement Phase A** (foundation infrastructure)
-3. **Begin Tier 1** (Core Components - Demos 1-4)
-4. **Progress through tiers** following dependency graph
-5. **Archive legacy demos** as new versions complete
-6. **Update main index** page with demo cards
+2. **Continue Tier 1** (Demos 2-4: Core Components)
+3. **Begin Tier 2** (Demos 5-7: Subsystems)
+4. **Complete Phase 7.5** (Pulse Communication) - CRITICAL
+5. **Begin Tier 3** (Demos 8-10: Complete Mobiles)
+6. **Progress through tiers** following dependency graph
+7. **Update demo gallery** index as demos complete
 
 ## Validation Checklist
 
@@ -1776,12 +1809,13 @@ function animate() {
 
 ### For Complete Suite
 
-- [ ] Phase A complete (foundation)
-- [ ] All Tier 1-2 demos complete (foundation + subsystems)
-- [ ] At least Demos 8-9 complete (complete Mobiles)
+- [ ] Phase A complete (foundation) ✅ DONE
+- [ ] All Tier 1 demos complete (Demos 1-4)
+- [ ] All Tier 2 demos complete (Demos 5-7)
+- [ ] Phase 7.5 complete (Pulse Communication)
+- [ ] All Tier 3 demos complete (Demos 8-10)
 - [ ] Demo 12 complete (Full Colloquy)
-- [ ] Legacy demos archived
-- [ ] Demo index page created with all cards
+- [ ] Demo gallery index page updated
 - [ ] Documentation for adding new demos
 
 ---

@@ -1,55 +1,174 @@
-# TODOs for Colloquy of Mobiles Virtual Simulation
+# Project Roadmap - Colloquy of Mobiles Virtual Simulation
 
-This TODO list outlines tasks that need to be completed across the various parts of the Colloquy of Mobiles Virtual Simulation project. Please update this list as tasks are completed or as new tasks are identified.
+**Last Updated:** February 11, 2026
 
-## General
-
-- [ ] Review and update the `README.md` files in all major directories.
-- [ ] Standardize naming conventions across all demo and application directories.
-- [ ] Ensure that all `package.json` files have up-to-date dependencies.
-
-## `lib/` Directory
-
-- [ ] Add documentation for all classes in `lib/`.
-- [ ] Write unit tests for all classes in `lib/`.
-- [ ] Refactor all classes in `lib/` to improve modularity and reusability.
-- [ ] Migrate any hard-coded values to configuration files where applicable.
-
-## `apps/demo-config-editor/`
-
-- [ ] Transfer OpenProcessing sketch
-
-## `apps/main/`
-
-- [ ] Transfer OpenProcessing sketch
-
-## `docs/` Directory
-
-- [ ] Add a new section on configuration file management to the documentation.
-- [ ] Update diagrams to reflect recent changes in the project’s architecture.
-- [ ] Review and expand the user manual to cover new features.
-- [ ] Create a troubleshooting guide for common issues during setup.
-- [ ] Document the process for contributing to the project, including coding standards and best practices.
-
-## Configuration and Deployment
-
-- [ ] Verify that all configuration files are correctly set up for different environments (development, production).
-- [ ] Update the `Procfile` in each app to reflect the current start commands.
-- [ ] Ensure that all environment variables are properly documented and set in `.env` files or via the Heroku dashboard.
-- [ ] Add deployment instructions for Heroku, including any required environment variables.
-
-## Testing and Quality Assurance
-
-- [ ] Set up continuous integration (CI) to automatically run tests on all pull requests.
-- [ ] Review and improve test coverage across all modules.
-- [ ] Create a test plan for manual testing of the main application.
-- [ ] Implement code linting and formatting checks as part of the CI pipeline.
+This document provides a high-level view of project status and immediate priorities. For detailed implementation plans, see the linked documents below.
 
 ---
 
-**Contributing to the TODO List**
+## 🎯 Current Sprint (February 2026)
 
-- Feel free to add new tasks to this TODO list as you identify them.
-- When completing a task, please mark it as done by replacing `[ ]` with `[x]`.
-- For larger tasks, consider breaking them down into smaller sub-tasks.
-- Keep this list up-to-date to help maintain project clarity and direction.
+### Critical Path Items
+- [ ] **Phase 7.5: Pulse Communication System** (BLOCKING Complete Mobile demos)
+  - [ ] Implement `PulseTransmitter` and `PulseReceiver` (TypeScript)
+  - [ ] Create pattern vocabulary (`lib/communication/PaskPatterns.ts`)
+  - [ ] Add message broker to `Environment.ts`
+  - [ ] Migrate demo-05-transceiversV2 logic to TypeScript
+  - 📋 **Details:** [docs/PULSE_COMMUNICATION_ARCHITECTURE.md](docs/PULSE_COMMUNICATION_ARCHITECTURE.md)
+
+### Active Development
+- [ ] **Demo Gallery - Tier 1 (Foundation Demos)**
+  - [x] Demo 1: Transform Hierarchy (COMPLETE)
+  - [ ] Demo 2: Sensor Field of View
+  - [ ] Demo 3: Actuator Field of Effect
+  - [ ] Demo 4: Sensor-Actuator Interaction
+  - [ ] Demo 5: External Sensor Inputs
+  - 📋 **Details:** [docs/DEMO_REFACTORING_PLAN.md](docs/DEMO_REFACTORING_PLAN.md)
+
+### Documentation Updates
+- [ ] Update main README completion status (reflect Phase 7 done)
+- [ ] Document Phase 7.5 architecture decisions
+- [ ] Archive legacy demo documentation
+
+---
+
+## 📊 Development Tracks
+
+### Track 1: Core Implementation
+📋 **Authoritative Doc:** [docs/REFACTORING_PLAN.md](docs/REFACTORING_PLAN.md)
+
+| Phase | Status | Description |
+|-------|--------|-------------|
+| Phase 1 | ✅ COMPLETE | TypeScript, Jest, ESLint, Prettier |
+| Phase 2 | ✅ COMPLETE | Core classes (Mobile, Transform, Environment) |
+| Phase 3 | ✅ COMPLETE | Subsystems (Drive, Oscillators, Motion) |
+| Phase 4 | ✅ COMPLETE | Components (Sensors, Actuators) |
+| Phase 5 | ✅ COMPLETE | Library reorganization |
+| Phase 6 | ✅ COMPLETE | Type cleanup and documentation |
+| Phase 7 | ✅ COMPLETE | Config V2, SceneGraphLoader, schema validation |
+| **Phase 7.5** | ⏳ **IN PROGRESS** | **Pulse communication (CRITICAL)** |
+| Phase 8 | ❌ FUTURE | WebSocket server/client (Museum installation) |
+| Phase 9 | ❌ FUTURE | Visualization refactor |
+| Phase 10 | ❌ FUTURE | Legacy demo migration |
+
+**Key Metrics:**
+- ✅ 35 passing tests across 9 test suites
+- ✅ 100% TypeScript coverage in `lib/`
+- ✅ Config V2 schema with validation
+- ✅ Scene graph with full serialization
+
+---
+
+### Track 2: Demo Gallery
+📋 **Authoritative Doc:** [docs/DEMO_REFACTORING_PLAN.md](docs/DEMO_REFACTORING_PLAN.md)
+
+| Tier | Demos | Status | Purpose |
+|------|-------|--------|----------|
+| Phase A | Foundation Infrastructure | ✅ COMPLETE | CameraController, ThreeJSRenderer |
+| Tier 1 | Demos 1-5 (Core Components) | ⏳ IN PROGRESS | Transform, Sensors, Actuators, External Inputs |
+| Tier 2 | Demos 6-9 (Subsystems) | ⏳ PLANNED | Drives, Pulse Comm, Oscillators |
+| Tier 3 | Demos 10-12 (Complete Mobiles) | ❌ BLOCKED | Requires Phase 7.5 |
+| Tier 4 | Demos 13-14 (Full Colloquy) | ❌ FUTURE | Complete system |
+| Tier 5 | Demos 15-17 (Tools) | ❌ FUTURE | Dev/debug tools |
+
+**Current:**
+- ✅ Demo 1: Transform Hierarchy (DEPLOYED)
+- ⏳ Demos 2-5: Tier 1 planning/implementation
+- ⏳ Demos 6-17: Planned (see detailed doc)
+
+---
+
+### Track 3: Documentation & Quality
+
+**Testing & Linting:**
+- ✅ Jest configured with 35 passing tests
+- ✅ ESLint + Prettier (0 errors, 29 warnings)
+- [ ] Increase test coverage to >80%
+- [ ] Set up CI/CD pipeline (GitHub Actions)
+
+**Documentation:**
+- ✅ [docs/REFACTORING_PLAN.md](docs/REFACTORING_PLAN.md) - Core implementation phases
+- ✅ [docs/DEMO_REFACTORING_PLAN.md](docs/DEMO_REFACTORING_PLAN.md) - Demo suite plan
+- ✅ [docs/PULSE_COMMUNICATION_ARCHITECTURE.md](docs/PULSE_COMMUNICATION_ARCHITECTURE.md) - Communication system
+- ✅ [docs/CAMERA_CONTROLLER_SPEC.md](docs/CAMERA_CONTROLLER_SPEC.md) - Camera controls
+- ✅ [docs/TYPESCRIPT_MIGRATION.md](docs/TYPESCRIPT_MIGRATION.md) - Migration guide
+- ✅ [docs/TESTING_AND_LINTING.md](docs/TESTING_AND_LINTING.md) - Testing guide
+- [ ] Update [readme.md](readme.md) with Phase 7 completion
+- [ ] Review [docs/terminology.md](docs/terminology.md) TODO section
+
+---
+
+## ✅ Recently Completed (Q1 2026)
+
+- ✅ **Phase 7:** Config V2 schema + SceneGraphLoader
+- ✅ **Phase A:** CameraController with standard controls
+- ✅ **Demo 1:** Transform Hierarchy demonstration
+- ✅ **Testing:** 35 passing tests, full test suite
+- ✅ **Deployment:** Vercel configuration for demo gallery
+- ✅ **Types:** Complete type system in `lib/types/`
+
+---
+
+## 🔮 Backlog / Future Work
+
+### Phase 8: Museum Installation (Q3 2026+)
+- [ ] WebSocket server for distributed simulation
+- [ ] Sensor station client applications
+- [ ] State broadcast system
+- [ ] Multi-viewer synchronization
+- 📋 **Note:** Demos (Architecture 1) must be complete before starting this
+
+### Advanced Features
+- [ ] Camera touch gestures (mobile support)
+- [ ] Camera state persistence (localStorage)
+- [ ] VR/WebXR viewing lens
+- [ ] Real-time dashboard with time-series charts
+- [ ] Advanced camera paths (animations)
+
+### Documentation
+- [ ] Terminology review (verify Mobile, Drive O/P definitions)
+- [ ] User manual expansion
+- [ ] Troubleshooting guide
+- [ ] Contributing guide (coding standards)
+
+---
+
+## 📖 Quick Reference
+
+### Key Documents
+- **[readme.md](readme.md)** - Project overview, architecture, philosophy
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Build and deployment guide
+- **[docs/](docs/)** - All technical documentation
+- **[lib/](lib/)** - Core TypeScript simulation library
+- **[apps/](apps/)** - Demo applications
+
+### Commands
+```bash
+# Development
+npm test              # Run test suite
+npm run lint          # Check code quality
+npm run type-check    # TypeScript validation
+
+# Demos
+cd apps/demo-TS-01-transform-hierarchy
+npm run dev           # Run demo locally
+
+# Deployment
+npm run build:demos   # Build all demos
+npm run deploy        # Deploy to Vercel
+```
+
+---
+
+## 🤝 Contributing to This Roadmap
+
+- **Update status** as tasks complete (replace `[ ]` with `[x]`)
+- **Link to detailed docs** for complex tasks
+- **Keep sprint section current** (top 5-7 active items only)
+- **Move completed items** to "Recently Completed" quarterly
+- **Archive old completions** to maintain readability
+
+**For detailed task tracking, see domain-specific documents:**
+- Core lib work → [docs/REFACTORING_PLAN.md](docs/REFACTORING_PLAN.md)
+- Demo work → [docs/DEMO_REFACTORING_PLAN.md](docs/DEMO_REFACTORING_PLAN.md)
+- Deployment → [DEPLOYMENT.md](DEPLOYMENT.md)

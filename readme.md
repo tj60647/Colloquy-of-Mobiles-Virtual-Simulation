@@ -5,16 +5,16 @@ This project is a virtual simulation of Gordon Pask's "Colloquy of Mobiles," mod
 ## Directory Structure
 
 - **apps/**: Contains distinct runnable applications and demos.
-  - `demo-00-P5` to `demo-08...`: Various implementations and experiments.
+  - `demo-TS-01-transform-hierarchy/`: First completed TypeScript demo.
+  - `demo-TS-template/`: Template for creating new demos.
+  - `public/`: Gallery landing page for demo suite.
   - `SimulationConfigurationFiles/`: JSON configurations with schema validation.
-  - `server.js`: Node.js server for serving the apps.
 - **lib/**: Shared core library (TypeScript).
   - `Mobile.ts`, `Environment.ts`, `Transform.ts`: Core simulation classes.
   - `SceneGraphLoader.ts`: Parses config files (v2) and instantiates scene graph.
   - `subsystems/`: Paskian internal systems (drives, oscillators).
   - `components/`: External attachments (sensors, actuators).
   - `visualization/`: THREE.js rendering wrappers.
-  - `legacy/`: Deprecated p5.js code.
   - `types/`: TypeScript type definitions.
 - **docs/**: Project documentation, system diagrams, and refactoring plan.
 
@@ -147,30 +147,45 @@ This implementation is based on **canonical documentation** by Gordon Pask and t
 
 ## Current Implementation Status
 
-### TypeScript Core (Phases 1-7): ✅ Complete
-- Spatial positioning and scene graph (`Transform`)
-- Drive accumulation system (`DriveSubsystem`)
-- Motion control (`HorizontalControlSubsystem`, `VerticalControlSubsystem`)
-- Sensors and actuators with field-of-view detection
-- Configuration loading and JSON schema validation
-- 35 passing tests across 9 test suites
+**Last Updated:** February 11, 2026
 
-### Communication System (Phase 7.5): ⏳ Critical Gap
-**Missing Infrastructure:**
+### TypeScript Core (Phases 1-7): ✅ Complete (Q1 2026)
+- ✅ Spatial positioning and scene graph (`Transform`)
+- ✅ Drive accumulation system (`DriveSubsystem`)
+- ✅ Motion control (`HorizontalControlSubsystem`, `VerticalControlSubsystem`)
+- ✅ Sensors and actuators with field-of-view detection
+- ✅ Configuration loading and JSON schema validation
+- ✅ 35 passing tests across 9 test suites
+- ✅ Config V2 with `SceneGraphLoader`
+- ✅ Complete type system in `lib/types/`
+
+### Demo Gallery (Phase A-F): ⏳ In Progress
+- ✅ Phase A: Foundation infrastructure (CameraController, ThreeJSRenderer)
+- ✅ Demo 1: Transform Hierarchy (deployed)
+- ⏳ Demos 2-5: Tier 1 Foundation (sensors, actuators, interaction, external inputs)
+- ⏳ Demos 6-9: Tier 2 Subsystems (drives, pulse communication, oscillators)
+- ❌ Demos 10-14: Blocked by Phase 7.5 (requires pulse communication for complete Mobiles)
+- ❌ Demos 15-17: Tools (config editor, serialization, performance)
+
+### Communication System (Phase 7.5): ⏳ Critical - In Progress
+**Missing Infrastructure (BLOCKING Tier 3/4 demos):**
 - Pulse transmission (temporal binary patterns)
 - Pattern vocabulary (I_O, I_P, II_O, II_P, etc.)
 - Circular buffers for pulse sequences
 - Message passing between Mobiles
 - Pattern matching framework
 
-**Current State:** Demo `apps/demo-05-transceiversV2` implements pulse communication using Actor model with `PulseTransmitter`/`PulseReceiver`, but it's in legacy JavaScript. This infrastructure must be migrated to TypeScript before Complete Mobile demos can be implemented.
+**Current State:** Pulse communication requires implementation in TypeScript. The concept includes temporal binary patterns, circular buffers, pattern vocabulary (I_O, I_P, II_O, II_P), and message passing between Mobiles.
 
 **Documentation:** See `docs/PULSE_COMMUNICATION_ARCHITECTURE.md` and `docs/DEMO_REFACTORING_PLAN.md`.
 
-### Network Layer (Phase 8): ⏳ Planned
+**Priority:** HIGH - Target completion Q1 2026
+
+### Network Layer (Phase 8): ❌ Future (Q3 2026+)
 - WebSocket server for distributed simulation
 - Sensor event handling
 - State broadcasting to viewing lenses
+- **Note:** Museum installation architecture - demos must complete first
 
 **Refactoring Status:** See `docs/REFACTORING_PLAN.md` for complete migration roadmap.
 
@@ -188,7 +203,7 @@ This repository currently implements **standalone browser demonstrations** of th
 - Educational and development focus
 - Can be deployed as static files (GitHub Pages, Vercel, etc.)
 
-**See:** `docs/DEMO_REFACTORING_PLAN.md` for the 16-demo implementation plan
+**See:** `docs/DEMO_REFACTORING_PLAN.md` for the 17-demo implementation plan
 
 ### Future: Museum Installation Architecture
 
@@ -254,9 +269,9 @@ Sensor Inputs → Virtual Colloquy Simulation (Heroku/Local) → Multiple Viewin
 **Large screen or projection showing the live simulation**
 
 - **Purpose**: Primary visualization of autonomous agents exhibiting emergent behaviors
-- **Technology**: p5.js/THREE.js browser-based 3D rendering
+- **Technology**: THREE.js browser-based 3D rendering
 - **Deployment**: Static app connecting to local simulation server via WebSocket
-- **Status**: ✅ Core implementation in `apps/demo-05-transceiversV2`
+- **Status**: ⏳ Planned (Phase 8 - after demos complete)
 
 #### 3. VR Experience
 
@@ -597,9 +612,9 @@ The installation consists of **6 modular components** communicating via WebSocke
   - Drive state visualizations
   - Interaction effects (light/sound pulses)
 - **Output**: Real-time 3D graphics on screen/projector
-- **Technology**: p5.js/THREE.js browser-based 3D
-- **Repository**: `apps/renderer-3d/` (refactor from `demo-05-transceiversV2`)
-- **Status**: ✅ Partial implementation exists
+- **Technology**: THREE.js browser-based 3D
+- **Repository**: `apps/renderer-3d/` (to be created in Phase 8)
+- **Status**: ⏳ Planned (Phase 8 - museum installation)
 
 ---
 
