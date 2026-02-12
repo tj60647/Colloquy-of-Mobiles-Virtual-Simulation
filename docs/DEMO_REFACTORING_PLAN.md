@@ -12,7 +12,7 @@ This document outlines the plan to build a comprehensive demonstration suite usi
 - Use only TypeScript (no legacy JavaScript dependencies)
 - Establish patterns for future demo development
 
-**Current Status:** Building from scratch - Demo 1 complete, Demos 2-17 planned
+**Current Status:** Building from scratch - Demo 1 complete, Demos 2-18 planned
 
 ---
 
@@ -72,30 +72,32 @@ The SAME simulation code (`lib/Mobile.ts`, `lib/Environment.ts`, etc.) works for
 ### Planned Demos (Not Yet Implemented)
 
 **Tier 1: Core Components**
-- ⏳ Demo 2: Sensor Field of View
-- ⏳ Demo 3: Actuator Field of Effect  
-- ⏳ Demo 4: Sensor-Actuator Interaction
-- ⏳ Demo 5: External Sensor Inputs
+- ✅ Demo 2: Motion Profiles - **COMPLETE & DEPLOYED**
+- ✅ Demo 3: Oscillator Basics - **COMPLETE & DEPLOYED**
+- ⏳ Demo 4: Sensor Field of View
+- ⏳ Demo 5: Actuator Field of Effect  
+- ⏳ Demo 6: Sensor-Actuator Interaction
+- ⏳ Demo 7: External Sensor Inputs
 
 **Tier 2: Subsystems**
-- ⏳ Demo 6: Drive System
-- ⏳ Demo 7: Pulse Communication (Phase 7.5)
-- ⏳ Demo 8: Horizontal Control
-- ⏳ Demo 9: Vertical Control
+- ⏳ Demo 8: Drive System
+- ⏳ Demo 9: Pulse Communication (Phase 7.5)
+- ⏳ Demo 10: Horizontal Control
+- ⏳ Demo 11: Vertical Control
 
 **Tier 3: Complete Mobiles** (Blocked by Phase 7.5)
-- ❌ Demo 10: Male Mobile Behavior
-- ❌ Demo 11: Female Mobile Behavior
-- ❌ Demo 12: Beam Arbitration
+- ❌ Demo 12: Male Mobile Behavior
+- ❌ Demo 13: Female Mobile Behavior
+- ❌ Demo 14: Beam Arbitration
 
 **Tier 4: Social Interaction** (Future)
-- ❌ Demo 13: Simple Colloquy (3 Mobiles)
-- ❌ Demo 14: Full Colloquy (6 Mobiles)
+- ❌ Demo 15: Simple Colloquy (3 Mobiles)
+- ❌ Demo 16: Full Colloquy (6 Mobiles)
 
 **Tier 5: Tools** (Future)
-- ❌ Demo 15: Config Editor
-- ❌ Demo 16: Serialization Test
-- ❌ Demo 17: Performance Benchmark
+- ❌ Demo 17: Config Editor
+- ❌ Demo 18: Serialization Test
+- ❌ Demo 19: Performance Benchmark
 
 ### Legacy Demos Status
 
@@ -317,11 +319,11 @@ class ClientViewer {
 
 **Each demo validates components that will be used in the installation:**
 
-- **Demo 1-4:** Validate scene graph, sensors, actuators → Used by all client views
-- **Demo 5-7:** Validate subsystem logic → Runs on server
-- **Demo 8-10:** Validate Mobile behaviors → Runs on server
-- **Demo 11-12:** Validate full simulation → Becomes server core
-- **Demo 13-15:** Development tools → Help build installation
+- **Demo 1-5:** Validate scene graph, sensors, actuators → Used by all client views
+- **Demo 6-8:** Validate subsystem logic → Runs on server
+- **Demo 9-11:** Validate Mobile behaviors → Runs on server
+- **Demo 12-13:** Validate full simulation → Becomes server core
+- **Demo 14-16:** Development tools → Help build installation
 
 **The demos ARE the test suite for the museum installation.**
 
@@ -350,8 +352,61 @@ class ClientViewer {
 
 ---
 
-#### Demo 2: Sensor Field of View ✨ NEW
-**Path:** `apps/demo-TS-02-sensor-fov/`
+#### Demo 2: Motion Profiles ✨ NEW
+**Path:** `apps/demo-TS-02-motion-profiles/`
+
+**Purpose:** Demonstrate the actual MotionProfile.ts trapezoidal motion system
+
+**Features:**
+- Real-time visualization of the MotionProfile.ts class
+- Position, velocity, and acceleration graphs from actual profile.profile[] data
+- Phase indicators (Acceleration, Cruise, Deceleration)
+- Interactive parameter controls:
+  - Total Distance (45°-360°)
+  - Max Velocity (20-120°/s)
+  - Max Acceleration (10-100°/s²)
+- Shows how parameters affect profile shape and duration
+- Current progress indicator and profile statistics
+- Uses the ACTUAL MotionProfile implementation (not fake sine waves)
+
+**Config:** None (2D Canvas visualization only)
+
+**Tech:** TypeScript + Canvas 2D (uses real MotionProfile.ts class)
+
+**Validates:** MotionProfile subsystem - shows internal trapezoidal profile generation
+
+**Pedagogical Value:** Students see the real motion profile system BEFORE it's applied to 3D Mobiles in Demo 3. Understanding the math first makes the oscillating motion more intuitive.
+
+**Status:** ✅ Complete & Deployed
+
+---
+
+#### Demo 3: Oscillator Basics ✨ NEW
+**Path:** `apps/demo-TS-03-oscillator-basics/`
+
+**Purpose:** Demonstrate oscillator-driven transform animation with motion profiles applied to 3D Mobiles
+
+**Features:**
+- 4 Mobiles with different oscillator configurations
+- Visual representation of oscillating rotation (horizontal arms)
+- Varied speeds (slow sine, fast sine, narrow range, compound motion)
+- Demonstrate RELEASED vs STOPPED states
+- Simulation controls (pause/resume, release/stop)
+
+**Config:** 4 Mobiles with HorizontalControlSubsystem
+
+**Tech:** TypeScript + THREE.js
+
+**Validates:** Oscillator and HorizontalControlSubsystem integration
+
+**Pedagogical Value:** Natural progression from motion math (Demo 2) to motion in 3D space, foundation for all Mobile movement
+
+**Status:** ✅ Complete & Deployed
+
+---
+
+#### Demo 4: Sensor Field of View ✨ NEW
+**Path:** `apps/demo-TS-04-sensor-fov/`
 
 **Purpose:** Demonstrate sensor detection with cone-based field of view
 
@@ -370,8 +425,8 @@ class ClientViewer {
 
 ---
 
-#### Demo 3: Actuator Field of Effect ✨ NEW
-**Path:** `apps/demo-TS-03-actuator-field/`
+#### Demo 4: Actuator Field of Effect ✨ NEW
+**Path:** `apps/demo-TS-04-actuator-field/`
 
 **Purpose:** Demonstrate actuator emission with inverse-square intensity
 
@@ -390,8 +445,8 @@ class ClientViewer {
 
 ---
 
-#### Demo 4: Sensor-Actuator Interaction ✨ NEW
-**Path:** `apps/demo-TS-04-sensor-actuator/`
+#### Demo 5: Sensor-Actuator Interaction ✨ NEW
+**Path:** `apps/demo-TS-05-sensor-actuator/`
 
 **Purpose:** Demonstrate bidirectional detection between sensors and actuators
 
@@ -410,8 +465,8 @@ class ClientViewer {
 
 ---
 
-#### Demo 5: External Sensor Inputs ✨ NEW
-**Path:** `apps/demo-TS-05-external-sensors/`
+#### Demo 6: External Sensor Inputs ✨ NEW
+**Path:** `apps/demo-TS-06-external-sensors/`
 
 **Purpose:** Demonstrate sensors responding to external stimuli (visitor interaction)
 
@@ -435,8 +490,8 @@ class ClientViewer {
 
 ### Tier 2: Subsystem Demos (Behavior)
 
-#### Demo 6: Drive System ✨ NEW
-**Path:** `apps/demo-TS-06-drive-system/`
+#### Demo 7: Drive System ✨ NEW
+**Path:** `apps/demo-TS-07-drive-system/`
 
 **Purpose:** Demonstrate entropy accumulation and drive states
 
@@ -455,8 +510,8 @@ class ClientViewer {
 
 ---
 
-#### Demo 7: Pulse Communication ✨ NEW
-**Path:** `apps/demo-TS-07-pulse-communication/`
+#### Demo 8: Pulse Communication ✨ NEW
+**Path:** `apps/demo-TS-08-pulse-communication/`
 
 **Purpose:** Demonstrate pulse transmission/reception infrastructure and circular buffer operation
 
@@ -476,12 +531,12 @@ class ClientViewer {
 
 **Scope:** Implements the **communication infrastructure** (SENSE and ACT phases) - circular buffers, pulse transmission mechanics, pattern vocabulary constants, and message passing. Does NOT implement LOGIC phase (drive-based pattern selection, behavioral responses) - that comes in Complete Mobile demos (Tier 3/4).
 
-**Critical:** This provides the "channel" for social communication. The "intelligence" (what to say based on drives, how to respond to received patterns) is implemented in Demos 8-12.
+**Critical:** This provides the "channel" for social communication. The "intelligence" (what to say based on drives, how to respond to received patterns) is implemented in Demos 10-14.
 
 ---
 
-#### Demo 8: Horizontal Control Subsystem ✨ NEW
-**Path:** `apps/demo-TS-08-horizontal-control/`
+#### Demo 9: Horizontal Control Subsystem ✨ NEW
+**Path:** `apps/demo-TS-09-horizontal-control/`
 
 **Purpose:** Demonstrate oscillator-based yaw rotation
 
@@ -496,12 +551,12 @@ class ClientViewer {
 
 **Tech:** TypeScript + THREE.js + Canvas 2D (charts)
 
-**Validates:** Oscillator subsystem with motion profiles
+**Validates:** Horizontal control with advanced oscillator features
 
 ---
 
-#### Demo 9: Vertical Control Subsystem ✨ NEW
-**Path:** `apps/demo-TS-09-vertical-control/`
+#### Demo 10: Vertical Control Subsystem ✨ NEW
+**Path:** `apps/demo-TS-10-vertical-control/`
 
 **Purpose:** Demonstrate Female Mobile's roll rotation
 
@@ -521,8 +576,8 @@ class ClientViewer {
 
 ### Tier 3: Complete Mobile Demos (Integration)
 
-#### Demo 10: Male Mobile Behavior ✨ NEW
-**Path:** `apps/demo-TS-10-male-mobile/`
+#### Demo 11: Male Mobile Behavior ✨ NEW
+**Path:** `apps/demo-TS-11-male-mobile/`
 
 **Purpose:** Demonstrate complete Male Mobile with drives + oscillators + sensors/actuators
 
@@ -537,12 +592,12 @@ class ClientViewer {
 
 **Tech:** TypeScript + THREE.js
 
-**Integration:** Combines demos 6 + 8 + sensors
+**Integration:** Combines demos 7 + 9 + sensors
 
 ---
 
-#### Demo 11: Female Mobile Behavior ✨ NEW
-**Path:** `apps/demo-TS-11-female-mobile/`
+#### Demo 12: Female Mobile Behavior ✨ NEW
+**Path:** `apps/demo-TS-12-female-mobile/`
 
 **Purpose:** Demonstrate complete Female Mobile with two-axis control
 
@@ -561,8 +616,8 @@ class ClientViewer {
 
 ---
 
-#### Demo 12: Beam (Bar) Arbitration ✨ NEW
-**Path:** `apps/demo-TS-12-beam-arbitration/`
+#### Demo 13: Beam (Bar) Arbitration ✨ NEW
+**Path:** `apps/demo-TS-13-beam-arbitration/`
 
 **Purpose:** Demonstrate Beam arbitration between two Males
 
@@ -583,8 +638,8 @@ class ClientViewer {
 
 ### Tier 4: Social Interaction Demos (The Colloquy)
 
-#### Demo 13: Simple Colloquy (3 Mobiles) ✨ NEW
-**Path:** `apps/demo-TS-13-simple-colloquy/`
+#### Demo 14: Simple Colloquy (3 Mobiles) ✨ NEW
+**Path:** `apps/demo-TS-14-simple-colloquy/`
 
 **Purpose:** Demonstrate basic social interaction between 3 Mobiles
 
@@ -603,8 +658,8 @@ class ClientViewer {
 
 ---
 
-#### Demo 14: Full Colloquy (6 Mobiles) ✨ NEW
-**Path:** `apps/demo-TS-14-full-colloquy/`
+#### Demo 15: Full Colloquy (6 Mobiles) ✨ NEW
+**Path:** `apps/demo-TS-15-full-colloquy/`
 
 **Purpose:** Complete simulation with all agent types
 
@@ -626,8 +681,8 @@ class ClientViewer {
 
 ### Tier 5: Special Purpose Demos
 
-#### Demo 15: Config Editor/Visualizer ✨ NEW
-**Path:** `apps/demo-TS-15-config-editor/`
+#### Demo 16: Config Editor/Visualizer ✨ NEW
+**Path:** `apps/demo-TS-16-config-editor/`
 
 **Purpose:** Interactive tool for creating/editing Config V2 files
 
@@ -644,8 +699,8 @@ class ClientViewer {
 
 ---
 
-#### Demo 16: Serialization Test ✨ NEW
-**Path:** `apps/demo-TS-16-serialization/`
+#### Demo 17: Serialization Test ✨ NEW
+**Path:** `apps/demo-TS-17-serialization/`
 
 **Purpose:** Demonstrate save/load functionality
 
@@ -664,8 +719,8 @@ class ClientViewer {
 
 ---
 
-#### Demo 17: Performance Benchmark ✨ NEW
-**Path:** `apps/demo-TS-17-performance/`
+#### Demo 18: Performance Benchmark ✨ NEW
+**Path:** `apps/demo-TS-18-performance/`
 
 **Purpose:** Test simulation performance with many Mobiles
 
@@ -779,7 +834,7 @@ However, the current implementation is a **clean TypeScript rebuild**, not a mig
 
 ### Phase 7.5: Communication System (CRITICAL - NEW)
 
-**Sequence:** Must complete AFTER Demos 6-9, BEFORE Phase D
+**Sequence:** Must complete AFTER Demos 7-10, BEFORE Phase D
 
 **Why:** Mobiles need communication infrastructure (buffers, transmission mechanics, pattern vocabulary) as the foundation for social behavior. This implements the SENSE and ACT phases; the LOGIC phase (pattern recognition → decision → behavior) comes in Complete Mobile demos.
 
@@ -840,11 +895,11 @@ However, the current implementation is a **clean TypeScript rebuild**, not a mig
 **Sequence:** Must complete Phases B, C, D first
 
 #### Demo 13: Simple Colloquy
-- **Dependencies:** Demos 1-11 (all components and Mobiles)
+- **Dependencies:** Demos 1-12 (all components and Mobiles)
 - **Blocks:** Demo 14 (simplified version as test)
 
 #### Demo 14: Full Colloquy
-- **Dependencies:** Demos 1-13 (complete system)
+- **Dependencies:** Demos 1-14 (complete system)
 - **Blocks:** None (final integration)
 
 ---
@@ -888,7 +943,7 @@ Phase A (Foundation + CameraController)
     │           │                      │                │
     │           └──────────────────────┼────────────────┤
     │                                  │                │
-    └──► (Demos 1-9) ──► Demo 10 (Male) ───────────────┤
+    └──► (Demos 1-10) ──► Demo 11 (Male) ───────────────┤
                               │                         │
                               ├──► Demo 12 (Beam)       │
                               │                         │
@@ -1376,9 +1431,9 @@ Demonstrates pulse transmission/reception **infrastructure** - the communication
 **Classes:** `PulseTransmitter`, `PulseReceiver`, `PaskPatterns`, updated `Environment` (message broker)
 
 **Scope:** Infrastructure (SENSE and ACT phases) only. Does NOT demonstrate:
-- Drive state → pattern selection (Demos 8-10)
-- Behavioral responses to received patterns (Demos 8-12)
-- Social negotiation rules (Demos 11-12)
+- Drive state → pattern selection (Demos 9-11)
+- Behavioral responses to received patterns (Demos 9-13)
+- Social negotiation rules (Demos 12-13)
 
 **Critical Context:** Provides the communication "channel". The intelligence (what to say, how to respond) comes in Complete Mobile demos.
 
@@ -1468,7 +1523,7 @@ Demonstrates the Beam (Bar) as a reactive agent that arbitrates between two Male
 
 ### Demo 13: Simple Colloquy (3 Mobiles)
 
-**Category:** Social Interaction | **Complexity:** Advanced | **Dependencies:** Demos 1-11
+**Category:** Social Interaction | **Complexity:** Advanced | **Dependencies:** Demos 1-12
 
 Demonstrates basic social interaction between 3 Mobiles. Shows emergent behavior through sensor/actuator communication, drive-based searching, and mutual satisfaction.
 
@@ -1484,7 +1539,7 @@ Demonstrates basic social interaction between 3 Mobiles. Shows emergent behavior
 
 ### Demo 14: Full Colloquy (6 Mobiles)
 
-**Category:** Social Interaction | **Complexity:** Advanced | **Dependencies:** Demos 1-13
+**Category:** Social Interaction | **Complexity:** Advanced | **Dependencies:** Demos 1-14
 
 Demonstrates complete Colloquy of Mobiles simulation with all agent types. The full museum installation behavior with emergent social dynamics.
 
@@ -1784,10 +1839,10 @@ function animate() {
 ## Next Steps
 
 1. **Review and Approve** this plan
-2. **Continue Tier 1** (Demos 2-4: Core Components)
-3. **Begin Tier 2** (Demos 5-7: Subsystems)
+2. **Continue Tier 1** (Demos 2-5: Core Components)
+3. **Begin Tier 2** (Demos 6-8: Subsystems)
 4. **Complete Phase 7.5** (Pulse Communication) - CRITICAL
-5. **Begin Tier 3** (Demos 8-10: Complete Mobiles)
+5. **Begin Tier 3** (Demos 9-11: Complete Mobiles)
 6. **Progress through tiers** following dependency graph
 7. **Update demo gallery** index as demos complete
 
@@ -1810,8 +1865,8 @@ function animate() {
 ### For Complete Suite
 
 - [ ] Phase A complete (foundation) ✅ DONE
-- [ ] All Tier 1 demos complete (Demos 1-4)
-- [ ] All Tier 2 demos complete (Demos 5-7)
+- [ ] All Tier 1 demos complete (Demos 1-5)
+- [ ] All Tier 2 demos complete (Demos 6-8)
 - [ ] Phase 7.5 complete (Pulse Communication)
 - [ ] All Tier 3 demos complete (Demos 8-10)
 - [ ] Demo 12 complete (Full Colloquy)

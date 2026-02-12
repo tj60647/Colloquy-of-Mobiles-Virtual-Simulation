@@ -19,10 +19,11 @@ This document provides a high-level view of project status and immediate priorit
 ### Active Development
 - [ ] **Demo Gallery - Tier 1 (Foundation Demos)**
   - [x] Demo 1: Transform Hierarchy (COMPLETE)
-  - [ ] Demo 2: Sensor Field of View
-  - [ ] Demo 3: Actuator Field of Effect
-  - [ ] Demo 4: Sensor-Actuator Interaction
-  - [ ] Demo 5: External Sensor Inputs
+  - [ ] Demo 2: Oscillator Basics
+  - [ ] Demo 3: Sensor Field of View
+  - [ ] Demo 4: Actuator Field of Effect
+  - [ ] Demo 5: Sensor-Actuator Interaction
+  - [ ] Demo 6: External Sensor Inputs
   - 📋 **Details:** [docs/DEMO_REFACTORING_PLAN.md](docs/DEMO_REFACTORING_PLAN.md)
 
 ### Documentation Updates
@@ -65,16 +66,16 @@ This document provides a high-level view of project status and immediate priorit
 | Tier | Demos | Status | Purpose |
 |------|-------|--------|----------|
 | Phase A | Foundation Infrastructure | ✅ COMPLETE | CameraController, ThreeJSRenderer |
-| Tier 1 | Demos 1-5 (Core Components) | ⏳ IN PROGRESS | Transform, Sensors, Actuators, External Inputs |
-| Tier 2 | Demos 6-9 (Subsystems) | ⏳ PLANNED | Drives, Pulse Comm, Oscillators |
-| Tier 3 | Demos 10-12 (Complete Mobiles) | ❌ BLOCKED | Requires Phase 7.5 |
-| Tier 4 | Demos 13-14 (Full Colloquy) | ❌ FUTURE | Complete system |
-| Tier 5 | Demos 15-17 (Tools) | ❌ FUTURE | Dev/debug tools |
+| Tier 1 | Demos 1-6 (Core Components) | ⏳ IN PROGRESS | Transform, Oscillators, Sensors, Actuators |
+| Tier 2 | Demos 7-10 (Subsystems) | ⏳ PLANNED | Drives, Pulse Comm, Horizontal/Vertical Control |
+| Tier 3 | Demos 11-13 (Complete Mobiles) | ❌ BLOCKED | Requires Phase 7.5 |
+| Tier 4 | Demos 14-15 (Full Colloquy) | ❌ FUTURE | Complete system |
+| Tier 5 | Demos 16-18 (Tools) | ❌ FUTURE | Dev/debug tools |
 
 **Current:**
 - ✅ Demo 1: Transform Hierarchy (DEPLOYED)
-- ⏳ Demos 2-5: Tier 1 planning/implementation
-- ⏳ Demos 6-17: Planned (see detailed doc)
+- ⏳ Demo 2: Oscillator Basics (NEXT)
+- ⏳ Demos 3-18: Tier 1-5 planning/implementation
 
 ---
 

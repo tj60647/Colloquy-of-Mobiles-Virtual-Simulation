@@ -6,6 +6,7 @@
  */
 
 import { icons } from './icons';
+import { CameraController } from '../utils/CameraController';
 
 export interface CustomCameraButton {
   label: string;
@@ -15,17 +16,17 @@ export interface CustomCameraButton {
   toggleStates?: { on: string; off: string };
 }
 
-export interface OrbitControlsConfig {
-  /** Callback when orbit is toggled */
-  onToggle: (enabled: boolean) => void;
-  /** Callback when orbit speed changes */
-  onSpeedChange: (speed: number) => void;
-  /** Initial orbit speed (default: 0.002) */
+export interface AutoOrbitConfig {
+  /** CameraController instance to control */
+  cameraController: CameraController;
+  /** Initial orbit speed (default: 0.005) */
   initialSpeed?: number;
   /** Minimum orbit speed (default: -0.01) */
   minSpeed?: number;
   /** Maximum orbit speed (default: 0.01) */
   maxSpeed?: number;
+  /** Start with orbit enabled (default: false) */
+  startEnabled?: boolean;
 }
 
 export interface CameraControlPanelOptions {
@@ -35,8 +36,8 @@ export interface CameraControlPanelOptions {
   canvasId?: string;
   /** Custom buttons to add before standard view buttons */
   customButtons?: CustomCameraButton[];
-  /** Configuration for orbit controls (if provided, adds orbit toggle and slider) */
-  orbitControls?: OrbitControlsConfig;
+  /** Configuration for auto-orbit controls (if provided, adds orbit toggle and slider) */
+  autoOrbit?: AutoOrbitConfig;
 }
 
 /**
@@ -56,7 +57,7 @@ export function setupCameraControls(options: CameraControlPanelOptions = {}): {
   setOrbitEnabled: (enabled: boolean) => void;
   setOrbitSpeed: (speed: number) => void;
 } {
-  const { panelId = 'controls-panel', canvasId = 'canvas', customButtons = [], orbitControls } = options;
+  const { panelId = 'controls-panel', canvasId = 'canvas', customButtons = [], autoOrbit } = options;
 
   const controlsPanel = document.getElementById(panelId);
   const canvas = document.getElementById(canvasId);
@@ -137,19 +138,37 @@ export function setupCameraControls(options: CameraControlPanelOptions = {}): {
   let orbitToggleButton: HTMLButtonElement | null = null;
   let orbitSlider: HTMLInputElement | null = null;
   
-  if (orbitControls) {
+  if (autoOrbit) {
+    const { cameraController, initialSpeed = 0.005, minSpeed = -0.01, maxSpeed = 0.01, startEnabled = false } = autoOrbit;
+    
+    // Set initial state
+    if (startEnabled) {
+      cameraController.enableAutoOrbit(initialSpeed);
+    }
+    
     // Orbit toggle button
     orbitToggleButton = document.createElement('button');
     orbitToggleButton.className = 'camera-button';
-    orbitToggleButton.textContent = 'Orbit: Off';
+    orbitToggleButton.textContent = startEnabled ? 'Orbit: On' : 'Orbit: Off';
+    if (startEnabled) {
+      orbitToggleButton.classList.add('active');
+    }
+    
     orbitToggleButton.addEventListener('click', () => {
       const isActive = orbitToggleButton!.classList.toggle('active');
       orbitToggleButton!.textContent = isActive ? 'Orbit: On' : 'Orbit: Off';
+      
       // Enable/disable slider based on orbit state
       if (orbitSlider) {
         orbitSlider.disabled = !isActive;
       }
-      orbitControls.onToggle(isActive);
+      
+      // Control CameraController directly
+      if (isActive) {
+        cameraController.enableAutoOrbit();
+      } else {
+        cameraController.disableAutoOrbit();
+      }
     });
     controlsPanel.appendChild(orbitToggleButton);
 
@@ -160,11 +179,11 @@ export function setupCameraControls(options: CameraControlPanelOptions = {}): {
     orbitSlider = document.createElement('input');
     orbitSlider.type = 'range';
     orbitSlider.className = 'camera-slider';
-    orbitSlider.min = String(orbitControls.minSpeed ?? -0.005);
-    orbitSlider.max = String(orbitControls.maxSpeed ?? 0.005);
+    orbitSlider.min = String(minSpeed);
+    orbitSlider.max = String(maxSpeed);
     orbitSlider.step = '0.0005';
-    orbitSlider.value = String(orbitControls.initialSpeed ?? 0.005);
-    orbitSlider.disabled = true; // Start disabled
+    orbitSlider.value = String(initialSpeed);
+    orbitSlider.disabled = !startEnabled; // Start disabled unless orbit is enabled
 
     const sliderValue = document.createElement('div');
     sliderValue.className = 'camera-slider-value';
@@ -173,7 +192,7 @@ export function setupCameraControls(options: CameraControlPanelOptions = {}): {
     orbitSlider.addEventListener('input', () => {
       const speed = parseFloat(orbitSlider!.value);
       sliderValue.textContent = speed.toFixed(4);
-      orbitControls.onSpeedChange(speed);
+      cameraController.setAutoOrbitSpeed(speed);
     });
 
     sliderContainer.appendChild(orbitSlider);

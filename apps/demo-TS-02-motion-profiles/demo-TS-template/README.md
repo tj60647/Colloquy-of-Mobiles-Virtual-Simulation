@@ -152,12 +152,11 @@ If your demo needs custom controls (like Demo 1's rotation slider), follow this 
 
 ### 1. Add HTML to index.html
 ```html
-<!-- Custom Control Panel -->
+<!-- CustomControl Panel -->
 <div id="custom-panel" class="panel">
     <div class="panel-header">Your Control Title</div>
     <div class="control-row">
         <span class="control-label">Control Name</span>
-        <span class="control-hint">Value</span>
     </div>
     <input type="range" id="your-slider" min="0" max="1" step="0.01" value="0.5">
     <div class="slider-value" id="your-value">0.5</div>
@@ -166,9 +165,9 @@ If your demo needs custom controls (like Demo 1's rotation slider), follow this 
 
 **Note:** Always add `class="panel"` to get shared glassmorphism styling.
 
-### 2. Add CSS to public/styles.css
+### 2. Add CSS to public/styles.css (if needed)
 
-**IMPORTANT: Only add positioning and demo-specific layout.** The `.panel` class provides all styling (glassmorphism, colors, borders, etc.).
+**Only add positioning.** The `.panel` class provides all styling (glassmorphism, colors, borders, etc.).
 
 ```css
 /* Demo-specific panel positioning only */
@@ -179,11 +178,32 @@ If your demo needs custom controls (like Demo 1's rotation slider), follow this 
 }
 ```
 
-**That's it!** The shared `lib/visualization/ui/styles.css` already provides:
-- `.panel` styling (background, border, padding, glassmorphism)
-- `.control-row`, `.control-label`, `.control-hint` styling
-- `input[type="range"]` and `.slider-value` styling
-- All info modal, camera button, and standard component styles
+**That's it!** No need for background, padding, border-radius, etc. - the `.panel` class handles all that.
+    background: rgba(13, 17, 30, 0.92);
+    color: #e0e0e0;
+    padding: 16px 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    min-width: 220px;
+}
+
+#your-slider {
+    width: 100%;
+    margin: 8px 0;
+    accent-color: #3498db;
+}
+
+.slider-value {
+    text-align: center;
+    font-size: 0.9em;
+    color: #5dade2;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+```
 
 ### 3. Wire up in src/main.ts
 ```typescript
@@ -215,44 +235,20 @@ async function init() {
 
 ### How It Works
 
-1. **Shared UI styles** are in `lib/visualization/ui/styles.css`:
-   - Imported automatically: `import '../../../lib/visualization/ui/styles.css';` in main.ts
-   - Provides: `.panel`, `.panel-header`, `.control-row`, camera buttons, info modal, sliders, etc.
-   - **DO NOT duplicate these styles in your demo!**
+**Shared UI components** are styled in `lib/visualization/ui/styles.css`:
+- `.panel` - Base panel styling (glassmorphism, borders, colors, etc.)
+- `.panel.large` - Larger padding for description/title panels
+- `.panel-header`, `.control-row`, `.control-label` - Panel content styles
+- `.camera-button`, `kbd`, `input[type="range"]` - Interactive elements
+- All info icon, modal, and standard components
 
-2. **Demo-specific styles** go in `public/styles.css`:
-   - **ONLY positioning**: `top`, `left`, `right`, `bottom` for panel placement
-   - **Demo-specific layout**: Custom grid/flex arrangements for your unique controls
-   - **DO NOT redefine** `.panel`, `.control-row`, or other shared classes
+**Demo-specific CSS** in `public/styles.css` only needs:
+- Positioning (`top`, `left`, `right`, `bottom` for your panel IDs)
+- That's it!
 
-### Example - Demo 1 Transform Hierarchy
-
-```css
-/**
- * Demo 1: Transform Hierarchy - Demo-Specific Styles
- * 
- * Shared UI styles imported from lib/visualization/ui/styles.css
- * This file only contains demo-specific positioning and layout.
- */
-
-/* Transform Control Panel - Positioning Only */
-#transform-panel {
-    position: absolute;
-    top: 180px;  /* Below description panel */
-    left: 20px;
-}
+### Adding Custom Panels
 
 **1. HTML** - Add `class="panel"` to your div:
-```html
-<div id="my-panel" class="panel">
-    <div class="panel-header">My Controls</div>
-    <!-- content -->
-</div>
-```
-
-### Standard Panel Usage
-
-**1. HTML** - Add `class="panel"`:
 ```html
 <div id="my-panel" class="panel">
     <div class="panel-header">My Controls</div>
@@ -270,17 +266,15 @@ async function init() {
 ```
 
 The `.panel` class automatically provides:
-✅ Glassmorphism background (light theme with transparency)
-✅ Subtle border and shadows  
+✅ Dark glassmorphism background  
+✅ Blue border and shadows  
 ✅ Proper padding and border-radius  
 ✅ Backdrop blur effect  
 ✅ Consistent z-index  
 
 ### Shared Classes Available
 
-Use these classes from `lib/visualization/ui/styles.css` - **DO NOT redefine them:**
-
-- **`.panel`** - Standard panel (220px min-width, light glassmorphism)
+- **`.panel`** - Standard panel (220px min-width)
 - **`.panel.large`** - Larger panel with more padding (420px max-width)
 - **`.panel-header`** - Uppercase blue header text
 - **`.control-row`** - Flexbox row for label + value
@@ -288,19 +282,28 @@ Use these classes from `lib/visualization/ui/styles.css` - **DO NOT redefine the
 - **`.slider-value`** - Monospace value display
 - **`.camera-button`** - Camera control buttons
 - **`input[type="range"]`** - Styled sliders
-- **`#info-icon`** - Info icon button (top-right)
-- **`#info-modal`** - Info modal backdrop and card
-- **`.help-section`**, **`.help-item`**, **`.help-key`** - Modal content styling
 
-### Color Palette (Light Theme)
+### Standard Panel Style
 
-From `lib/visualization/ui/styles.css`:
-- **Panel BG:** `rgba(255, 255, 255, 0.5)` with `backdrop-filter: blur(8px)`
-- **Text:** `#2c3e50` (primary), `#5a6c7d` (secondary), `#666` (labels)
-- **Primary Blue:** `#2980b9`, `#3498db` (borders, highlights, interactive elements)
-- **Hover:** `rgba(52, 152, 219, 0.2)` backgrounds
-- **Success Green:** `#27ae60` (active states)
-- **Warning Red:** `#c0392b` (reset buttons)
+**Don't redefine these** - just use the `.panel` class:
+```css
+.your-panel {
+    position: absolute;
+    background: rgba(13, 17, 30, 0.92);
+    color: #e0e0e0;
+    padding: 16px 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+```
+
+### Color Palette
+- **Background:** `#0a0a0a` (canvas), `rgba(13, 17, 30, 0.92)` (panels)
+- **Primary Blue:** `#3498db`, `#5dade2`, `rgba(52, 152, 219, 0.3-0.7)`
+- **Text:** `#e0e0e0` (primary), `#b8b8b8` (secondary), `#888` (tertiary)
 
 ### Typography
 - **Font:** `'Segoe UI', Tahoma, Geneva, Verdana, sans-serif`

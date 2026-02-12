@@ -1,0 +1,19 @@
+{
+  "name": "demo-ts-02-motion-profiles",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Visualize motion profile wave functions and their mathematical properties",
+  "scripts": {
+    "dev": "powershell -ExecutionPolicy Bypass -File ./dev-start.ps1",
+    "dev:vite": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.168.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11"
+  }
+}

@@ -38,6 +38,10 @@ export class CameraController {
 
   private presetViews: Map<string, PresetView>;
 
+  // Auto-orbit state
+  private autoOrbitEnabled: boolean = false;
+  private autoOrbitSpeed: number = 0.005;
+
   constructor(config: CameraControllerConfig) {
     this.camera = config.camera;
     this.domElement = config.domElement;
@@ -273,7 +277,61 @@ Camera Controls:
    * Update controls (call in animation loop)
    */
   update(): void {
+    if (this.autoOrbitEnabled) {
+      // Auto-orbit: rotate camera around target
+      const target = this.controls.target;
+      const offset = this.camera.position.clone().sub(target);
+      
+      // Rotate around Y-axis
+      const angle = this.autoOrbitSpeed;
+      const x = offset.x * Math.cos(angle) - offset.z * Math.sin(angle);
+      const z = offset.x * Math.sin(angle) + offset.z * Math.cos(angle);
+      
+      offset.x = x;
+      offset.z = z;
+      
+      this.camera.position.copy(target).add(offset);
+    }
+    
     this.controls.update();
+  }
+
+  /**
+   * Enable auto-orbit mode
+   */
+  enableAutoOrbit(speed?: number): void {
+    this.autoOrbitEnabled = true;
+    if (speed !== undefined) {
+      this.autoOrbitSpeed = speed;
+    }
+  }
+
+  /**
+   * Disable auto-orbit mode
+   */
+  disableAutoOrbit(): void {
+    this.autoOrbitEnabled = false;
+  }
+
+  /**
+   * Check if auto-orbit is enabled
+   */
+  isAutoOrbitEnabled(): boolean {
+    return this.autoOrbitEnabled;
+  }
+
+  /**
+   * Set auto-orbit speed
+   */
+  setAutoOrbitSpeed(speed: number): void {
+    this.autoOrbitSpeed = speed;
+  }
+
+  /**
+   * Get current auto-orbit speed
+   */
+  getAutoOrbitSpeed(): number {
+    return this.autoOrbitSpeed;
   }
 
   /**

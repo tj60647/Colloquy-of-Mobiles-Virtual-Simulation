@@ -1,0 +1,154 @@
+{
+  "$schema": "../../SimulationConfigurationFiles/simulation-config-v2.schema.json",
+  "version": "2.0",
+  "name": "Oscillator Basics Demo",
+  "description": "Demonstrates oscillator-driven animation with different motion profiles",
+  
+  "coordinateSystems": [
+    {
+      "id": "root",
+      "name": "Root",
+      "parent": null,
+      "position": { "x": 0, "y": 0, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 0 }
+    },
+    {
+      "id": "mobile1_base",
+      "name": "Mobile 1 Base",
+      "parent": "root",
+      "position": { "x": -150, "y": 0, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 0 }
+    },
+    {
+      "id": "mobile1_horizontal",
+      "name": "Mobile 1 Horizontal",
+      "parent": "mobile1_base",
+      "position": { "x": 0, "y": 0, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 0 }
+    },
+    {
+      "id": "mobile2_base",
+      "name": "Mobile 2 Base",
+      "parent": "root",
+      "position": { "x": -50, "y": 0, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 0 }
+    },
+    {
+      "id": "mobile2_horizontal",
+      "name": "Mobile 2 Horizontal",
+      "parent": "mobile2_base",
+      "position": { "x": 0, "y": 0, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 0 }
+    },
+    {
+      "id": "mobile3_base",
+      "name": "Mobile 3 Base",
+      "parent": "root",
+      "position": { "x": 50, "y": 0, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 0 }
+    },
+    {
+      "id": "mobile3_horizontal",
+      "name": "Mobile 3 Horizontal",
+      "parent": "mobile3_base",
+      "position": { "x": 0, "y": 0, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 0 }
+    },
+    {
+      "id": "mobile4_base",
+      "name": "Mobile 4 Base",
+      "parent": "root",
+      "position": { "x": 150, "y": 0, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 0 }
+    },
+    {
+      "id": "mobile4_horizontal",
+      "name": "Mobile 4 Horizontal (Parent)",
+      "parent": "mobile4_base",
+      "position": { "x": 0, "y": 0, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 0 }
+    },
+    {
+      "id": "mobile4_child",
+      "name": "Mobile 4 Child",
+      "parent": "mobile4_horizontal",
+      "position": { "x": 0, "y": 50, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 0 }
+    }
+  ],
+  
+  "mobiles": [
+    {
+      "id": "mobile1",
+      "name": "Mobile 1 - Slow Sine",
+      "type": "custom",
+      "transformId": "mobile1_horizontal",
+      "subsystems": {
+        "horizontalControl": {
+          "minPosition": -1.5708,
+          "maxPosition": 1.5708,
+          "reinforcementPosition": 0,
+          "tolerance": 0.05,
+          "frameRate": 60,
+          "maxVelocity": 0.5,
+          "maxAcceleration": 0.3,
+          "maxJerk": 0.1
+        }
+      }
+    },
+    {
+      "id": "mobile2",
+      "name": "Mobile 2 - Fast Sine",
+      "type": "custom",
+      "transformId": "mobile2_horizontal",
+      "subsystems": {
+        "horizontalControl": {
+          "minPosition": -3.14159,
+          "maxPosition": 3.14159,
+          "reinforcementPosition": 0,
+          "tolerance": 0.05,
+          "frameRate": 60,
+          "maxVelocity": 1.5,
+          "maxAcceleration": 1.0,
+          "maxJerk": 0.5
+        }
+      }
+    },
+    {
+      "id": "mobile3",
+      "name": "Mobile 3 - Narrow Range",
+      "type": "custom",
+      "transformId": "mobile3_horizontal",
+      "subsystems": {
+        "horizontalControl": {
+          "minPosition": -0.7854,
+          "maxPosition": 0.7854,
+          "reinforcementPosition": 0,
+          "tolerance": 0.05,
+          "frameRate": 60,
+          "maxVelocity": 0.8,
+          "maxAcceleration": 0.5,
+          "maxJerk": 0.2
+        }
+      }
+    },
+    {
+      "id": "mobile4",
+      "name": "Mobile 4 - Compound Motion",
+      "type": "custom",
+      "transformId": "mobile4_horizontal",
+      "subsystems": {
+        "horizontalControl": {
+          "minPosition": -1.0472,
+          "maxPosition": 1.0472,
+          "reinforcementPosition": 0,
+          "tolerance": 0.05,
+          "frameRate": 60,
+          "maxVelocity": 0.6,
+          "maxAcceleration": 0.4,
+          "maxJerk": 0.15
+        }
+      }
+    }
+  ]
+}

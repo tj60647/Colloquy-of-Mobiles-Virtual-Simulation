@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demo ##: [Name] - Colloquy of Mobiles</title>
+    <title>Demo 3: Oscillator Basics - Colloquy of Mobiles</title>
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -21,16 +21,23 @@
     
     <!-- Demo Description Panel -->
     <div id="description-panel" class="panel large">
-        <h1>Demo ##: [Name]</h1>
-        <p>[Brief description of what this demo demonstrates]</p>
+        <h1>Demo 3: Oscillator Basics</h1>
+        <p>Demonstrates oscillator-driven animation with different motion profiles</p>
+    </div>
+    
+    <!-- Simulation Controls Panel -->
+    <div id="simulation-panel" class="panel">
+        <div class="panel-header">Simulation Controls</div>
+        <button id="pause-button" class="camera-button">Pause</button>
+        <button id="state-button" class="camera-button">Stop All</button>
     </div>
     
     <!-- Info Modal -->
     <div id="info-modal">
         <div id="info-card">
             <button id="info-close" aria-label="Close">&times;</button>
-            <h2>Demo ##: [Name]</h2>
-            <p class="description">[Brief description of what this demo demonstrates]</p>
+            <h2>Demo 2: Oscillator Basics</h2>
+            <p class="description">This demo shows how oscillators animate transforms with different motion profiles (sine, triangle, trapezoidal). Watch how parent-child hierarchies create compound motion.</p>
             
             <div class="help-section">
                 <h3>Mouse Controls</h3>
@@ -51,8 +58,16 @@
             <div class="help-section">
                 <h3>Keyboard Shortcuts</h3>
                 <div class="help-item">
+                    <span class="help-key"><kbd>Space</kbd></span>
+                    <span>Pause / Resume simulation</span>
+                </div>
+                <div class="help-item">
+                    <span class="help-key"><kbd>S</kbd></span>
+                    <span>Toggle oscillator state (Release / Stop)</span>
+                </div>
+                <div class="help-item">
                     <span class="help-key"><kbd>R</kbd></span>
-                    <span>Reset to default view</span>
+                    <span>Reset camera to default view</span>
                 </div>
                 <div class="help-item">
                     <span class="help-key"><kbd>1</kbd> / <kbd>2</kbd> / <kbd>3</kbd> / <kbd>4</kbd></span>
@@ -66,7 +81,6 @@
         </div>
     </div>
     
-    <!-- Camera Controls Panel -->
     <!-- Camera Controls Panel -->
     <div id="controls-panel" class="panel">
         <div class="panel-header">Camera Controls</div>

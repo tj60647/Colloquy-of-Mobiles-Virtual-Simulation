@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo 2: Motion Profiles - Colloquy of Mobiles</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <!-- Back to Gallery Button -->
+    <a href="/" class="back-button">Gallery</a>
+    
+    <!-- Info Icon -->
+    <button id="info-icon" aria-label="Show information">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+    </button>
+    
+    <!-- Demo Description Panel -->
+    <div id="description-panel" class="panel large">
+        <h1>Demo 2: Motion Profiles</h1>
+        <p>Visualize the trapezoidal motion profile system from MotionProfile.ts. See acceleration, cruise, and deceleration phases.</p>
+    </div>
+    
+    <!-- Info Modal -->
+    <div id="info-modal">
+        <div id="info-card">
+            <button id="info-close" aria-label="Close">&times;</button>
+            <h2>Demo 2: Motion Profiles</h2>
+            <p class="description">Demonstrates the actual MotionProfile.ts trapezoidal motion system used by Oscillators for smooth movement.</p>
+            
+            <div class="help-section">
+                <h3>Motion Profile Phases</h3>
+                <div class="help-item">
+                    <span class="help-key">Acceleration</span>
+                    <span>Ramp up to max velocity (blue phase)</span>
+                </div>
+                <div class="help-item">
+                    <span class="help-key">Cruise</span>
+                    <span>Constant velocity travel (green phase)</span>
+                </div>
+                <div class="help-item">
+                    <span class="help-key">Deceleration</span>
+                    <span>Ramp down to zero velocity (red phase)</span>
+                </div>
+            </div>
+            
+            <div class="help-section">
+                <h3>What You're Seeing</h3>
+                <div class="help-item">
+                    <span class="help-key">Position</span>
+                    <span>Angular displacement (θ) - where the Mobile is</span>
+                </div>
+                <div class="help-item">
+                    <span class="help-key">Velocity</span>
+                    <span>Rate of change (dθ/dt) - speed of movement</span>
+                </div>
+                <div class="help-item">
+                    <span class="help-key">Acceleration</span>
+                    <span>Rate of velocity change (d²θ/dt²) - force applied</span>
+                </div>
+            </div>
+            
+            <div class="help-section">
+                <h3>Key Concepts</h3>
+                <div class="help-item">
+                    <span class="help-key">Smooth Motion</span>
+                    <span>Trapezoidal profiles provide smooth starts and stops</span>
+                </div>
+                <div class="help-item">
+                    <span class="help-key">Real Implementation</span>
+                    <span>This uses the actual MotionProfile.ts subsystem</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profile Controls Panel -->
+    <div id="profile-panel" class="panel">
+        <div class="panel-header">Motion Profile Controls</div>
+        
+        <div class="control-row">
+            <span class="control-label">Total Distance</span>
+            <span class="control-value" id="distance-value">180°</span>
+        </div>
+        <input type="range" id="distance-slider" min="45" max="360" step="15" value="180">
+        
+        <div class="control-row">
+            <span class="control-label">Max Velocity</span>
+            <span class="control-value" id="velocity-value">60°/s</span>
+        </div>
+        <input type="range" id="velocity-slider" min="5" max="60" step="5" value="60">
+        
+        <div class="control-row">
+            <span class="control-label">Max Acceleration</span>
+            <span class="control-value" id="accel-value">60°/s²</span>
+        </div>
+        <input type="range" id="accel-slider" min="5" max="60" step="5" value="60">
+        
+        <div class="control-row" style="margin-top: 12px;">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" id="yoyo-checkbox" style="margin-right: 8px; cursor: pointer;">
+                <span class="control-label" style="margin: 0;">Yo-Yo Mode</span>
+            </label>
+        </div>
+        
+        <div class="control-row button-row">
+            <button id="play-pause-btn" class="control-button">⏸ Pause</button>
+            <button id="reset-btn" class="control-button">↻ Reset</button>
+        </div>
+    </div>
+    
+    <!-- Camera Controls Panel -->
+    <!-- Camera Controls Panel -->
+    <div id="controls-panel" class="panel">
+        <div class="panel-header">Camera Controls</div>
+        <!-- Buttons will be added dynamically -->
+    </div>
+    
+    <canvas id="canvas"></canvas>
+    
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

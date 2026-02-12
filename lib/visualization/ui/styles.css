@@ -368,3 +368,156 @@ input[type="range"] {
     font-weight: 600;
     font-family: 'Courier New', monospace;
 }
+
+/* ============================================================
+   INFO ICON & MODAL
+   ============================================================ */
+
+/* Info Icon Button - Top Right */
+#info-icon {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1001;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 50%;
+    color: #2980b9;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#info-icon:hover {
+    background: rgba(245, 245, 245, 0.85);
+    border-color: #2980b9;
+    transform: scale(1.05);
+}
+
+/* Info Modal - Backdrop */
+#info-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+#info-modal.visible {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Info Card */
+#info-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+#info-modal.visible #info-card {
+    transform: scale(1);
+}
+
+#info-card h2 {
+    color: #2980b9;
+    font-size: 1.8em;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+#info-card .description {
+    color: #5a6c7d;
+    font-size: 1.05em;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+/* Close Button */
+#info-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 32px;
+    color: #95a5a6;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+#info-close:hover {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+/* Help Sections */
+.help-section {
+    margin-bottom: 24px;
+}
+
+.help-section:last-child {
+    margin-bottom: 0;
+}
+
+.help-section h3 {
+    color: #2c3e50;
+    font-size: 1.2em;
+    margin-bottom: 12px;
+    font-weight: 600;
+    border-bottom: 2px solid rgba(52, 152, 219, 0.2);
+    padding-bottom: 6px;
+}
+
+.help-item {
+    display: flex;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.help-item:last-child {
+    margin-bottom: 0;
+}
+
+.help-key {
+    min-width: 140px;
+    font-weight: 600;
+    color: #2980b9;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95em;
+}
+
+.help-item span:last-child {
+    color: #5a6c7d;
+    flex: 1;
+}

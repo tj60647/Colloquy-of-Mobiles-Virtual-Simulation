@@ -111,7 +111,7 @@ export class MotionProfile {
 
     // 1. Acceleration Phase
     const accelerationSteps = Math.ceil(accelerationTime / this.timestep);
-    for (let i = 0; i <= accelerationSteps; i++) {
+    for (let i = 0; i < accelerationSteps; i++) {
       const currentAcceleration = this.maxAcceleration;
       currentVelocity += currentAcceleration * this.timestep;
       currentPosition += currentVelocity * this.timestep;
@@ -122,7 +122,7 @@ export class MotionProfile {
     // 2. Cruising Phase
     if (cruisingTime > 0) {
       const cruisingSteps = Math.ceil(cruisingTime / this.timestep);
-      for (let i = 0; i <= cruisingSteps; i++) {
+      for (let i = 0; i < cruisingSteps; i++) {
         currentPosition += this.maxVelocity * this.timestep;
         this.addPoint(currentPosition, this.maxVelocity, 0);
       }
@@ -130,12 +130,23 @@ export class MotionProfile {
 
     // 3. Deceleration Phase
     // Assuming symmetric deceleration for now (same time as acceleration)
-    for (let i = 0; i <= accelerationSteps; i++) {
+    for (let i = 0; i < accelerationSteps; i++) {
       const currentAcceleration = -this.maxAcceleration;
       currentVelocity += currentAcceleration * this.timestep;
       currentPosition += currentVelocity * this.timestep;
 
       this.addPoint(currentPosition, currentVelocity, currentAcceleration);
+    }
+    
+    // Post-process: Calculate jerk as derivative of acceleration
+    // jerk[i] = (acceleration[i] - acceleration[i-1]) / timestep
+    for (let i = 1; i < this.profile.length; i++) {
+      const jerk = (this.profile[i].acceleration - this.profile[i - 1].acceleration) / this.timestep;
+      this.profile[i].jerk = jerk;
+    }
+    // First point has no previous acceleration, so jerk = 0
+    if (this.profile.length > 0) {
+      this.profile[0].jerk = 0;
     }
   }
 
@@ -151,7 +162,7 @@ export class MotionProfile {
       position: p,
       velocity: v,
       acceleration: a,
-      jerk: a !== 0 ? (a > 0 ? this.maxJerk : -this.maxJerk) : 0, // Simplified jerk
+      jerk: 0, // Will be calculated in post-processing
     });
   }
 

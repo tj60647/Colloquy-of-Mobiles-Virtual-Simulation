@@ -68,13 +68,10 @@ interface DemoConfig {
  */
 class Demo1App {
   private environment: Environment;
-  private renderer: ThreeJSRenderer;
+  public renderer: ThreeJSRenderer;
   private labelRenderer: CSS2DRenderer;
   private animationId: number | null = null;
   private transformObjects: Map<string, THREE.Object3D> = new Map();
-  public isOrbiting: boolean = false;
-  private cameraRig: THREE.Group | null = null;
-  public orbitSpeed: number = 0.005;
   private config: DemoConfig | null = null;
   private jsonLiveMode: boolean = false;
 
@@ -362,17 +359,11 @@ class Demo1App {
    */
   start(): void {
     const animate = () => {
-      // Update orbit if active
-      if (this.isOrbiting) {
-        this.updateOrbit();
-      }
-
       // Animate the hierarchy
       this.animateTransforms();
 
-      // Render visualization directly (bypass state-based rendering)
-      // Disable camera controller updates when mutually exclusive orbit mode is active
-      this.renderer.renderDirect(!this.isOrbiting);
+      // Render visualization (camera controller handles its own updates)
+      this.renderer.renderDirect(true);
 
       // Render labels
       this.labelRenderer.render(this.renderer.getScene(), this.renderer.getCamera());
@@ -422,72 +413,7 @@ class Demo1App {
     jsonContent.innerHTML = this.formatJsonWithColors(liveConfig);
   }
 
-  /**
-   * Update camera orbit animation
-   */
-  private updateOrbit(): void {
-    if (this.cameraRig) {
-      this.cameraRig.rotation.y += this.orbitSpeed;
-    }
-  }
 
-  /**
-   * Start orbit mode
-   */
-  startOrbit(): void {
-    const camera = this.renderer.getCamera();
-
-    if (!this.cameraRig) {
-      // Create camera rig
-      this.cameraRig = new THREE.Group();
-      this.cameraRig.name = 'cameraRig';
-
-      // Calculate rig rotation from current camera position
-      const currentAngle = Math.atan2(camera.position.z, camera.position.x);
-      this.cameraRig.rotation.y = currentAngle;
-
-      // Get camera's world position before reparenting
-      const worldPosition = new THREE.Vector3();
-      camera.getWorldPosition(worldPosition);
-
-      // Add rig to scene
-      this.renderer.addToScene(this.cameraRig);
-
-      // Attach camera to rig
-      this.cameraRig.attach(camera);
-
-      console.log('Orbit mode enabled - camera attached to rig');
-    }
-  }
-
-  /**
-   * Stop orbit mode
-   */
-  stopOrbit(): void {
-    const camera = this.renderer.getCamera();
-
-    if (this.cameraRig) {
-      // Get camera's world position/rotation before reparenting
-      const worldPosition = new THREE.Vector3();
-      const worldQuaternion = new THREE.Quaternion();
-      camera.getWorldPosition(worldPosition);
-      camera.getWorldQuaternion(worldQuaternion);
-
-      // Remove camera from rig (returns to previous parent)
-      this.cameraRig.remove(camera);
-
-      // Add camera back to scene with preserved world transform
-      this.renderer.addToScene(camera);
-      camera.position.copy(worldPosition);
-      camera.quaternion.copy(worldQuaternion);
-
-      // Remove rig from scene
-      this.renderer.getScene().remove(this.cameraRig);
-      this.cameraRig = null;
-
-      console.log('Orbit mode disabled - camera restored to scene');
-    }
-  }
 
   /**
    * Animate transforms to show hierarchy
@@ -550,23 +476,14 @@ async function init() {
   setupTransformControls();
   setupLabelControl(app);
 
-  // Set up camera controls with orbit controls
+  // Set up camera controls with auto-orbit
   setupCameraControls({
-    orbitControls: {
-      onToggle: (enabled: boolean) => {
-        app.isOrbiting = enabled;
-        if (enabled) {
-          app.startOrbit();
-        } else {
-          app.stopOrbit();
-        }
-      },
-      onSpeedChange: (speed: number) => {
-        app.orbitSpeed = speed;
-      },
+    autoOrbit: {
+      cameraController: app.renderer.getCameraController(),
       initialSpeed: 0.005,
-      minSpeed: -0.005,
-      maxSpeed: 0.005,
+      minSpeed: -0.01,
+      maxSpeed: 0.01,
+      startEnabled: false,
     },
   });
 

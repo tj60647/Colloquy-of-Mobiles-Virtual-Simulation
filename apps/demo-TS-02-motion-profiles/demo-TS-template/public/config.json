@@ -1,0 +1,18 @@
+{
+  "$schema": "../../SimulationConfigurationFiles/simulation-config-v2.schema.json",
+  "version": "2.0",
+  "name": "Demo Template Configuration",
+  "description": "Example configuration for demo template",
+  
+  "coordinateSystems": [
+    {
+      "id": "root",
+      "name": "Root",
+      "parent": null,
+      "position": { "x": 0, "y": 0, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 0 }
+    }
+  ],
+  
+  "mobiles": []
+}
