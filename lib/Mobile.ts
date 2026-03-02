@@ -37,6 +37,10 @@ export class Mobile extends Transform {
   public driveSubsystem: DriveSubsystem;
   public horizontalControlSubsystem: HorizontalControlSubsystem;
   public verticalControlSubsystem?: VerticalControlSubsystem; // Females only
+  public horizontalTransform?: Transform;
+  public verticalTransform?: Transform;
+  public horizontalTransformBaseYaw: number = 0;
+  public verticalTransformBaseRoll: number = 0;
 
   // Components (Scene Graph Children)
   public sensors: SensorBase[] = [];
@@ -122,12 +126,22 @@ export class Mobile extends Transform {
 
   private updateOrientation(): void {
     const angleOffset = this.horizontalControlSubsystem.sensePosition();
-    this.yaw = this._config.initialRotation.y + angleOffset;
+
+    if (this.horizontalTransform) {
+      this.horizontalTransform.yaw = this.horizontalTransformBaseYaw + angleOffset;
+    } else {
+      this.yaw = this._config.initialRotation.y + angleOffset;
+    }
 
     // Update roll if vertical control is present (Females)
     if (this.verticalControlSubsystem) {
       const rollOffset = this.verticalControlSubsystem.sensePosition();
-      this.roll = this._config.initialRotation.z + rollOffset;
+
+      if (this.verticalTransform) {
+        this.verticalTransform.roll = this.verticalTransformBaseRoll + rollOffset;
+      } else {
+        this.roll = this._config.initialRotation.z + rollOffset;
+      }
     }
   }
 
@@ -183,8 +197,26 @@ export class Mobile extends Transform {
 
   // Serialization override
   toJSON() {
+    const globalPosition = this.getGlobalPosition();
+    const globalOrientation = this.getGlobalOrientation();
+
     const json: any = {
       ...super.toJSON(), // Includes id, name, localPos, localOri, parentId
+      transform: {
+        id: this.id,
+        name: this.name,
+        position: {
+          x: globalPosition.x,
+          y: globalPosition.y,
+          z: globalPosition.z,
+        },
+        rotation: {
+          yaw: globalOrientation.yaw,
+          pitch: globalOrientation.pitch,
+          roll: globalOrientation.roll,
+        },
+        parentId: this.parent ? this.parent.id : null,
+      },
       drives: this.driveSubsystem.toJSON(),
       horizontalControl: this.horizontalControlSubsystem.toJSON(),
       sensors: this.sensors.map((s) => s.toJSON()),

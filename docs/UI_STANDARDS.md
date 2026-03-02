@@ -2,6 +2,8 @@
 
 This document defines the standard UI pattern for all demos in the Colloquy of Mobiles system.
 
+> Architecture authority: See `docs/UI_ARCHITECTURE.md` for canonical UI architecture, migration strategy, and panel/module patterns.
+
 ## Overview
 
 All demos use a consistent, minimal UI with:
@@ -193,7 +195,7 @@ function setupInfoModal() {
 - High contrast text (WCAG AA compliant)
 - Focus states on interactive elements
 
-## Technology Philosophy
+## Technology Philosophy (Summary)
 
 **IMPORTANT:** Demos use **vanilla TypeScript** with **custom CSS only**
 
@@ -204,7 +206,7 @@ function setupInfoModal() {
 ### Why Vanilla TypeScript?
 - **Lightweight** - No framework overhead (~45KB+ for React alone)
 - **Performance** - Direct DOM manipulation is faster for 60fps animations
-- **Simplicity** - Current UI complexity doesn't justify framework complexity
+- **Simplicity** - For current demo scope, framework overhead is often unnecessary
 - **Control** - Full control over styling and behavior
 - **Minimal dependencies** - Aligns with project philosophy
 
@@ -215,7 +217,7 @@ React/frameworks would be worth considering if demos require:
 - Real-time data tables
 - Advanced state management across many components
 
-Current UI needs (~50 lines of code per demo) don't warrant this complexity.
+Decisions on framework adoption and migration criteria are maintained in `docs/UI_ARCHITECTURE.md`.
 
 ### Shared UI Components
 While we avoid frameworks, we do share common logic:
@@ -258,3 +260,8 @@ Key considerations for future mobile support:
 - Touch gesture equivalents for mouse controls
 - Collapsible/minimized controls panel on small screens
 - Simplified info modal layout
+
+## Related Docs
+
+- `docs/UI_ARCHITECTURE.md` - Canonical UI architecture and migration patterns
+- `lib/visualization/ui/README.md` - Shared UI module usage

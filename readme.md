@@ -40,7 +40,7 @@ This project is a virtual simulation of Gordon Pask's "Colloquy of Mobiles," mod
 - **Vercel** - Static site hosting for gallery + demos
 - **GitHub** - Version control and CI/CD
 
-**Philosophy:** Minimal dependencies, maximum control. Frameworks add weight and complexity where they're not needed. See [docs/UI_STANDARDS.md](docs/UI_STANDARDS.md) for detailed rationale.
+**Philosophy:** Minimal dependencies, maximum control. Frameworks add weight and complexity where they're not needed. See [docs/UI_ARCHITECTURE.md](docs/UI_ARCHITECTURE.md) for canonical architecture/rationale and [docs/UI_STANDARDS.md](docs/UI_STANDARDS.md) for visual standards.
 
 
 ## Simulation Philosophy & Architecture

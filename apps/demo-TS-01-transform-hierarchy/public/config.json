@@ -2,7 +2,7 @@
   "$schema": "../../SimulationConfigurationFiles/simulation-config-v2.schema.json",
   "version": "2.0",
   "name": "Transform Hierarchy Demo",
-  "description": "Demonstrates parent-child transform relationships with rotating hierarchy",
+  "description": "Demonstrates parent-child transform relationships in a hierarchical structure",
   
   "coordinateSystems": [
     {
@@ -17,21 +17,21 @@
       "name": "Child",
       "parent": "root",
       "position": { "x": 0, "y": 96, "z": 0 },
-      "rotation": { "x": 0, "y": 0, "z": 1.5708 }
+      "rotation": { "x": 0, "y": 0, "z": 90 }
     },
     {
       "id": "grandchild",
       "name": "Grandchild",
       "parent": "child",
       "position": { "x": 0, "y": 96, "z": 0 },
-      "rotation": { "x": 0, "y": 0, "z": 1.5708 }
+      "rotation": { "x": 0, "y": 0, "z": 90 }
     },
     {
       "id": "great-grandchild",
       "name": "Great-grandchild",
       "parent": "grandchild",
       "position": { "x": 0, "y": 96, "z": 0 },
-      "rotation": { "x": 0, "y": 0, "z": 1.5708 }
+      "rotation": { "x": 0, "y": 0, "z": 90 }
     }
   ],
   

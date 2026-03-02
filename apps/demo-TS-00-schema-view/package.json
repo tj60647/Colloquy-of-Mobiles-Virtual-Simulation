@@ -1,8 +1,8 @@
 {
-  "name": "demo-ts-template",
+  "name": "demo-ts-00-schema-view",
   "version": "1.0.0",
   "type": "module",
-  "description": "Template for Colloquy of Mobiles TypeScript demos",
+  "description": "Schema-first viewer for the active Colloquy simulation configuration schema",
   "scripts": {
     "dev": "powershell -ExecutionPolicy Bypass -File ./dev-start.ps1",
     "dev:vite": "vite",

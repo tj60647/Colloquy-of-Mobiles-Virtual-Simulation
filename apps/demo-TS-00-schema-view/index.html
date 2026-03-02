@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo 00: Schema Lab - Colloquy of Mobiles</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        html,
+        body {
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            height: auto;
+        }
+
+        .schema-panel {
+            margin: 140px 20px 24px;
+            max-width: calc(100vw - 40px);
+        }
+
+        .schema-meta {
+            color: #5a6c7d;
+            font-size: 0.92em;
+            margin-bottom: 10px;
+        }
+
+        #legacy-schema-content,
+        #v2-schema-content {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: calc(50vh - 140px);
+            overflow: auto;
+            padding: 14px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            background: rgba(255, 255, 255, 0.65);
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.45;
+            color: #2c3e50;
+        }
+
+        #config-content {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow: visible;
+            padding: 14px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            background: rgba(255, 255, 255, 0.65);
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.45;
+            color: #2c3e50;
+        }
+
+        .schema-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .schema-column {
+            min-width: 0;
+        }
+
+        @media (max-width: 1100px) {
+            .schema-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .schema-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .schema-controls select {
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #2c3e50;
+            padding: 6px 10px;
+            font-size: 13px;
+        }
+
+        .schema-status {
+            margin: 6px 0 14px;
+            color: #5a6c7d;
+            font-size: 0.92em;
+        }
+
+        .schema-subheader {
+            font-weight: 600;
+            color: #2980b9;
+            margin: 12px 0 8px;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-button">Gallery</a>
+
+    <button id="info-icon" aria-label="Show information">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+    </button>
+
+    <div id="description-panel" class="panel large">
+        <h1>Demo 00: Schema Lab</h1>
+        <p>Schema-first sandbox. Start from the legacy abstract schema and compare with runtime-oriented v2.</p>
+    </div>
+
+    <div id="info-modal">
+        <div id="info-card">
+            <button id="info-close" aria-label="Close">&times;</button>
+            <h2>Demo 00: Schema Lab</h2>
+            <p class="description">Use this demo to evaluate schema direction. It supports old-schema-first exploration while keeping v2 visible for comparison.</p>
+            <div class="help-section">
+                <h3>What it shows</h3>
+                <div class="help-item">
+                    <span class="help-key">Schema</span>
+                    <span>Legacy abstract schema and v2 runtime schema</span>
+                </div>
+                <div class="help-item">
+                    <span class="help-key">Config</span>
+                    <span>Legacy reference config for loadability discussions</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="panel schema-panel">
+        <div class="panel-header">Schema Evaluation</div>
+        <div class="schema-controls">
+            <select id="config-select" aria-label="Configuration file">
+                <option value="config_240812.json" selected>Legacy Reference Config</option>
+            </select>
+        </div>
+        <div id="schema-meta" class="schema-meta">Loading schemas...</div>
+        <div id="schema-status" class="schema-status">Checking compatibility...</div>
+        <div class="schema-grid">
+            <div class="schema-column">
+                <div class="schema-subheader">Legacy Abstract Schema</div>
+                <pre id="legacy-schema-content">Loading...</pre>
+            </div>
+            <div class="schema-column">
+                <div class="schema-subheader">V2 Runtime Schema</div>
+                <pre id="v2-schema-content">Loading...</pre>
+            </div>
+        </div>
+        <div class="schema-subheader">Config JSON</div>
+        <pre id="config-content">Loading...</pre>
+    </section>
+
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

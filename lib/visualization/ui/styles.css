@@ -521,3 +521,132 @@ input[type="range"] {
     color: #5a6c7d;
     flex: 1;
 }
+
+/* ============================================================
+   MOTION PROFILE PANEL (Reusable)
+   ============================================================ */
+
+.motion-profile-panel {
+    position: absolute;
+    top: 200px;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 16px;
+    z-index: 90;
+    padding: 16px;
+}
+
+.motion-profile-controls {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    background: rgba(255, 255, 255, 0.35);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.motion-profile-graphs {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    min-height: 0;
+    background: rgba(255, 255, 255, 0.35);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.motion-profile-graphs #canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.motion-profile-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.motion-profile-section-toggle {
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.18);
+    color: #2980b9;
+    font-size: 0.85em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.motion-profile-section-toggle:hover {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+.motion-profile-section-caret {
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.motion-profile-section-content {
+    padding: 12px;
+    overflow: hidden;
+}
+
+.motion-profile-controls .motion-profile-section-content {
+    overflow-y: auto;
+}
+
+.motion-profile-section.is-collapsed .motion-profile-section-content {
+    display: none;
+}
+
+.motion-profile-section.is-collapsed .motion-profile-section-caret {
+    transform: rotate(-90deg);
+}
+
+.motion-profile-graphs .motion-profile-section-content {
+    flex: 1;
+    min-height: 0;
+    padding: 0;
+}
+
+@media (max-width: 1300px) {
+    .motion-profile-panel {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+    }
+
+    .motion-profile-controls {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .motion-profile-graphs {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .motion-profile-controls .motion-profile-section-content {
+        max-height: 280px;
+    }
+
+    .motion-profile-graphs {
+        min-height: 420px;
+    }
+}
+
+@media (max-height: 850px) {
+    .motion-profile-panel {
+        top: 160px;
+    }
+}

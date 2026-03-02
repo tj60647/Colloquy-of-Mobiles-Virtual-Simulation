@@ -2,433 +2,85 @@
 
 ## Purpose
 
-Demonstrates the **actual MotionProfile.ts trapezoidal motion system** used by Oscillators in the Colloquy simulation. Shows how smooth movement is achieved through acceleration, cruise, and deceleration phases.
+Demo 2 visualizes the trapezoidal profile generator used in `lib/subsystems/MotionProfile.ts` and shows how position, velocity, acceleration, and jerk evolve over time.
 
-## What You'll See
+## Current Features
 
-- **Real-time trapezoidal motion profile visualization**
-  - Position graph showing movement from start to target
-  - Velocity graph showing ramp-up, cruise, and ramp-down
-  - Acceleration graph showing positive/negative acceleration phases
-
-- **Phase indicators:**
-  - **Acceleration Phase** (Blue): Ramping up to max velocity
-  - **Cruise Phase** (Green): Constant velocity travel
-  - **Deceleration Phase** (Red): Ramping down to stop
-
-- **Interactive controls:**
-  - Total Distance: How far to move (45°-360°)
-  - Max Velocity: Top speed during cruise (20-120°/s)
-  - Max Acceleration: How quickly to speed up/slow down (10-100°/s²)
-  - See how changing parameters affects the profile shape!
-
-- **Profile statistics:**
-  - Duration of the complete movement
-  - Number of timestep points generated
-  - Current progress through the profile
-
-## Key Concepts
-
-- **Trapezoidal Profile:** The standard motion pattern used by Mobile Oscillators
-  - Smooth starts (no sudden jerks)
-  - Efficient travel at max velocity
-  - Smooth stops (controlled deceleration)
-
-- **Real Implementation:** This demo uses the actual `MotionProfile.ts` class from `lib/subsystems/`
-  - Same code that drives Mobile rotation in Demo 3
-  - Shows the internal workings of the Oscillator subsystem
-
-- **Triangle vs Trapezoid:** 
-  - If distance is too short to reach max velocity, becomes a "triangle" profile
-  - Only acceleration and deceleration, no cruise phase
+- Real-time graphs for:
+  - Position ($\theta$)
+  - Velocity ($d\theta/dt$)
+  - Acceleration ($d^2\theta/dt^2$)
+  - Jerk ($d^3\theta/dt^3$)
+- Circular rotation view with vector overlays (velocity, acceleration, jerk)
+- Phase and profile-stat overlays
+- Yo-yo mode (forward + reverse return profile)
+- Collapsible controls and visualization sections
 
 ## Controls
 
-### Profile Controls Panel
-- **Total Distance:** How far the Mobile needs to rotate
-- **Max Velocity:** The fastest rotation speed allowed
-- **Max Acceleration:** How quickly speed can change
-- **Play/Pause:** Control animation playback
-- **Reset:** Restart from beginning
+- `Total Distance`: 45° to 360° (step 15°)
+- `Max Velocity`: 5°/s to 60°/s (step 5°/s)
+- `Max Acceleration`: 5°/s² to 60°/s² (step 5°/s²)
+- `Yo-Yo Mode`: enabled/disabled
+- `Play/Pause` and `Reset`
+- `Show JSON`: opens a JSON panel for the current motion profile snapshot
 
-## Learning Goals
+Sampling is fixed at 40 Hz (`timestep = 1/40`).
 
-1. Understand how MotionProfile.ts generates smooth motion
-2. See the relationship between position, velocity, and acceleration
-3. Observe how parameters affect profile shape and duration
-4. Foundation for Demo 3 (Oscillator Basics) where this drives actual 3D Mobiles
+## View JSON
+
+Demo 2 includes a `Show JSON` button like Demo 1.
+
+- `Show JSON` opens a closable panel with schema-valid simulation configuration JSON.
+- Output is shaped to the v2 schema used in this repo.
+- Displayed JSON includes core config sections:
+  - `$schema` and `version`
+  - `metadata` and `simulation`
+  - `coordinateSystems`
+  - `mobiles`
+
+## Architecture (Current)
+
+Demo 2 now uses a contract-first boundary between UI/rendering and profile simulation state:
+
+- `src/motionProfileContracts.ts`
+  - `MotionProfileParams`
+  - `MotionProfileSnapshot`
+  - `MotionProfileListener`
+- `src/LocalMotionProfileAdapter.ts`
+  - Owns local simulation params/state
+  - Regenerates profile on control changes
+  - Emits immutable snapshots to the app
+- `src/main.ts`
+  - Renders from adapter snapshots
+  - Wires panel callbacks to adapter commands
+  - Avoids direct ownership of profile math state
+
+This keeps Demo 2 ready for a future remote/server-backed adapter with minimal UI changes.
 
 ## Development
+
+From `apps/demo-TS-02-motion-profiles`:
 
 ```bash
 npm install
 npm run dev
 ```
 
-## File Structure
+Build:
 
-```
-demo-TS-##-name/
-├── index.html          (at root, not in public/)
-├── src/
-│   └── main.ts         (demo logic)
-├── public/
-│   ├── styles.css      (demo styling)
-│   └── config.json     (simulation config)
-├── package.json
-├── vite.config.ts
-└── tsconfig.json
+```bash
+npm run build
 ```
 
-## Technology
+## Verification Status
 
-**Demos use vanilla TypeScript with custom CSS - NO frameworks.**
+- ✅ Local build succeeds after adapter migration
+- ✅ Local build succeeds after cleanup of accidental nested template directory
 
-- ❌ **No React, Vue, Angular** - Current UI needs don't justify framework complexity
-- ❌ **No Tailwind, Bootstrap** - Custom CSS ensures consistent styling
-- ✅ **Vanilla TypeScript** - Direct DOM manipulation, lightweight bundles
-- ✅ **Shared modules** - Reusable components like `CameraControlPanel.ts`
+## Related Docs
 
-**Why?** Demos prioritize 3D simulation over UI. Simple controls (~50 lines) don't need framework overhead. See [docs/UI_STANDARDS.md](../../docs/UI_STANDARDS.md) for full rationale.
-
-## Creating a New Demo
-
-1. **Copy this template folder:**
-   ```bash
-   cp -r apps/demo-TS-template apps/demo-TS-##-your-demo-name
-   cd apps/demo-TS-##-your-demo-name
-   ```
-
-2. **Update package.json:**
-   - Change `name` to `demo-ts-##-your-demo-name`
-   - Update `description`
-
-3. **Update index.html:**
-   - Replace `##` with demo number
-   - Replace `[Name]` with demo title
-   - Replace `[Brief description...]` with actual description
-   - Add any demo-specific UI panels (see Demo 1 for example)
-
-4. **Update src/main.ts:**
-   - Customize the demo logic
-   - Keep the standard init pattern with `setupInfoModal()`
-
-5. **Update public/config.json:**
-   - Define your simulation configuration
-
-6. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-7. **Test locally:**
-   ```bash
-   npm run dev
-   ```
-
-## Standard UI Components
-
-All demos include these standard components by default:
-
-### 1. Info Icon (ⓘ)
-- **Location:** Top-right corner
-- **Purpose:** Opens modal with demo description and help
-- **No changes needed** - works out of the box
-
-### 2. Info Modal
-- **Purpose:** Full demo description, mouse controls, keyboard shortcuts
-- **Customization:** Update title and description in index.html
-
-### 3. Camera Controls Panel
-- **Location:** Bottom-left corner
-- **Purpose:** Standard camera controls (Reset, View Presets)
-- **Module:** `lib/visualization/ui/CameraControlPanel.ts` (shared)
-- **Basic usage:** `setupCameraControls()` - no changes needed
-- **Custom buttons:** See "Adding Custom Camera Buttons" below
-
-**IMPORTANT:** The HTML for camera controls should be an empty panel:
-```html
-<!-- Camera Controls Panel -->
-<div id="controls-panel" class="panel">
-    <div class="panel-header">Camera Controls</div>
-    <!-- Buttons will be added dynamically -->
-</div>
-```
-❌ **DO NOT** add manual button HTML - `setupCameraControls()` creates them dynamically!
-
-## Adding Custom Camera Controls
-
-The camera controls panel includes standard buttons (Reset, View presets). You can add:
-
-### 1. Auto-Orbit Controls
-For demos with animated motion, enable automatic camera orbit:
-
-```typescript
-import { setupCameraControls } from '../../../lib/visualization/ui';
-
-// In your demo class, make renderer public:
-class YourDemoApp {
-  public renderer: YourRendererClass; // Must be public for setupCameraControls
-  // ...
-}
-
-// In init() function:
-const app = new YourDemoApp();
-
-setupCameraControls({
-  autoOrbit: {
-    cameraController: app.renderer.getCameraController(),
-    initialSpeed: 0.005,     // Default rotation speed
-    minSpeed: -0.01,         // Minimum (reverse rotation)
-    maxSpeed: 0.01,          // Maximum (fast rotation)
-    startEnabled: false,     // Whether orbit starts immediately
-  }
-});
-```
-
-This adds:
-- **Orbit toggle** button (Enable/Disable)
-- **Speed slider** to control rotation speed
-
-The CameraController handles all orbit logic automatically - no callbacks needed!
-
-### 2. Custom Action Buttons
-Add custom buttons for demo-specific actions:
-
-```typescript
-setupCameraControls({
-  customButtons: [
-    {
-      label: 'Take Screenshot',
-      onClick: () => captureScreenshot(),
-      className: 'camera-button'
-    }
-  ]
-});
-```
-
-Custom buttons appear **between** the Reset button and View Preset buttons.
-
-## Adding Demo-Specific Controls
-
-If your demo needs custom controls (like Demo 1's rotation slider), follow this pattern:
-
-### 1. Add HTML to index.html
-```html
-<!-- CustomControl Panel -->
-<div id="custom-panel" class="panel">
-    <div class="panel-header">Your Control Title</div>
-    <div class="control-row">
-        <span class="control-label">Control Name</span>
-    </div>
-    <input type="range" id="your-slider" min="0" max="1" step="0.01" value="0.5">
-    <div class="slider-value" id="your-value">0.5</div>
-</div>
-```
-
-**Note:** Always add `class="panel"` to get shared glassmorphism styling.
-
-### 2. Add CSS to public/styles.css (if needed)
-
-**Only add positioning.** The `.panel` class provides all styling (glassmorphism, colors, borders, etc.).
-
-```css
-/* Demo-specific panel positioning only */
-#custom-panel {
-    position: absolute;
-    top: 180px;  /* Below description panel */
-    left: 20px;
-}
-```
-
-**That's it!** No need for background, padding, border-radius, etc. - the `.panel` class handles all that.
-    background: rgba(13, 17, 30, 0.92);
-    color: #e0e0e0;
-    padding: 16px 20px;
-    border-radius: 8px;
-    border: 1px solid rgba(52, 152, 219, 0.3);
-    z-index: 100;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    min-width: 220px;
-}
-
-#your-slider {
-    width: 100%;
-    margin: 8px 0;
-    accent-color: #3498db;
-}
-
-.slider-value {
-    text-align: center;
-    font-size: 0.9em;
-    color: #5dade2;
-    font-weight: 600;
-    font-family: 'Courier New', monospace;
-}
-```
-
-### 3. Wire up in src/main.ts
-```typescript
-function setupCustomControls() {
-    const slider = document.getElementById('your-slider') as HTMLInputElement;
-    const valueDisplay = document.getElementById('your-value');
-    
-    if (!slider || !valueDisplay) return;
-    
-    slider.addEventListener('input', (event) => {
-        const value = parseFloat((event.target as HTMLInputElement).value);
-        valueDisplay.textContent = value.toFixed(2);
-        // Update your demo state here
-    });
-}
-
-// Call in init()
-async function init() {
-    // ...
-    setupInfoModal();
-    setupCustomControls(); // Add this
-    // ...
-}
-```
-
-## Styling Guidelines
-
-**Shared CSS imported automatically - only add demo-specific positioning.**
-
-### How It Works
-
-**Shared UI components** are styled in `lib/visualization/ui/styles.css`:
-- `.panel` - Base panel styling (glassmorphism, borders, colors, etc.)
-- `.panel.large` - Larger padding for description/title panels
-- `.panel-header`, `.control-row`, `.control-label` - Panel content styles
-- `.camera-button`, `kbd`, `input[type="range"]` - Interactive elements
-- All info icon, modal, and standard components
-
-**Demo-specific CSS** in `public/styles.css` only needs:
-- Positioning (`top`, `left`, `right`, `bottom` for your panel IDs)
-- That's it!
-
-### Adding Custom Panels
-
-**1. HTML** - Add `class="panel"` to your div:
-```html
-<div id="my-panel" class="panel">
-    <div class="panel-header">My Controls</div>
-    <!-- content -->
-</div>
-```
-
-**2. CSS** - Only position it:
-```css
-#my-panel {
-    position: absolute;
-    top: 180px;
-    left: 20px;
-}
-```
-
-The `.panel` class automatically provides:
-✅ Dark glassmorphism background  
-✅ Blue border and shadows  
-✅ Proper padding and border-radius  
-✅ Backdrop blur effect  
-✅ Consistent z-index  
-
-### Shared Classes Available
-
-- **`.panel`** - Standard panel (220px min-width)
-- **`.panel.large`** - Larger panel with more padding (420px max-width)
-- **`.panel-header`** - Uppercase blue header text
-- **`.control-row`** - Flexbox row for label + value
-- **`.control-label`** / **`.control-hint`** - Text styling
-- **`.slider-value`** - Monospace value display
-- **`.camera-button`** - Camera control buttons
-- **`input[type="range"]`** - Styled sliders
-
-### Standard Panel Style
-
-**Don't redefine these** - just use the `.panel` class:
-```css
-.your-panel {
-    position: absolute;
-    background: rgba(13, 17, 30, 0.92);
-    color: #e0e0e0;
-    padding: 16px 20px;
-    border-radius: 8px;
-    border: 1px solid rgba(52, 152, 219, 0.3);
-    z-index: 100;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-}
-```
-
-### Color Palette
-- **Background:** `#0a0a0a` (canvas), `rgba(13, 17, 30, 0.92)` (panels)
-- **Primary Blue:** `#3498db`, `#5dade2`, `rgba(52, 152, 219, 0.3-0.7)`
-- **Text:** `#e0e0e0` (primary), `#b8b8b8` (secondary), `#888` (tertiary)
-
-### Typography
-- **Font:** `'Segoe UI', Tahoma, Geneva, Verdana, sans-serif`
-- **Monospace:** `'Courier New', monospace` (for values, kbd)
-
-## Panel Positioning
-
-Standard positions to avoid overlap:
-- **Top-right:** Info icon (ⓘ)
-- **Top-left:** Demo-specific controls (if needed)
-- **Bottom-left:** Camera controls (standard)
-- **Bottom-right:** Available for demo-specific controls
-
-## Config File Format
-
-Use Config V2 format:
-```json
-{
-  "version": "2.0",
-  "name": "Demo Name",
-  "description": "Demo description",
-  "coordinateSystems": [
-    {
-      "id": "root",
-      "name": "Root",
-      "parent": null,
-      "position": { "x": 0, "y": 0, "z": 0 },
-      "rotation": { "x": 0, "y": 0, "z": 0 }
-    }
-  ],
-  "mobiles": []
-}
-```
-
-## Build Configuration
-
-The template includes:
-- **Vite config:** Pre-configured with Three.js deduplication
-- **TypeScript config:** Extends root tsconfig
-- **Package.json:** Three.js ^0.168.0 to match root dependency
-
-**Do not modify these unless necessary.**
-
-## Testing
-
-Before submitting your demo:
-
-1. ✅ Runs locally with `npm run dev`
-2. ✅ Builds successfully with `npm run build`
-3. ✅ All UI components visible and styled consistently
-4. ✅ Info modal has accurate description
-5. ✅ No console errors
-6. ✅ Camera controls work (R, 1-4, F keys)
-7. ✅ Responsive to window resize
-
-## Documentation
-
-See:
-- [UI Standards](../../docs/UI_STANDARDS.md) - Detailed UI component specs
-- [Camera Controller Spec](../../docs/CAMERA_CONTROLLER_SPEC.md) - Camera behavior
-
-## Examples
-
-- **Demo 1:** Transform hierarchy with rotation speed control
+- [UI Architecture](../../docs/UI_ARCHITECTURE.md)
+- [UI Standards](../../docs/UI_STANDARDS.md)
+- [Pulse Communication Architecture](../../docs/PULSE_COMMUNICATION_ARCHITECTURE.md)
 

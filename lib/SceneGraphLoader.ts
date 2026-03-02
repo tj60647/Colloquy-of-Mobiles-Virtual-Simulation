@@ -196,16 +196,13 @@ export class SceneGraphLoader {
     }
 
     // Create Mobile configuration
-    const globalOrientation = coordinateSystem.getGlobalOrientation();
     const mobileConfig: MobileConfig = {
       name: config.name,
       parent: coordinateSystem,
-      initialPosition: coordinateSystem.localPosition,
-      initialRotation: {
-        x: globalOrientation.pitch,
-        y: globalOrientation.yaw,
-        z: globalOrientation.roll,
-      },
+      // Mobile is attached to its coordinateSystem, so its own local transform starts at identity.
+      // The coordinateSystem hierarchy already encodes placement/orientation.
+      initialPosition: { x: 0, y: 0, z: 0 },
+      initialRotation: { x: 0, y: 0, z: 0 },
       drives: this.createDriveConfig(config.drives),
     };
 
@@ -279,12 +276,25 @@ export class SceneGraphLoader {
     // Create and attach subsystem
     if (config.type === 'horizontal_control') {
       mobile.horizontalControlSubsystem = new HorizontalControlSubsystem(oscillatorConfig);
-      // Store reference to Transform for updates
-      (mobile as any).horizontalTransform = coordinateSystem;
+      mobile.horizontalTransform = coordinateSystem;
+      mobile.horizontalTransformBaseYaw = coordinateSystem.yaw;
+
+      if (mobile.parent !== coordinateSystem) {
+        if (mobile.parent) {
+          mobile.parent.removeChild(mobile);
+        }
+        coordinateSystem.addChild(mobile);
+        mobile.x = 0;
+        mobile.y = 0;
+        mobile.z = 0;
+        mobile.yaw = 0;
+        mobile.pitch = 0;
+        mobile.roll = 0;
+      }
     } else if (config.type === 'vertical_control') {
       mobile.verticalControlSubsystem = new VerticalControlSubsystem(oscillatorConfig);
-      // Store reference to Transform for updates
-      (mobile as any).verticalTransform = coordinateSystem;
+      mobile.verticalTransform = coordinateSystem;
+      mobile.verticalTransformBaseRoll = coordinateSystem.roll;
     }
   }
 

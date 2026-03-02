@@ -1,154 +1,288 @@
 {
   "$schema": "../../SimulationConfigurationFiles/simulation-config-v2.schema.json",
   "version": "2.0",
-  "name": "Oscillator Basics Demo",
-  "description": "Demonstrates oscillator-driven animation with different motion profiles",
-  
+  "metadata": {
+    "name": "Oscillator System Extraction",
+    "date": "2026-02-14",
+    "description": "Extracted from legacy OscillatorSystem_THREE scene setup (3 females + beam + 2 males)."
+  },
   "coordinateSystems": [
     {
-      "id": "root",
-      "name": "Root",
+      "id": "world",
+      "name": "World",
       "parent": null,
       "position": { "x": 0, "y": 0, "z": 0 },
       "rotation": { "x": 0, "y": 0, "z": 0 }
     },
     {
-      "id": "mobile1_base",
-      "name": "Mobile 1 Base",
-      "parent": "root",
-      "position": { "x": -150, "y": 0, "z": 0 },
+      "id": "armature",
+      "name": "Armature",
+      "parent": "world",
+      "position": { "x": 0, "y": 42, "z": 0 },
       "rotation": { "x": 0, "y": 0, "z": 0 }
     },
+
     {
-      "id": "mobile1_horizontal",
-      "name": "Mobile 1 Horizontal",
-      "parent": "mobile1_base",
+      "id": "female1_base",
+      "name": "Female 1 Base",
+      "parent": "armature",
+      "position": { "x": 0, "y": -8, "z": 42 },
+      "rotation": { "x": 0, "y": 180, "z": 0 }
+    },
+    {
+      "id": "female1_horizontal",
+      "name": "Female 1 Horizontal",
+      "parent": "female1_base",
       "position": { "x": 0, "y": 0, "z": 0 },
       "rotation": { "x": 0, "y": 0, "z": 0 }
     },
     {
-      "id": "mobile2_base",
-      "name": "Mobile 2 Base",
-      "parent": "root",
-      "position": { "x": -50, "y": 0, "z": 0 },
-      "rotation": { "x": 0, "y": 0, "z": 0 }
+      "id": "female1_vertical",
+      "name": "Female 1 Vertical Search",
+      "parent": "female1_horizontal",
+      "position": { "x": 0, "y": -15, "z": 5 },
+      "rotation": { "x": 0, "y": 0, "z": 90 }
+    },
+
+    {
+      "id": "female2_base",
+      "name": "Female 2 Base",
+      "parent": "armature",
+      "position": { "x": 36.373, "y": -8, "z": -21 },
+      "rotation": { "x": 0, "y": 300, "z": 0 }
     },
     {
-      "id": "mobile2_horizontal",
-      "name": "Mobile 2 Horizontal",
-      "parent": "mobile2_base",
+      "id": "female2_horizontal",
+      "name": "Female 2 Horizontal",
+      "parent": "female2_base",
       "position": { "x": 0, "y": 0, "z": 0 },
       "rotation": { "x": 0, "y": 0, "z": 0 }
     },
     {
-      "id": "mobile3_base",
-      "name": "Mobile 3 Base",
-      "parent": "root",
-      "position": { "x": 50, "y": 0, "z": 0 },
-      "rotation": { "x": 0, "y": 0, "z": 0 }
+      "id": "female2_vertical",
+      "name": "Female 2 Vertical Search",
+      "parent": "female2_horizontal",
+      "position": { "x": 0, "y": -15, "z": 5 },
+      "rotation": { "x": 0, "y": 0, "z": 90 }
+    },
+
+    {
+      "id": "female3_base",
+      "name": "Female 3 Base",
+      "parent": "armature",
+      "position": { "x": -36.373, "y": -8, "z": -21 },
+      "rotation": { "x": 0, "y": 60, "z": 0 }
     },
     {
-      "id": "mobile3_horizontal",
-      "name": "Mobile 3 Horizontal",
-      "parent": "mobile3_base",
+      "id": "female3_horizontal",
+      "name": "Female 3 Horizontal",
+      "parent": "female3_base",
       "position": { "x": 0, "y": 0, "z": 0 },
       "rotation": { "x": 0, "y": 0, "z": 0 }
     },
     {
-      "id": "mobile4_base",
-      "name": "Mobile 4 Base",
-      "parent": "root",
-      "position": { "x": 150, "y": 0, "z": 0 },
-      "rotation": { "x": 0, "y": 0, "z": 0 }
+      "id": "female3_vertical",
+      "name": "Female 3 Vertical Search",
+      "parent": "female3_horizontal",
+      "position": { "x": 0, "y": -15, "z": 5 },
+      "rotation": { "x": 0, "y": 0, "z": 90 }
+    },
+
+    {
+      "id": "beam_base",
+      "name": "Beam Base",
+      "parent": "armature",
+      "position": { "x": 0, "y": -4, "z": 0 },
+      "rotation": { "x": 0, "y": 180, "z": 0 }
     },
     {
-      "id": "mobile4_horizontal",
-      "name": "Mobile 4 Horizontal (Parent)",
-      "parent": "mobile4_base",
+      "id": "beam_horizontal",
+      "name": "Beam Horizontal",
+      "parent": "beam_base",
       "position": { "x": 0, "y": 0, "z": 0 },
       "rotation": { "x": 0, "y": 0, "z": 0 }
     },
+
     {
-      "id": "mobile4_child",
-      "name": "Mobile 4 Child",
-      "parent": "mobile4_horizontal",
-      "position": { "x": 0, "y": 50, "z": 0 },
+      "id": "male1_base",
+      "name": "Male 1 Base",
+      "parent": "beam_horizontal",
+      "position": { "x": 0, "y": -4, "z": 12 },
+      "rotation": { "x": 0, "y": 0, "z": 0 }
+    },
+    {
+      "id": "male1_horizontal",
+      "name": "Male 1 Horizontal",
+      "parent": "male1_base",
+      "position": { "x": 0, "y": 0, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 0 }
+    },
+
+    {
+      "id": "male2_base",
+      "name": "Male 2 Base",
+      "parent": "beam_horizontal",
+      "position": { "x": 0, "y": -4, "z": -12 },
+      "rotation": { "x": 0, "y": 180, "z": 0 }
+    },
+    {
+      "id": "male2_horizontal",
+      "name": "Male 2 Horizontal",
+      "parent": "male2_base",
+      "position": { "x": 0, "y": 0, "z": 0 },
       "rotation": { "x": 0, "y": 0, "z": 0 }
     }
   ],
-  
   "mobiles": [
     {
-      "id": "mobile1",
-      "name": "Mobile 1 - Slow Sine",
-      "type": "custom",
-      "transformId": "mobile1_horizontal",
-      "subsystems": {
-        "horizontalControl": {
-          "minPosition": -1.5708,
-          "maxPosition": 1.5708,
+      "id": "female1",
+      "name": "OscillatorSystem Female 1",
+      "mobileType": "female",
+      "coordinateSystem": "female1_base",
+      "drives": {
+        "orange": { "initialValue": 0, "lowerLimit": 0, "upperLimit": 10, "maximum": 100, "incrementRate": 1, "decrementRate": 1 },
+        "puce": { "initialValue": 0, "lowerLimit": 0, "upperLimit": 10, "maximum": 100, "incrementRate": 1, "decrementRate": 1 }
+      },
+      "subsystems": [
+        {
+          "type": "horizontal_control",
+          "coordinateSystem": "female1_horizontal",
+          "rangeOfMotion": { "axis": "yaw", "min": -45, "max": 45 },
+          "motionProfile": { "maxVelocity": 15, "maxAcceleration": 15, "maxJerk": 0 },
           "reinforcementPosition": 0,
-          "tolerance": 0.05,
-          "frameRate": 60,
-          "maxVelocity": 0.5,
-          "maxAcceleration": 0.3,
-          "maxJerk": 0.1
+          "tolerance": 1
+        },
+        {
+          "type": "vertical_control",
+          "coordinateSystem": "female1_vertical",
+          "rangeOfMotion": { "axis": "roll", "min": -30, "max": 30 },
+          "motionProfile": { "maxVelocity": 20, "maxAcceleration": 10, "maxJerk": 0 },
+          "reinforcementPosition": 0,
+          "tolerance": 1
         }
-      }
+      ],
+      "components": []
     },
     {
-      "id": "mobile2",
-      "name": "Mobile 2 - Fast Sine",
-      "type": "custom",
-      "transformId": "mobile2_horizontal",
-      "subsystems": {
-        "horizontalControl": {
-          "minPosition": -3.14159,
-          "maxPosition": 3.14159,
+      "id": "female2",
+      "name": "OscillatorSystem Female 2",
+      "mobileType": "female",
+      "coordinateSystem": "female2_base",
+      "drives": {
+        "orange": { "initialValue": 0, "lowerLimit": 0, "upperLimit": 10, "maximum": 100, "incrementRate": 1, "decrementRate": 1 },
+        "puce": { "initialValue": 0, "lowerLimit": 0, "upperLimit": 10, "maximum": 100, "incrementRate": 1, "decrementRate": 1 }
+      },
+      "subsystems": [
+        {
+          "type": "horizontal_control",
+          "coordinateSystem": "female2_horizontal",
+          "rangeOfMotion": { "axis": "yaw", "min": -45, "max": 45 },
+          "motionProfile": { "maxVelocity": 15, "maxAcceleration": 15, "maxJerk": 0 },
           "reinforcementPosition": 0,
-          "tolerance": 0.05,
-          "frameRate": 60,
-          "maxVelocity": 1.5,
-          "maxAcceleration": 1.0,
-          "maxJerk": 0.5
+          "tolerance": 1
+        },
+        {
+          "type": "vertical_control",
+          "coordinateSystem": "female2_vertical",
+          "rangeOfMotion": { "axis": "roll", "min": -30, "max": 30 },
+          "motionProfile": { "maxVelocity": 20, "maxAcceleration": 10, "maxJerk": 0 },
+          "reinforcementPosition": 0,
+          "tolerance": 1
         }
-      }
+      ],
+      "components": []
     },
     {
-      "id": "mobile3",
-      "name": "Mobile 3 - Narrow Range",
-      "type": "custom",
-      "transformId": "mobile3_horizontal",
-      "subsystems": {
-        "horizontalControl": {
-          "minPosition": -0.7854,
-          "maxPosition": 0.7854,
+      "id": "female3",
+      "name": "OscillatorSystem Female 3",
+      "mobileType": "female",
+      "coordinateSystem": "female3_base",
+      "drives": {
+        "orange": { "initialValue": 0, "lowerLimit": 0, "upperLimit": 10, "maximum": 100, "incrementRate": 1, "decrementRate": 1 },
+        "puce": { "initialValue": 0, "lowerLimit": 0, "upperLimit": 10, "maximum": 100, "incrementRate": 1, "decrementRate": 1 }
+      },
+      "subsystems": [
+        {
+          "type": "horizontal_control",
+          "coordinateSystem": "female3_horizontal",
+          "rangeOfMotion": { "axis": "yaw", "min": -45, "max": 45 },
+          "motionProfile": { "maxVelocity": 15, "maxAcceleration": 15, "maxJerk": 0 },
           "reinforcementPosition": 0,
-          "tolerance": 0.05,
-          "frameRate": 60,
-          "maxVelocity": 0.8,
-          "maxAcceleration": 0.5,
-          "maxJerk": 0.2
+          "tolerance": 1
+        },
+        {
+          "type": "vertical_control",
+          "coordinateSystem": "female3_vertical",
+          "rangeOfMotion": { "axis": "roll", "min": -30, "max": 30 },
+          "motionProfile": { "maxVelocity": 20, "maxAcceleration": 10, "maxJerk": 0 },
+          "reinforcementPosition": 0,
+          "tolerance": 1
         }
-      }
+      ],
+      "components": []
     },
     {
-      "id": "mobile4",
-      "name": "Mobile 4 - Compound Motion",
-      "type": "custom",
-      "transformId": "mobile4_horizontal",
-      "subsystems": {
-        "horizontalControl": {
-          "minPosition": -1.0472,
-          "maxPosition": 1.0472,
+      "id": "beam",
+      "name": "OscillatorSystem Beam",
+      "mobileType": "beam",
+      "coordinateSystem": "beam_base",
+      "drives": {
+        "orange": { "initialValue": 0, "lowerLimit": 0, "upperLimit": 10, "maximum": 100, "incrementRate": 1, "decrementRate": 1 },
+        "puce": { "initialValue": 0, "lowerLimit": 0, "upperLimit": 10, "maximum": 100, "incrementRate": 1, "decrementRate": 1 }
+      },
+      "subsystems": [
+        {
+          "type": "horizontal_control",
+          "coordinateSystem": "beam_horizontal",
+          "rangeOfMotion": { "axis": "yaw", "min": -180, "max": 180 },
+          "motionProfile": { "maxVelocity": 5, "maxAcceleration": 5, "maxJerk": 0 },
           "reinforcementPosition": 0,
-          "tolerance": 0.05,
-          "frameRate": 60,
-          "maxVelocity": 0.6,
-          "maxAcceleration": 0.4,
-          "maxJerk": 0.15
+          "tolerance": 1
         }
-      }
+      ],
+      "components": []
+    },
+    {
+      "id": "male1",
+      "name": "OscillatorSystem Male 1",
+      "mobileType": "male",
+      "coordinateSystem": "male1_base",
+      "drives": {
+        "orange": { "initialValue": 0, "lowerLimit": 0, "upperLimit": 10, "maximum": 100, "incrementRate": 1, "decrementRate": 1 },
+        "puce": { "initialValue": 0, "lowerLimit": 0, "upperLimit": 10, "maximum": 100, "incrementRate": 1, "decrementRate": 1 }
+      },
+      "subsystems": [
+        {
+          "type": "horizontal_control",
+          "coordinateSystem": "male1_horizontal",
+          "rangeOfMotion": { "axis": "yaw", "min": -60, "max": 60 },
+          "motionProfile": { "maxVelocity": 10, "maxAcceleration": 10, "maxJerk": 0 },
+          "reinforcementPosition": 0,
+          "tolerance": 1
+        }
+      ],
+      "components": []
+    },
+    {
+      "id": "male2",
+      "name": "OscillatorSystem Male 2",
+      "mobileType": "male",
+      "coordinateSystem": "male2_base",
+      "drives": {
+        "orange": { "initialValue": 0, "lowerLimit": 0, "upperLimit": 10, "maximum": 100, "incrementRate": 1, "decrementRate": 1 },
+        "puce": { "initialValue": 0, "lowerLimit": 0, "upperLimit": 10, "maximum": 100, "incrementRate": 1, "decrementRate": 1 }
+      },
+      "subsystems": [
+        {
+          "type": "horizontal_control",
+          "coordinateSystem": "male2_horizontal",
+          "rangeOfMotion": { "axis": "yaw", "min": -60, "max": 60 },
+          "motionProfile": { "maxVelocity": 10, "maxAcceleration": 10, "maxJerk": 0 },
+          "reinforcementPosition": 0,
+          "tolerance": 1
+        }
+      ],
+      "components": []
     }
   ]
 }

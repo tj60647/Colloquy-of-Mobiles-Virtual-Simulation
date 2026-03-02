@@ -26,7 +26,7 @@ demo-TS-##-name/
 - ✅ **Vanilla TypeScript** - Direct DOM manipulation, lightweight bundles
 - ✅ **Shared modules** - Reusable components like `CameraControlPanel.ts`
 
-**Why?** Demos prioritize 3D simulation over UI. Simple controls (~50 lines) don't need framework overhead. See [docs/UI_STANDARDS.md](../../docs/UI_STANDARDS.md) for full rationale.
+**Why?** Demos prioritize 3D simulation over UI. See [UI Architecture](../../docs/UI_ARCHITECTURE.md) for canonical architecture/rationale and [UI Standards](../../docs/UI_STANDARDS.md) for visual conventions.
 
 ## Creating a New Demo
 
@@ -359,6 +359,7 @@ Before submitting your demo:
 ## Documentation
 
 See:
+- [UI Architecture](../../docs/UI_ARCHITECTURE.md) - Canonical UI architecture and migration strategy
 - [UI Standards](../../docs/UI_STANDARDS.md) - Detailed UI component specs
 - [Camera Controller Spec](../../docs/CAMERA_CONTROLLER_SPEC.md) - Camera behavior
 

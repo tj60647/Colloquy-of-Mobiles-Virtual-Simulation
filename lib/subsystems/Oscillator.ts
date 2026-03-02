@@ -273,11 +273,17 @@ export class Oscillator {
       maxVelocity: this.maxVelocity,
       maxAcceleration: this.maxAcceleration,
       maxJerk: this.maxJerk,
+      currentPosition: this.currentPosition,
+      startPosition: this.startPosition,
+      targetPosition: this.targetPosition,
+      currentMotionRequest: this.currentMotionRequest,
+      currentProfileIndex: this.currentProfileIndex,
+      stopTargetReached: this.stopTargetReached,
     };
   }
 
   static fromJSON(json: any): Oscillator {
-    return new Oscillator({
+    const oscillator = new Oscillator({
       minPosition: json.minPosition,
       maxPosition: json.maxPosition,
       reinforcementPosition: json.reinforcementPosition,
@@ -287,5 +293,26 @@ export class Oscillator {
       maxAcceleration: json.maxAcceleration,
       maxJerk: json.maxJerk,
     });
+
+    if (typeof json.currentPosition === 'number') {
+      oscillator.currentPosition = json.currentPosition;
+    }
+    if (typeof json.startPosition === 'number') {
+      oscillator.startPosition = json.startPosition;
+    }
+    if (typeof json.targetPosition === 'number') {
+      oscillator.targetPosition = json.targetPosition;
+    }
+    if (typeof json.currentProfileIndex === 'number') {
+      oscillator.currentProfileIndex = json.currentProfileIndex;
+    }
+    if (typeof json.stopTargetReached === 'boolean') {
+      oscillator.stopTargetReached = json.stopTargetReached;
+    }
+    if (json.currentMotionRequest === MotionRequest.STOP || json.currentMotionRequest === MotionRequest.RELEASE) {
+      oscillator.currentMotionRequest = json.currentMotionRequest;
+    }
+
+    return oscillator;
   }
 }

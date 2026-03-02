@@ -7,7 +7,10 @@
  */
 
 import '../../../lib/visualization/ui/styles.css';
-import { MotionProfile, MotionPoint } from '../../../lib/subsystems/MotionProfile';
+import type { MotionPoint } from '../../../lib/subsystems/MotionProfile';
+import { setupMotionProfilePanel, type MotionProfilePanelApi } from '../../../lib/visualization/ui';
+import { LocalMotionProfileAdapter } from './LocalMotionProfileAdapter';
+import type { MotionProfileSnapshot } from './motionProfileContracts';
 
 /**
  * Main application class for motion profile visualization
@@ -16,18 +19,11 @@ class Demo2App {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private animationId: number | null = null;
-  private isPaused: boolean = false;
-  private currentIndex: number = 0;
-  private direction: number = 1; // 1 for forward, -1 for reverse
-  
-  // Motion profile parameters
-  private totalDistance: number = 180; // degrees
-  private maxVelocity: number = 60; // degrees per second
-  private maxAcceleration: number = 60; // degrees per second^2
-  private timestep: number = 1/40; // 40 Hz sample rate
-  private yoyoMode: boolean = false; // yo-yo mode (forward and reverse)
-  
-  private motionProfile: MotionProfile | null = null;
+  private simulationAdapter: LocalMotionProfileAdapter;
+  private snapshot: MotionProfileSnapshot;
+  private unsubscribeSnapshot: (() => void) | null = null;
+  private motionProfilePanel: MotionProfilePanelApi | null = null;
+  private readonly onResize: () => void;
   
   constructor() {
     this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -40,171 +36,179 @@ class Demo2App {
       throw new Error('Failed to get 2D context');
     }
     this.ctx = context;
+
+    this.simulationAdapter = new LocalMotionProfileAdapter({
+      totalDistance: 120,
+      maxVelocity: 15,
+      maxAcceleration: 15,
+      timestep: 1 / 40,
+      yoyoMode: true,
+    });
+    this.snapshot = this.simulationAdapter.getSnapshot();
+    this.unsubscribeSnapshot = this.simulationAdapter.subscribe((nextSnapshot) => {
+      this.snapshot = nextSnapshot;
+    });
     
+    this.onResize = () => this.resize();
+
     // Handle canvas resizing
     this.resize();
-    window.addEventListener('resize', () => this.resize());
+    window.addEventListener('resize', this.onResize);
     
     // Setup UI controls
-    this.setupControls();
-    
-    // Generate initial profile
-    this.regenerateProfile();
+    this.motionProfilePanel = setupMotionProfilePanel({
+      initialState: {
+        totalDistance: this.snapshot.params.totalDistance,
+        maxVelocity: this.snapshot.params.maxVelocity,
+        maxAcceleration: this.snapshot.params.maxAcceleration,
+        yoyoMode: this.snapshot.params.yoyoMode,
+        isPaused: this.snapshot.isPaused,
+      },
+      onDistanceChange: (value: number) => {
+        this.simulationAdapter.setDistance(value);
+      },
+      onVelocityChange: (value: number) => {
+        this.simulationAdapter.setMaxVelocity(value);
+      },
+      onAccelerationChange: (value: number) => {
+        this.simulationAdapter.setMaxAcceleration(value);
+      },
+      onYoyoModeChange: (enabled: boolean) => {
+        this.simulationAdapter.setYoyoMode(enabled);
+        this.syncPanelState();
+      },
+      onPlayPause: () => {
+        this.togglePause();
+      },
+      onReset: () => {
+        this.reset();
+      },
+      onSectionCollapseChange: (section, collapsed) => {
+        if (section === 'visualization') {
+          requestAnimationFrame(() => this.resize());
+        }
+      },
+    });
+    this.syncPanelState();
+    this.setupJsonDisplay();
   }
   
   /**
    * Resize canvas to match window size
    */
   private resize(): void {
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+    const rect = this.canvas.getBoundingClientRect();
+    this.canvas.width = Math.max(1, Math.floor(rect.width));
+    this.canvas.height = Math.max(1, Math.floor(rect.height));
   }
   
-  /**
-   * Generate motion profile using MotionProfile.ts
-   */
-  private regenerateProfile(): void {
-    try {
-      if (this.yoyoMode) {
-        // Generate full bidirectional profile: forward + backward
-        // Profile 1: 0° → totalDistance
-        const profile1 = new MotionProfile(
-          this.totalDistance,
-          this.maxVelocity,
-          this.maxAcceleration,
-          0.0,
-          this.timestep,
-          0.0
-        );
-        
-        // Profile 2: totalDistance → 0° (return journey)
-        const profile2 = new MotionProfile(
-          this.totalDistance,
-          this.maxVelocity,
-          this.maxAcceleration,
-          0.0,
-          this.timestep,
-          0.0
-        );
-        
-        // Combine profiles: forward motion + reversed motion
-        const combinedProfile: MotionPoint[] = [];
-        
-        // Add forward profile as-is
-        profile1.profile.forEach(point => {
-          combinedProfile.push({ ...point });
-        });
-        
-        // Add return profile (reversed: from totalDistance back to 0)
-        profile2.profile.forEach(point => {
-          combinedProfile.push({
-            position: this.totalDistance - point.position, // Reverse position
-            velocity: -point.velocity,                     // Negative velocity
-            acceleration: -point.acceleration,             // Negative acceleration
-            jerk: -point.jerk                              // Negative jerk
-          });
-        });
-        
-        // Create a motion profile object with the combined profile
-        this.motionProfile = profile1; // Use profile1 as base
-        this.motionProfile.profile = combinedProfile; // Replace with combined profile
-        
-        console.log('Generated yo-yo profile:', combinedProfile.length, 'points', 
-                    '(', profile1.profile.length, 'forward +', profile2.profile.length, 'return)');
-      } else {
-        // Standard one-way profile
-        this.motionProfile = new MotionProfile(
-          this.totalDistance,
-          this.maxVelocity,
-          this.maxAcceleration,
-          0.0, // maxJerk (not used in current implementation)
-          this.timestep,
-          0.0  // initialVelocity
-        );
-        console.log('Generated profile:', this.motionProfile.toString());
-      }
-      
-      this.currentIndex = 0;
-    } catch (error) {
-      console.error('Failed to generate motion profile:', error);
+  private syncPanelState(): void {
+    this.motionProfilePanel?.setPaused(this.snapshot.isPaused);
+    this.motionProfilePanel?.setYoyoMode(this.snapshot.params.yoyoMode);
+    this.motionProfilePanel?.setValues({
+      totalDistance: this.snapshot.params.totalDistance,
+      maxVelocity: this.snapshot.params.maxVelocity,
+      maxAcceleration: this.snapshot.params.maxAcceleration,
+      yoyoMode: this.snapshot.params.yoyoMode,
+    });
+    this.refreshJsonDisplay();
+  }
+
+  private setupJsonDisplay(): void {
+    const toggleButton = document.getElementById('json-toggle');
+    const jsonPanel = document.getElementById('json-panel');
+    const closeButton = document.getElementById('json-close');
+    const jsonContent = document.getElementById('json-content');
+
+    if (!toggleButton || !jsonPanel || !closeButton || !jsonContent) {
+      return;
     }
+
+    this.refreshJsonDisplay();
+
+    toggleButton.addEventListener('click', () => {
+      const isVisible = jsonPanel.classList.toggle('visible');
+      toggleButton.textContent = isVisible ? 'Hide JSON' : 'Show JSON';
+      this.refreshJsonDisplay();
+      if (isVisible) {
+        toggleButton.style.display = 'none';
+      }
+    });
+
+    closeButton.addEventListener('click', () => {
+      jsonPanel.classList.remove('visible');
+      toggleButton.textContent = 'Show JSON';
+      toggleButton.style.display = 'block';
+    });
   }
-  
-  /**
-   * Setup UI control handlers
-   */
-  private setupControls(): void {
-    // Distance slider
-    const distanceSlider = document.getElementById('distance-slider') as HTMLInputElement;
-    const distanceValue = document.getElementById('distance-value');
-    distanceSlider?.addEventListener('input', (e) => {
-      this.totalDistance = parseFloat((e.target as HTMLInputElement).value);
-      if (distanceValue) {
-        distanceValue.textContent = `${this.totalDistance.toFixed(0)}°`;
-      }
-      this.regenerateProfile();
-    });
-    
-    // Max velocity slider
-    const velocitySlider = document.getElementById('velocity-slider') as HTMLInputElement;
-    const velocityValue = document.getElementById('velocity-value');
-    velocitySlider?.addEventListener('input', (e) => {
-      this.maxVelocity = parseFloat((e.target as HTMLInputElement).value);
-      if (velocityValue) {
-        velocityValue.textContent = `${this.maxVelocity.toFixed(0)}°/s`;
-      }
-      this.regenerateProfile();
-    });
-    
-    // Max acceleration slider
-    const accelSlider = document.getElementById('accel-slider') as HTMLInputElement;
-    const accelValue = document.getElementById('accel-value');
-    accelSlider?.addEventListener('input', (e) => {
-      this.maxAcceleration = parseFloat((e.target as HTMLInputElement).value);
-      if (accelValue) {
-        accelValue.textContent = `${this.maxAcceleration.toFixed(0)}°/s²`;
-      }
-      this.regenerateProfile();
-    });
-    
-    // Yo-yo mode checkbox
-    const yoyoCheckbox = document.getElementById('yoyo-checkbox') as HTMLInputElement;
-    yoyoCheckbox?.addEventListener('change', (e) => {
-      this.yoyoMode = (e.target as HTMLInputElement).checked;
-      this.reset();
-    });
-    
-    // Play/Pause button
-    const playPauseBtn = document.getElementById('play-pause-btn');
-    playPauseBtn?.addEventListener('click', () => {
-      this.togglePause();
-    });
-    
-    // Reset button
-    const resetBtn = document.getElementById('reset-btn');
-    resetBtn?.addEventListener('click', () => {
-      this.reset();
-    });
+
+  private buildSimulationConfigJson(): Record<string, unknown> {
+    const { totalDistance, maxVelocity, maxAcceleration, timestep, yoyoMode } = this.snapshot.params;
+
+    return {
+      $schema: 'https://colloquy-of-mobiles.org/schemas/simulation-config-v2.schema.json',
+      version: '2.0',
+      metadata: {
+        name: 'Demo 2 Motion Profile Configuration',
+        date: new Date().toISOString().slice(0, 10),
+        description: `Motion profile preview (distance=${totalDistance}deg, maxVelocity=${maxVelocity}deg/s, maxAcceleration=${maxAcceleration}deg/s^2, yoyoMode=${yoyoMode})`,
+      },
+      simulation: {
+        timestep,
+      },
+      coordinateSystems: [
+        {
+          id: 'world',
+          name: 'World',
+          parent: null,
+          position: { x: 0, y: 0, z: 0 },
+          rotation: { x: 0, y: 0, z: 0 },
+        },
+        {
+          id: 'motion_profile_mobile_cs',
+          name: 'Motion Profile Mobile Coordinate System',
+          parent: 'world',
+          position: { x: 0, y: 0, z: 0 },
+          rotation: { x: 0, y: 0, z: 0 },
+        },
+      ],
+      mobiles: [
+        {
+          id: 'motion_profile_mobile',
+          name: 'Motion Profile Mobile',
+          mobileType: 'female',
+          coordinateSystem: 'motion_profile_mobile_cs',
+        },
+      ],
+    };
+  }
+
+  private formatConfigJson(payload: Record<string, unknown>): string {
+    return JSON.stringify(payload, null, 2);
+  }
+
+  private refreshJsonDisplay(): void {
+    const jsonContent = document.getElementById('json-content');
+    if (!jsonContent) {
+      return;
+    }
+    jsonContent.textContent = this.formatConfigJson(this.buildSimulationConfigJson());
   }
   
   /**
    * Toggle pause state
    */
   private togglePause(): void {
-    this.isPaused = !this.isPaused;
-    const btn = document.getElementById('play-pause-btn');
-    if (btn) {
-      btn.textContent = this.isPaused ? '▶ Play' : '⏸ Pause';
-    }
+    this.simulationAdapter.togglePause();
+    this.motionProfilePanel?.setPaused(this.snapshot.isPaused);
   }
   
   /**
    * Reset simulation
    */
   private reset(): void {
-    this.currentIndex = 0;
-    this.direction = 1;
-    this.regenerateProfile(); // Regenerate profile in case yo-yo mode changed
+    this.simulationAdapter.reset();
+    this.syncPanelState();
   }
   
   /**
@@ -212,15 +216,7 @@ class Demo2App {
    */
   start(): void {
     const animate = (timestamp: number) => {
-      if (!this.isPaused && this.motionProfile) {
-        // Advance through profile (yo-yo profile already contains full forward+back cycle)
-        this.currentIndex++;
-        
-        // Loop at end
-        if (this.currentIndex >= this.motionProfile.profile.length) {
-          this.currentIndex = 0;
-        }
-      }
+      this.simulationAdapter.step();
       
       // Render
       this.render();
@@ -242,30 +238,32 @@ class Demo2App {
     this.ctx.fillStyle = '#ffffff';
     this.ctx.fillRect(0, 0, width, height);
     
-    if (!this.motionProfile || this.motionProfile.profile.length === 0) {
+    const profile = this.snapshot.profile;
+    if (profile.length === 0) {
       this.ctx.fillStyle = '#e74c3c';
       this.ctx.font = '20px monospace';
       this.ctx.fillText('No motion profile generated', width / 2 - 150, height / 2);
       return;
     }
     
-    // Layout dimensions
-    const graphWidth = width - 320; // Leave space for panels
-    const graphX = 300;
+    // Layout dimensions inside motion profile graphs container
+    const panelPadding = 16;
+    const graphX = panelPadding;
+    const graphWidth = width - panelPadding * 2;
     
     // Circular visualization at top
-    const circleY = 100;
-    const circleHeight = 200;
+    const circleY = panelPadding;
+    const circleHeight = Math.min(220, Math.max(140, height * 0.24));
     this.drawCircularVisualization(graphX, circleY, graphWidth, circleHeight);
     
     // Graph layout (four horizontal graphs stacked below circular viz)
-    const graphStartY = circleY + circleHeight + 40;
-    const graphHeight = (height - graphStartY - 40) / 4;
+    const graphStartY = circleY + circleHeight + 20;
+    const graphHeight = Math.max(70, (height - graphStartY - panelPadding) / 4);
     
     const graphs = [
-      { y: graphStartY, label: 'Position (θ)', data: 'position', color: '#3498db', unit: '°', maxY: this.totalDistance },
-      { y: graphStartY + graphHeight, label: 'Velocity (dθ/dt)', data: 'velocity', color: '#2ecc71', unit: '°/s', maxY: this.maxVelocity },
-      { y: graphStartY + 2 * graphHeight, label: 'Acceleration (d²θ/dt²)', data: 'acceleration', color: '#e74c3c', unit: '°/s²', maxY: this.maxAcceleration },
+      { y: graphStartY, label: 'Position (θ)', data: 'position', color: '#3498db', unit: '°', maxY: this.snapshot.params.totalDistance },
+      { y: graphStartY + graphHeight, label: 'Velocity (dθ/dt)', data: 'velocity', color: '#2ecc71', unit: '°/s', maxY: this.snapshot.params.maxVelocity },
+      { y: graphStartY + 2 * graphHeight, label: 'Acceleration (d²θ/dt²)', data: 'acceleration', color: '#e74c3c', unit: '°/s²', maxY: this.snapshot.params.maxAcceleration },
       { y: graphStartY + 3 * graphHeight, label: 'Jerk (d³θ/dt³)', data: 'jerk', color: '#9b59b6', unit: '°/s³', maxY: null }
     ];
     
@@ -274,11 +272,14 @@ class Demo2App {
       this.drawGraph(graphX, graph.y, graphWidth, graphHeight - 30, graph as any);
     });
     
-    // Draw phase indicators
-    this.drawPhaseIndicators(20, 60);
-    
-    // Draw profile info
-    this.drawProfileInfo(width - 280, 60);
+    const showOverlayBoxes = graphWidth >= 760 && height >= 560;
+    if (showOverlayBoxes) {
+      // Draw phase indicators
+      this.drawPhaseIndicators(graphX + 12, circleY + 12);
+      
+      // Draw profile info
+      this.drawProfileInfo(graphX + graphWidth - 272, circleY + 12);
+    }
   }
   
   /**
@@ -286,7 +287,7 @@ class Demo2App {
    */
   private drawGraph(x: number, y: number, width: number, height: number, config: any): void {
     const ctx = this.ctx;
-    const profile = this.motionProfile!.profile;
+    const profile = this.snapshot.profile;
     
     // Leave space for axis labels
     const leftMargin = 60;
@@ -373,7 +374,7 @@ class Demo2App {
     ctx.fillStyle = '#2c3e50';
     ctx.font = '11px monospace';
     ctx.textAlign = 'center';
-    const totalTime = profile.length * this.timestep;
+    const totalTime = profile.length * this.snapshot.params.timestep;
     for (let i = 0; i <= 4; i++) {
       const time = (totalTime * i / 4);
       const tickX = graphX + (graphWidth * i / 4);
@@ -406,9 +407,9 @@ class Demo2App {
       ctx.stroke();
       
       // Draw current position marker
-      const currentPoint = profile[this.currentIndex];
+      const currentPoint = profile[this.snapshot.currentIndex];
       const currentValue = (currentPoint as any)[config.data];
-      const markerX = graphX + this.currentIndex * scaleX;
+      const markerX = graphX + this.snapshot.currentIndex * scaleX;
       const markerY = graphY + graphHeight * 0.95 - (currentValue - minValue) * scaleY;
       
       ctx.fillStyle = config.color;
@@ -428,8 +429,9 @@ class Demo2App {
    */
   private drawCircularVisualization(x: number, y: number, width: number, height: number): void {
     const ctx = this.ctx;
-    const profile = this.motionProfile!.profile;
-    const currentPoint = profile[this.currentIndex];
+    const profile = this.snapshot.profile;
+    const currentPoint = profile[this.snapshot.currentIndex];
+    const { totalDistance } = this.snapshot.params;
     
     // Center of visualization
     const centerX = x + width / 2;
@@ -449,7 +451,7 @@ class Demo2App {
     ctx.fillText('Rotation State', x + 10, y + 20);
     
     // Calculate adjusted position (centered around 0)
-    const adjustedPosition = currentPoint.position - this.totalDistance / 2;
+    const adjustedPosition = currentPoint.position - totalDistance / 2;
     
     // Draw current angle display
     ctx.fillStyle = '#3498db';
@@ -464,8 +466,8 @@ class Demo2App {
     ctx.stroke();
     
     // Draw range of motion arc (from -totalDistance/2 to +totalDistance/2)
-    const startAngle = ((-this.totalDistance / 2) * Math.PI) / 180 - Math.PI / 2;
-    const endAngle = ((this.totalDistance / 2) * Math.PI) / 180 - Math.PI / 2;
+    const startAngle = ((-totalDistance / 2) * Math.PI) / 180 - Math.PI / 2;
+    const endAngle = ((totalDistance / 2) * Math.PI) / 180 - Math.PI / 2;
     ctx.strokeStyle = '#3498db';
     ctx.lineWidth = 4;
     ctx.beginPath();
@@ -490,8 +492,8 @@ class Demo2App {
     ctx.fillStyle = '#2c3e50';
     ctx.font = '12px monospace';
     ctx.textAlign = 'center';
-    ctx.fillText(`${(-this.totalDistance / 2).toFixed(0)}°`, startX, startY - 12);
-    ctx.fillText(`${(this.totalDistance / 2).toFixed(0)}°`, endX, endY - 12);
+    ctx.fillText(`${(-totalDistance / 2).toFixed(0)}°`, startX, startY - 12);
+    ctx.fillText(`${(totalDistance / 2).toFixed(0)}°`, endX, endY - 12);
     ctx.textAlign = 'left';
     
     // Draw center point
@@ -629,8 +631,8 @@ class Demo2App {
    */
   private drawPhaseIndicators(x: number, y: number): void {
     const ctx = this.ctx;
-    const profile = this.motionProfile!.profile;
-    const currentPoint = profile[this.currentIndex];
+    const profile = this.snapshot.profile;
+    const currentPoint = profile[this.snapshot.currentIndex];
     
     // Determine current phase based on acceleration
     let phase = 'Cruise';
@@ -664,11 +666,11 @@ class Demo2App {
     ctx.fillText(phase, x + 10, y + 60);
     
     // Progress
-    const progress = ((this.currentIndex / profile.length) * 100).toFixed(1);
+    const progress = ((this.snapshot.currentIndex / profile.length) * 100).toFixed(1);
     ctx.fillStyle = '#5a6c7d';
     ctx.font = '14px monospace';
     ctx.fillText(`Progress: ${progress}%`, x + 10, y + 90);
-    ctx.fillText(`Point: ${this.currentIndex + 1}/${profile.length}`, x + 10, y + 110);
+    ctx.fillText(`Point: ${this.snapshot.currentIndex + 1}/${profile.length}`, x + 10, y + 110);
   }
   
   /**
@@ -676,7 +678,8 @@ class Demo2App {
    */
   private drawProfileInfo(x: number, y: number): void {
     const ctx = this.ctx;
-    const profile = this.motionProfile!;
+    const profile = this.snapshot.profile;
+    const { totalDistance, maxVelocity, maxAcceleration, timestep } = this.snapshot.params;
     
     // Draw info box
     ctx.fillStyle = 'rgba(245, 245, 245, 0.9)';
@@ -693,15 +696,15 @@ class Demo2App {
     // Stats
     ctx.font = '13px monospace';
     ctx.fillStyle = '#5a6c7d';
-    const sampleFreq = 1 / this.timestep;
+    const sampleFreq = 1 / timestep;
     const lines = [
-      `Distance: ${this.totalDistance.toFixed(0)}°`,
-      `Max Vel: ${this.maxVelocity.toFixed(0)}°/s`,
-      `Max Accel: ${this.maxAcceleration.toFixed(0)}°/s²`,
-      `Duration: ${profile.profile_duration.toFixed(2)}s`,
-      `Samples: ${profile.profile.length}`,
+      `Distance: ${totalDistance.toFixed(0)}°`,
+      `Max Vel: ${maxVelocity.toFixed(0)}°/s`,
+      `Max Accel: ${maxAcceleration.toFixed(0)}°/s²`,
+      `Duration: ${(profile.length * timestep).toFixed(2)}s`,
+      `Samples: ${profile.length}`,
       `Sample Rate: ${sampleFreq.toFixed(0)} Hz`,
-      `Timestep: ${(this.timestep * 1000).toFixed(1)}ms`,
+      `Timestep: ${(timestep * 1000).toFixed(1)}ms`,
     ];
     
     lines.forEach((line, i) => {
@@ -713,11 +716,13 @@ class Demo2App {
    * Clean up resources
    */
   dispose(): void {
-    if (this.animationId) {
+    if (this.animationId !== null) {
       cancelAnimationFrame(this.animationId);
       this.animationId = null;
     }
-    window.removeEventListener('resize', () => this.resize());
+    window.removeEventListener('resize', this.onResize);
+    this.unsubscribeSnapshot?.();
+    this.unsubscribeSnapshot = null;
   }
 }
 

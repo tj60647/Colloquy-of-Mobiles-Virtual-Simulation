@@ -4,9 +4,13 @@ This directory contains all the documentation related to the Colloquy of Mobiles
 
 ## Contents
 
-- **diagrams/**: Contains PlantUML and other diagram files that document the architecture and processes within the application.
-- **user-manual.md**: A comprehensive guide for users, detailing how to interact with the simulation.
-- **architecture.md**: Describes the overall architecture of the project, including key components and their interactions.
+- **UI_ARCHITECTURE.md**: Canonical UI architecture, panel patterns, and demo-to-client/server migration strategy.
+- **UI_STANDARDS.md**: Visual and interaction standards for demo UIs.
+- **DEMO_REFACTORING_PLAN.md**: Demo roadmap and architecture context.
+- **REFACTORING_PLAN.md**: TypeScript migration and refactoring phases.
+- **PULSE_COMMUNICATION_ARCHITECTURE.md**: Communication subsystem architecture.
+- **reference/**: Source material and historical technical references.
+- **development/**: Working notes and project development artifacts.
 
 ### How to Use
 

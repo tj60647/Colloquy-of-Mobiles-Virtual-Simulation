@@ -14,6 +14,10 @@
         },
         "ambientLight": 0.2
     },
+    "simulation": {
+        "timestep": 0.025,
+        "updateRate": 40
+    },
     "coordinateSystems": [
         {
             "id": "world",

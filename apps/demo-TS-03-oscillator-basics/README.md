@@ -86,7 +86,7 @@ In the full Colloquy, every Mobile uses oscillators for yaw and roll rotation. T
 
 ### To Run:
 ```bash
-cd apps/demo-TS-02-oscillator-basics
+cd apps/demo-TS-03-oscillator-basics
 npm install
 npm run dev
 ```

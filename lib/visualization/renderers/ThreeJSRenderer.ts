@@ -205,7 +205,11 @@ export class ThreeJSRenderer {
   protected updateTransform(object: THREE.Object3D, transform: TransformState): void {
     object.position.set(transform.position.x, transform.position.y, transform.position.z);
 
-    object.rotation.set(transform.rotation.pitch, transform.rotation.yaw, transform.rotation.roll);
+    object.rotation.set(
+      THREE.MathUtils.degToRad(transform.rotation.pitch),
+      THREE.MathUtils.degToRad(transform.rotation.yaw),
+      THREE.MathUtils.degToRad(transform.rotation.roll)
+    );
 
     if (transform.scale) {
       object.scale.set(transform.scale.x, transform.scale.y, transform.scale.z);

@@ -5,6 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Demo 2: Motion Profiles - Colloquy of Mobiles</title>
     <link rel="stylesheet" href="/styles.css">
+    <style>
+        #json-panel {
+            position: fixed;
+            top: 58px;
+            right: 10px;
+            width: 420px;
+            max-height: 80vh;
+            display: none;
+            z-index: 1000;
+        }
+        #json-panel.visible {
+            display: block;
+        }
+        #json-content {
+            font-family: monospace;
+            font-size: 12px;
+            color: #2c3e50;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: calc(80vh - 100px);
+            overflow-y: auto;
+            margin: 0;
+        }
+        #json-toggle {
+            position: fixed;
+            top: 58px;
+            right: 10px;
+            z-index: 999;
+            cursor: pointer;
+            font-family: monospace;
+            font-size: 14px;
+            min-width: 130px;
+            text-align: center;
+        }
+        #json-toggle:hover {
+            background-color: rgba(245, 245, 245, 0.85);
+        }
+        #json-panel h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        #json-close {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 24px;
+            line-height: 1;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+        }
+        #json-close:hover {
+            color: #ff6b6b;
+        }
+    </style>
 </head>
 <body>
     <!-- Back to Gallery Button -->
@@ -78,49 +139,69 @@
         </div>
     </div>
     
-    <!-- Profile Controls Panel -->
-    <div id="profile-panel" class="panel">
-        <div class="panel-header">Motion Profile Controls</div>
-        
-        <div class="control-row">
-            <span class="control-label">Total Distance</span>
-            <span class="control-value" id="distance-value">180°</span>
+    <div class="motion-profile-panel panel">
+        <div id="profile-panel" class="motion-profile-controls motion-profile-section">
+            <button id="motion-controls-toggle" class="motion-profile-section-toggle" aria-expanded="true" aria-controls="motion-controls-content" type="button">
+                <span>Motion Profile Controls</span>
+                <span class="motion-profile-section-caret">▾</span>
+            </button>
+            <div id="motion-controls-content" class="motion-profile-section-content">
+                <div class="control-row">
+                    <span class="control-label">Total Distance</span>
+                    <span class="control-value" id="distance-value">180°</span>
+                </div>
+                <input type="range" id="distance-slider" min="45" max="360" step="15" value="180">
+                
+                <div class="control-row">
+                    <span class="control-label">Max Velocity</span>
+                    <span class="control-value" id="velocity-value">60°/s</span>
+                </div>
+                <input type="range" id="velocity-slider" min="5" max="60" step="5" value="60">
+                
+                <div class="control-row">
+                    <span class="control-label">Max Acceleration</span>
+                    <span class="control-value" id="accel-value">60°/s²</span>
+                </div>
+                <input type="range" id="accel-slider" min="5" max="60" step="5" value="60">
+                
+                <div class="control-row" style="margin-top: 12px;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="yoyo-checkbox" style="margin-right: 8px; cursor: pointer;">
+                        <span class="control-label" style="margin: 0;">Yo-Yo Mode</span>
+                    </label>
+                </div>
+                
+                <div class="control-row button-row">
+                    <button id="play-pause-btn" class="control-button">⏸ Pause</button>
+                    <button id="reset-btn" class="control-button">↻ Reset</button>
+                </div>
+            </div>
         </div>
-        <input type="range" id="distance-slider" min="45" max="360" step="15" value="180">
-        
-        <div class="control-row">
-            <span class="control-label">Max Velocity</span>
-            <span class="control-value" id="velocity-value">60°/s</span>
-        </div>
-        <input type="range" id="velocity-slider" min="5" max="60" step="5" value="60">
-        
-        <div class="control-row">
-            <span class="control-label">Max Acceleration</span>
-            <span class="control-value" id="accel-value">60°/s²</span>
-        </div>
-        <input type="range" id="accel-slider" min="5" max="60" step="5" value="60">
-        
-        <div class="control-row" style="margin-top: 12px;">
-            <label style="display: flex; align-items: center; cursor: pointer;">
-                <input type="checkbox" id="yoyo-checkbox" style="margin-right: 8px; cursor: pointer;">
-                <span class="control-label" style="margin: 0;">Yo-Yo Mode</span>
-            </label>
-        </div>
-        
-        <div class="control-row button-row">
-            <button id="play-pause-btn" class="control-button">⏸ Pause</button>
-            <button id="reset-btn" class="control-button">↻ Reset</button>
+
+        <div class="motion-profile-graphs motion-profile-section" id="motion-viz-section">
+            <button id="motion-viz-toggle" class="motion-profile-section-toggle" aria-expanded="true" aria-controls="motion-viz-content" type="button">
+                <span>Motion Profile Visualization</span>
+                <span class="motion-profile-section-caret">▾</span>
+            </button>
+            <div id="motion-viz-content" class="motion-profile-section-content">
+                <canvas id="canvas"></canvas>
+            </div>
         </div>
     </div>
-    
-    <!-- Camera Controls Panel -->
-    <!-- Camera Controls Panel -->
-    <div id="controls-panel" class="panel">
-        <div class="panel-header">Camera Controls</div>
-        <!-- Buttons will be added dynamically -->
+
+    <!-- JSON Toggle Button -->
+    <button id="json-toggle" class="panel">Show JSON</button>
+
+    <!-- JSON Display Panel -->
+    <div id="json-panel" class="panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #444;">
+            <h3>
+                <span>Simulation Configuration (v2)</span>
+            </h3>
+            <button id="json-close">&times;</button>
+        </div>
+        <pre id="json-content"></pre>
     </div>
-    
-    <canvas id="canvas"></canvas>
     
     <script type="module" src="/src/main.ts"></script>
 </body>

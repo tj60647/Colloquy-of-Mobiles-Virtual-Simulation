@@ -14,8 +14,8 @@ import { ThreeJSRenderer } from '../../../lib/visualization/renderers/ThreeJSRen
 import { setupCameraControls } from '../../../lib/visualization/ui';
 import type { SimulationState } from '../../../lib/types';
 
-// Global rotation speed control
-let rotationSpeed = 0.0025;
+// Global rotation speed control (disabled - static hierarchy demonstration)
+let rotationSpeed = 0;
 
 // Transform offset constant for child positioning
 const TRANSFORM_OFFSET = 96;
@@ -359,9 +359,6 @@ class Demo1App {
    */
   start(): void {
     const animate = () => {
-      // Animate the hierarchy
-      this.animateTransforms();
-
       // Render visualization (camera controller handles its own updates)
       this.renderer.renderDirect(true);
 

@@ -10,6 +10,8 @@
 
 export { setupCameraControls } from './CameraControlPanel';
 export type { CustomCameraButton, CameraControlPanelOptions } from './CameraControlPanel';
+export { setupMotionProfilePanel } from './MotionProfilesPanel';
+export type { MotionProfilePanelOptions, MotionProfilePanelApi, MotionProfilePanelState } from './MotionProfilesPanel';
 export { icons, getIcon } from './icons';
 
 // Note: CSS must be imported separately in your demo's main.ts:

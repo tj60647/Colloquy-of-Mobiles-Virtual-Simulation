@@ -299,7 +299,7 @@ ACT Phase:      Send pulses from transmit buffer
 - Multi-step forms or advanced state management needs
 - UI code complexity exceeds 500+ lines per demo
 
-See [docs/UI_STANDARDS.md](UI_STANDARDS.md) for full rationale and implementation patterns.
+See [docs/UI_ARCHITECTURE.md](UI_ARCHITECTURE.md) for canonical architecture/rationale and [docs/UI_STANDARDS.md](UI_STANDARDS.md) for visual implementation patterns.
 
 ---
 

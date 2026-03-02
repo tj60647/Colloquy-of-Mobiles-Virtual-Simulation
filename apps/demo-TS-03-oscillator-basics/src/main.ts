@@ -13,13 +13,15 @@ import { ThreeJSRenderer } from '../../../lib/visualization/renderers/ThreeJSRen
 import { setupCameraControls } from '../../../lib/visualization/ui';
 import { Mobile } from '../../../lib/Mobile';
 import { MotionRequest } from '../../../lib/subsystems/HorizontalControlSubsystem';
-import type { SimulationState } from '../../../lib/types';
+import type { MobileState, SimulationState } from '../../../lib/types';
 
 /**
  * Extended renderer for oscillator visualization
  */
 class OscillatorRenderer extends ThreeJSRenderer {
   private mobileObjects: Map<number, THREE.Group> = new Map();
+  private oscillatorGroups: Map<number, THREE.Group> = new Map();
+  private verticalSearchGroups: Map<number, THREE.Group> = new Map();
 
   /**
    * Create visual representation for a Mobile
@@ -28,50 +30,87 @@ class OscillatorRenderer extends ThreeJSRenderer {
     const group = new THREE.Group();
     group.name = mobileState.name || `Mobile ${mobileState.id}`;
 
-    // Create a cylinder to represent the mobile body (vertical post)
-    const bodyGeometry = new THREE.CylinderGeometry(3, 3, 40, 16);
-    const bodyMaterial = new THREE.MeshPhongMaterial({
-      color: this.getMobileColor(mobileState.id),
-      emissive: this.getMobileColor(mobileState.id),
-      emissiveIntensity: 0.2,
-    });
-    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-    body.castShadow = true;
-    body.receiveShadow = true;
-    group.add(body);
+    const baseAxes = new THREE.AxesHelper(12);
+    group.add(baseAxes);
 
-    // Add a horizontal arm extending from the body
-    const armGeometry = new THREE.BoxGeometry(60, 4, 4);
-    const armMaterial = new THREE.MeshPhongMaterial({
-      color: 0xcccccc,
-      metalness: 0.5,
-      roughness: 0.5,
-    });
-    const arm = new THREE.Mesh(armGeometry, armMaterial);
-    arm.position.set(30, 0, 0);
-    arm.castShadow = true;
-    arm.receiveShadow = true;
-    group.add(arm);
+    const baseDirection = new THREE.ArrowHelper(
+      new THREE.Vector3(0, 0, 1),
+      new THREE.Vector3(0, 0, 0),
+      12,
+      0xff0000
+    );
+    group.add(baseDirection);
 
-    // Add sphere at end of arm to show motion clearly
-    const tipGeometry = new THREE.SphereGeometry(6, 16, 16);
-    const tipMaterial = new THREE.MeshPhongMaterial({
-      color: this.getMobileColor(mobileState.id),
-      emissive: this.getMobileColor(mobileState.id),
-      emissiveIntensity: 0.3,
-    });
-    const tip = new THREE.Mesh(tipGeometry, tipMaterial);
-    tip.position.set(60, 0, 0);
-    tip.castShadow = true;
-    tip.receiveShadow = true;
-    group.add(tip);
+    const oscillator = new THREE.Group();
+    oscillator.name = `${group.name}-oscillator`;
+    group.add(oscillator);
+    this.oscillatorGroups.set(mobileState.id, oscillator);
 
-    // Add axes helper
-    const axes = new THREE.AxesHelper(20);
-    group.add(axes);
+    const oscillatorAxes = new THREE.AxesHelper(10);
+    oscillator.add(oscillatorAxes);
+
+    const oscillatorDirection = new THREE.ArrowHelper(
+      new THREE.Vector3(0, 0, 1),
+      new THREE.Vector3(0, 0, 0),
+      10,
+      0x0088ff
+    );
+    oscillator.add(oscillatorDirection);
+
+    const isFemale = String(mobileState.name || '').toLowerCase().includes('female');
+    if (isFemale) {
+      const searchBase = new THREE.Group();
+      searchBase.name = `${group.name}-vertical-base`;
+      searchBase.position.set(0, -15, 5);
+      searchBase.rotation.z = Math.PI / 2;
+      oscillator.add(searchBase);
+
+      const searchOscillator = new THREE.Group();
+      searchOscillator.name = `${group.name}-vertical-oscillator`;
+      searchBase.add(searchOscillator);
+      this.verticalSearchGroups.set(mobileState.id, searchOscillator);
+
+      searchOscillator.add(new THREE.AxesHelper(7));
+      searchOscillator.add(
+        new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, 0), 7, 0x00aa66)
+      );
+    }
 
     this.mobileObjects.set(mobileState.id, group);
     return group;
+  }
+
+  protected override updateMobile(state: MobileState): void {
+    let object = this.objectCache.get(state.id);
+
+    if (!object) {
+      object = this.createMobileObject(state);
+      this.objectCache.set(state.id, object);
+      this.scene.add(object);
+    }
+
+    const position = state.transform?.position ?? state.localPosition;
+    const rotation = state.transform?.rotation ?? state.localOrientation;
+
+    const horizontalOffsetDeg = (state as any).horizontalControl?.currentPosition ?? 0;
+    const verticalOffsetDeg = (state as any).verticalControl?.currentPosition ?? 0;
+
+    object.position.set(position.x, position.y, position.z);
+    object.rotation.set(
+      THREE.MathUtils.degToRad(rotation.pitch),
+      THREE.MathUtils.degToRad(rotation.yaw - horizontalOffsetDeg),
+      THREE.MathUtils.degToRad(rotation.roll)
+    );
+
+    const horizontalOscillator = this.oscillatorGroups.get(state.id);
+    if (horizontalOscillator) {
+      horizontalOscillator.rotation.y = THREE.MathUtils.degToRad(horizontalOffsetDeg);
+    }
+
+    const verticalOscillator = this.verticalSearchGroups.get(state.id);
+    if (verticalOscillator) {
+      verticalOscillator.rotation.z = THREE.MathUtils.degToRad(verticalOffsetDeg);
+    }
   }
 
   /**
@@ -92,6 +131,8 @@ class OscillatorRenderer extends ThreeJSRenderer {
    */
   override dispose(): void {
     this.mobileObjects.clear();
+    this.oscillatorGroups.clear();
+    this.verticalSearchGroups.clear();
     super.dispose();
   }
 }
@@ -142,6 +183,9 @@ class Demo2App {
       // Initialize all oscillators to RELEASED state (start oscillating)
       for (const mobile of this.mobiles) {
         mobile.horizontalControlSubsystem.setMotion(MotionRequest.RELEASE);
+        if (mobile.verticalControlSubsystem) {
+          mobile.verticalControlSubsystem.setMotion(MotionRequest.RELEASE);
+        }
       }
 
       console.log('Configuration loaded successfully');
