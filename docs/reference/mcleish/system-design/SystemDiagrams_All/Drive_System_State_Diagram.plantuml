@@ -1,2 +1,51 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Drive_System_StateDiagram.plantuml
+' Diagram Type: State Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/drive-agent.ts
+' (evaluateFirmwareInternalDriveState) + behavior/drive-decay.ts (evaluateDriveState).
+'
+' The dual-drive (O/P) machine. Both O and P increment every tick; a successful
+' reinforcement decrements the dominant drive. The state is a pure function of
+' (levelO, levelP) against (lowerLimit, upperLimit) — the firmware internal_drive_state
+' code 1..4. Note: unlike a classic FSM, transitions are re-evaluated every tick from
+' the current levels, so any state can be reached from any other as the levels cross.
+
+[*] --> BothSatisfied
+
+state "1 · satisfied-and-indifferent" as BothSatisfied {
+  ' lowerLimit > levelO  AND  lowerLimit > levelP
+  ' driveSearch = Neither -> outcome satisfied-and-indifferent
+}
+
+state "2 · O search (O dominant)" as OSearch {
+  ' levelO > levelP  ->  driveSearch = O
+}
+
+state "3 · P search (P dominant)" as PSearch {
+  ' levelP > levelO  ->  driveSearch = P
+}
+
+state "4 · either-O-or-P (both desperate / tied)" as EitherSearch {
+  ' (levelO > upperLimit AND levelP > upperLimit)  OR  levelO == levelP
+  ' driveSearch = OP -> outcome either-search
+}
+
+BothSatisfied --> OSearch : O rises, O > P
+BothSatisfied --> PSearch : P rises, P > O
+BothSatisfied --> EitherSearch : both rise past upper limit, or O == P
+OSearch --> PSearch : P overtakes O
+PSearch --> OSearch : O overtakes P
+OSearch --> EitherSearch : both > upper limit, or O == P
+PSearch --> EitherSearch : both > upper limit, or O == P
+EitherSearch --> OSearch : O > P after a decrement
+EitherSearch --> PSearch : P > O after a decrement
+OSearch --> BothSatisfied : dominant drive decremented below the lower limit
+PSearch --> BothSatisfied : dominant drive decremented below the lower limit
+EitherSearch --> BothSatisfied : drive decremented below the lower limit
+
+legend right
+  The dominant drive level (max of O, P) is broadcast as this unit's
+  act_drive_level (0..168) — the beam's arbitration weight. See src/simulation/drive-agent.ts.
+endlegend
+
+@enduml

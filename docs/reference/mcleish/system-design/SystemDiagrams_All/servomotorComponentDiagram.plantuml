@@ -1,79 +1,53 @@
 @startuml
-!define LOCALTRANSFORM -down-> 
+' Filename: servomotorComponentDiagram.plantuml
+' Diagram Type: Component Diagram
+'
+' Rewritten 2026-07-18. Previously a byte-for-byte duplicate of componentDiagram.plantuml
+' (the physical armature hierarchy — see that file). This version instead shows the CURRENT
+' oscillator -> servo actuation path: how a unit's VIRTUAL Servomotor Oscillator drives an
+' OPTIONAL physical servo via the /actuator bridge. Grounded in the live app:
+' src/simulation/oscillator-controller-agent.ts, oscillator-step.ts, and the /actuator client
+' (docs/infrastructure/ACTUATOR_PAGE.md, docs/infrastructure/PHYGITAL_AUDIT_2026-07-17.md).
 
 skinparam componentStyle rectangle
 skinparam defaultTextAlignment center
-
-' Define a custom color for actuators
-skinparam {
-    componentBackgroundColorActuator #fff274
+skinparam component {
+  BackgroundColor<<actuator>> #fff274
+  BackgroundColor<<hardware>> #cfe8ff
 }
 
-' Place Armature at the top
-component "Armature" as Armature
-
-' Direct Bar and Female systems to appear below Armature
-Armature LOCALTRANSFORM Bar0_1
-
-' Horizontal subsystem for Bar with Servomotor Oscillator
-component "Bar Subsystem" as Bar0_1 {
-    component "Servomotor Oscillator" as ServoOscBar #fff274
+package "Simulation Server (authoritative)" {
+  component "Behavioral engine\n(state machines + drive)" as Engine
+  component "Oscillator Controller Agent\n(oscillator-controller-agent.ts)" as OscAgent
+  component "Servomotor Oscillator (virtual)\n(oscillator-step.ts:\nhold / release / engaging)" as VirtOsc <<actuator>>
+  Engine --> OscAgent : requestMode (hold / release),\nreinforcementPosition
+  OscAgent --> VirtOsc : per-tick target
+  VirtOsc --> OscAgent : position / velocity / mode
 }
 
-' Place Bar below Armature with a horizontal subsystem for Servomotor Oscillator
-component "Bar" as Bar0
-Bar0_1 LOCALTRANSFORM Bar0
+OscAgent --> Wire : frame variables\n(position, velocity, mode)
 
-' Correctly place Male subsystems hanging from the Bar
-Bar0 LOCALTRANSFORM Male1_1
-Bar0 LOCALTRANSFORM Male2_1
+component "WebSocket frame\n(keyframe + delta)" as Wire
 
-' Horizontal subsystem for Male 1 with Oscillator
-component "Male 1-1" as Male1_1 {
-    component "Servomotor Oscillator" as ServoOscM1 #fff274
+Wire --> Actuator : subscribe (viewer-tier)
+
+package "/actuator client (phygital bridge)" {
+  component "Actuator page\n(maps oscillator stream -> servo goal;\nsafety limits, HOLD-on-stale)" as Actuator
 }
 
-' Horizontal subsystem for Male 2 with Oscillator
-component "Male 2-1" as Male2_1 {
-    component "Servomotor Oscillator" as ServoOscM2 #fff274
-}
+Actuator --> DevServo : virtual dev servo (default)
+Actuator --> ESP32 : ESP32 serial bridge (460800 baud)
+Actuator --> Dxl : Dynamixel (Protocol 2.0 / 1.0, byte-exact)
+Actuator --> BLE : BLE (experimental)
 
-' Place Female subsystems below the Armature
-Armature LOCALTRANSFORM Female1_1
-Armature LOCALTRANSFORM Female2_1
-Armature LOCALTRANSFORM Female3_1
+component "Virtual dev servo" as DevServo <<actuator>>
+component "ESP32 bridge" as ESP32 <<hardware>>
+component "Dynamixel servo" as Dxl <<hardware>>
+component "BLE servo" as BLE <<hardware>>
 
-' First horizontal subsystem for Female 1 with Servomotor Oscillator
-component "Female 1-1" as Female1_1 {
-    component "Servomotor Oscillator" as ServoOscF1 #fff274
-}
-
-' Second vertical subsystem for Female 1 with Servomotor Oscillator
-component "Female 1-2" as Female1_2 {
-    component "Servomotor Oscillator" as ServoF1_2 #fff274
-}
-Female1_1 LOCALTRANSFORM Female1_2
-
-' First horizontal subsystem for Female 2 with Servomotor Oscillator
-component "Female 2-1" as Female2_1 {
-    component "Servomotor Oscillator" as ServoOscF2 #fff274
-}
-
-' Second vertical subsystem for Female 2 with Servomotor Oscillator
-component "Female 2-2" as Female2_2 {
-    component "Servomotor Oscillator" as ServoF2_2 #fff274
-}
-Female2_1 LOCALTRANSFORM Female2_2
-
-' First horizontal subsystem for Female 3 with Servomotor Oscillator
-component "Female 3-1" as Female3_1 {
-    component "Servomotor Oscillator" as ServoOscF3 #fff274
-}
-
-' Second vertical subsystem for Female 3 with Servomotor Oscillator
-component "Female 3-2" as Female3_2 {
-    component "Servomotor Oscillator" as ServoF3_2 #fff274
-}
-Female3_1 LOCALTRANSFORM Female3_2
+note bottom of Actuator
+  Mappings always load DISABLED and must be explicitly enabled.
+  On a stale stream the bridge HOLDs the last safe position.
+end note
 
 @enduml

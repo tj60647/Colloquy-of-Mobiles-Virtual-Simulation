@@ -1,2 +1,42 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Male_System_StateDiagram.plantuml
+' Diagram Type: State Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/behavior/state-machine-male.ts
+' (firmware lineage: Logic_male.ino). The Male engagement machine has 3 states.
+
+[*] --> SatisfiedAndIndifferent
+
+state "satisfied-and-indifferent" as SatisfiedAndIndifferent {
+  ' both drives below the lower limit
+  ' horizontal oscillator: idle (hold)   ·   Beam request: satisfied-release
+  ' drives O and P increment every tick
+}
+
+state "satisfaction-search" as SatisfactionSearch {
+  ' horizontal oscillator: release (searching)
+  ' broadcasts the Intermittent Signal — light, 40-segment binary word for the active drive
+  ' Beam request: search-release   ·   light sensors OFF in this phase
+}
+
+state "engaging-partner" as EngagingPartner {
+  ' firmware internal_reinforcing
+  ' Energetic Beam ON   ·   light sensors ON (only in this phase)
+  ' Beam request: HOLD at this male's reinforcement position
+  ' windowed reinforcement tally: 80-sample window (timer_reinforce), sum > trigger -> decrement
+}
+
+SatisfiedAndIndifferent --> SatisfactionSearch : a drive rises above the lower limit\n(drivePhase != satisfied-and-indifferent)
+SatisfactionSearch --> SatisfiedAndIndifferent : drives fall below the lower limit
+SatisfactionSearch --> SatisfactionSearch : identify timeout\n(keep broadcasting)
+SatisfactionSearch --> EngagingPartner : Identifying Signal received (sound)\n(identifyingSignalReceived)
+EngagingPartner --> EngagingPartner : window sum > trigger ->\ndecrement drive, open next window\n(keep engaging - exchange repeats)
+EngagingPartner --> SatisfactionSearch : window sum <= trigger\n(not enough reflected light - partner lost)
+EngagingPartner --> SatisfiedAndIndifferent : satisfaction reached\n(reinforcement_testSatisfaction)
+
+legend right
+  Signal media: Intermittent = <b>light</b>; Identifying + Reinforcement = <b>sound</b>.
+  The old 3-mode Beam request (search-release / stop / satisfied-release) collapses to
+  one bit (beamStopRequest) in the engine - no consumer branched on the three spellings.
+endlegend
+
+@enduml

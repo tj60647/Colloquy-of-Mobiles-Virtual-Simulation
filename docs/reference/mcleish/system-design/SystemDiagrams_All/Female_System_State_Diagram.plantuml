@@ -1,2 +1,38 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Female_System_StateDiagram.plantuml
+' Diagram Type: State Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/behavior/state-machine-female.ts
+' (firmware lineage: Logic_fem.ino). The Female two-phase engagement machine has 3 states.
+
+[*] --> SatisfiedAndIndifferent
+
+state "satisfied-and-indifferent" as SatisfiedAndIndifferent {
+  ' horizontal oscillator: hold   ·   vertical reflector: hold (female is still)
+  ' drives O and P increment every tick
+}
+
+state "satisfaction-search" as SatisfactionSearch {
+  ' horizontal oscillator: release (searching)   ·   vertical reflector: hold
+  ' watches for an Intermittent Signal matching "this satisfaction search"
+}
+
+state "engaging-partner" as EngagingPartner {
+  ' firmware internal_reinforcing
+  ' horizontal oscillator: hold   ·   vertical reflector: release (mirror wiggles all engagement)
+  ' voices her drive-need reply ONCE (40 segments, sound), then listens for the Reinforcement Signal
+}
+
+SatisfiedAndIndifferent --> SatisfactionSearch : any drive rises above the lower limit
+SatisfactionSearch --> EngagingPartner : matching search word heard\n(isSearchWord & femaleMatchesSignal)
+EngagingPartner --> EngagingPartner : Reinforcement word heard (rising edge) ->\ndecrement drive, reset timer (keep engaging)
+EngagingPartner --> SatisfiedAndIndifferent : shared drive falls below the lower limit after a decrement\n(reinforcement_testSatisfaction)
+EngagingPartner --> SatisfactionSearch : no reinforcement for 205 samples (~10.25 s)\n(partner lost)
+
+legend right
+  Signal media: Intermittent (heard) = <b>light</b>; Identifying + Reinforcement (voiced) = <b>sound</b>.
+  Partner memory ("Put Partner ID and Search into Memory") is <b>NOT implemented</b>
+  (PARTNER_MEMORY_IMPLEMENTED = false); it made satisfaction unreachable and was dropped.
+  See docs/colloquy/AUTONOMOUS_AGENTS_ARCHITECTURE_ASSESSMENT.md 2.5-2.6.
+endlegend
+
+@enduml

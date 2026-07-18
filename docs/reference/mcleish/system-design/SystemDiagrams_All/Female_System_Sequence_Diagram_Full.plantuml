@@ -36,7 +36,8 @@ loop System Running
         Environment --> FemaleSystem : Intermittent Signal
 
         alt Intermittent Signal = This Satisfaction Search
-            FemaleSystem -> FemaleSystem : Put Partner ID and Search into Memory*
+            ' NOT IMPLEMENTED in the virtual engine (PARTNER_MEMORY_IMPLEMENTED = false) — see legend
+            FemaleSystem -> FemaleSystem : Put Partner ID and Search into Memory (NOT IMPLEMENTED*)
             FemaleSystem -> Environment : Respond (Identifying Sound)
             Environment -> Actor : Identifying Signal
             FemaleSystem -> FemaleHorizontalControlSubsystem : Stop
@@ -79,5 +80,16 @@ else Female System State = Satisfied and Indifferent
     FemaleSystem -> FemaleHorizontalControlSubsystem : Stop
     FemaleSystem -> FemaleVerticalReflectorSubsystem : Stop
 end
+
+legend right
+  <b>As-built annotations (2026-07-18):</b>
+  - "Put Partner ID and Search into Memory*" is NOT implemented in the virtual engine
+    (PARTNER_MEMORY_IMPLEMENTED = false) - partner memory made satisfaction unreachable
+    and was dropped.
+  - Signal media: Intermittent (heard) = light; Identifying + Reinforcement (voiced) = sound.
+  - Reinforcement timeout = 205 samples (~10.25 s) -> back to Satisfaction Search.
+  Source: src/simulation/behavior/state-machine-female.ts;
+  docs/colloquy/AUTONOMOUS_AGENTS_ARCHITECTURE_ASSESSMENT.md 2.5-2.6.
+endlegend
 
 @enduml

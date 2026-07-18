@@ -83,4 +83,15 @@ loop System Running
     end
 end
 
+legend right
+  <b>As-built annotations (2026-07-18):</b>
+  - Signal media: Intermittent Signal = light (Male NeoPixel ring, 40-segment binary word);
+    Identifying + Reinforcement Signals = sound (audio tones).
+  - "Decrement Drive" is a windowed reinforcement tally (80-sample window, timer_reinforce;
+    sum > trigger -> decrement = sum x 10), not a single decrement per reflection.
+  - The three Beam requests (Search[Release] / Stop / Satisfied[Release]) collapse to one bit
+    (beamStopRequest) in the engine - no consumer branched on the three spellings.
+  Source: src/simulation/behavior/state-machine-male.ts, beam-arbitrator.ts.
+endlegend
+
 @enduml
