@@ -1,2 +1,34 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Female_Horizontal_Control_Sequence_Diagram.plantuml
+' Diagram Type: Sequence Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/behavior/state-machine-female.ts
+' (stepFemaleEngagement -> bodyStopRequest) + src/simulation/oscillator-step.ts (stepOscillator).
+' One loop iteration = one simulation tick driving the Female horizontal control oscillator.
+
+participant "Female Engagement Machine" as FSM
+participant "Harness (agent boundary)" as Harness
+participant "Horizontal Control Oscillator" as HOsc
+
+loop each tick
+  FSM -> FSM : stepFemaleEngagement(state, input)
+  FSM -> Harness : bodyStopRequest\n(lane act_stop_request_body)
+
+  alt phase == satisfaction-search
+    Harness -> HOsc : requestMode = "release" (search tier)
+    HOsc -> HOsc : stepOscillator -> sweep motionProfile.min <-> max
+  else phase == satisfied-and-indifferent / engaging-partner / animation
+    Harness -> HOsc : requestMode = "hold"
+    HOsc -> HOsc : stepOscillator -> drive to reinforcementPosition and hold
+  end
+
+  HOsc --> FSM : position / velocity / accel
+end
+
+legend right
+  Sources: src/simulation/behavior/state-machine-female.ts, src/simulation/oscillator-step.ts.
+  bodyStopRequest is one bit (true = stop = hold); false only while satisfaction-search.
+  The harness maps stop -> "hold" at the child oscillator's boundary. reinforcementPosition
+  is a fixed scene-config value (typically 0 deg / center).
+endlegend
+
+@enduml

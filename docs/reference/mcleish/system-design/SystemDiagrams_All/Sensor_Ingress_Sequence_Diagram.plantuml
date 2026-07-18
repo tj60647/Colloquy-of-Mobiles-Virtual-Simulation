@@ -1,0 +1,87 @@
+@startuml
+' Filename: Sensor_Ingress_Sequence_Diagram.plantuml
+' Diagram Type: Sequence Diagram
+' Authored 2026-07-18 from src/simulation/external-sense-ingress.ts,
+' docs/infrastructure/SENSOR_INGRESS.md, docs/infrastructure/SENSOR_PAGE.md.
+' The phygital sensor path: a /sensor client streams a normalized light level
+' that superposes onto a unit's receiver, then the normal decode pipeline runs.
+
+participant "/sensor client\n(camera + detector)" as Client
+participant "Simulation Server\n(scripts/simulation-server.mjs)" as Server
+participant "ExternalSenseLatch\n(external-sense-ingress.ts)" as Latch
+participant "Engine seam\nsetExternalSenseLevel" as Engine
+participant "Environment\n(lightPulseInput merge)" as Env
+participant "Receiver decode\n(<unit>/receiver)" as Decode
+
+' Client armed only after an explicit Start / All on.
+' Capture rides requestAnimationFrame, so streaming pauses while the tab is hidden.
+loop every rAF frame while armed (~20 Hz), per mapping
+    Client -> Client : capture frame -> BT.601 zone luminance\ndelta vs threshold -> normalize level 0..1
+    Client -> Server : sensor_input { unit, channel, level, seq, sampleTimestamp }
+
+    alt (unit, channel) not declared by loaded package
+        Server --> Client : error SENSOR_NOT_BOUND
+    else level non-finite or negative
+        Server --> Client : error SENSOR_LEVEL_INVALID
+    else dist helpers missing
+        Server --> Client : error SENSOR_INGRESS_UNAVAILABLE
+    else socket lacks operator capability
+        Server --> Client : error NOT_AUTHORIZED
+    else accepted
+        ' latest-wins latch, keyed unit:channel; nothing queues.
+        ' Staleness is judged later at drain time, by server receive time.
+        Server -> Latch : set(unit, channel, { level, receivedAtMs, seq, owner })
+        ' No per-sample ack on success (the stream is high-rate).
+    end
+end
+
+' Independent cadence: the tick loop drains the latch once per binding, per tick,
+' immediately before sim.step(1) (top of the else-if(sim) branch -> never in replay).
+loop every simulation tick, per binding (drainExternalSense)
+    Server -> Latch : get(unit, channel)
+    Latch --> Server : latest sample (or none)
+    alt fresh: age <= stalenessTicks x TICK_MS
+        Server -> Server : calibrate level = max(0, gain*level + offset)
+        Server -> Engine : setExternalSenseLevel(unit, channel, level, mode)
+    else stale or absent
+        ' null RELEASES the channel back to geometry, never to zero.
+        Server -> Engine : setExternalSenseLevel(unit, channel, null, mode)
+    end
+
+    alt unit has an authored light sensor (else no-op: no eye, no sight)
+        Engine -> Env : lightPulseInput(level, mode)
+        alt mode = sum
+            Env -> Env : merged = geometric + external
+        else mode = replace
+            Env -> Env : merged = external
+        end
+        Env -> Decode : sense_light_level = merged
+        ' The unit's own decode pipeline is untouched - torch is decoded like a NeoPixel ring.
+        Decode -> Decode : rolling background -> internal_light_background
+        Decode -> Decode : delta vs authored sensitivity -> internal_light_delta
+        Decode -> Decode : is-pulse bit -> internal_light_is_pulse
+        Decode -> Decode : 40-sample word correlation ->\ninternal_received_word / internal_word_distance
+    end
+
+    Server -> Server : sim.step(1) advances the frame
+end
+
+' Client observes the loop close via the patch stream (round-trip graph),
+' reading behavioral.frame.values at <unit>/receiver.
+Server --> Client : behavioral frame patch\n(sense_light_level, internal_light_is_pulse, internal_received_word)
+
+legend right
+  Source: src/simulation/external-sense-ingress.ts (latch/drain arithmetic),
+  docs/infrastructure/SENSOR_INGRESS.md, docs/infrastructure/SENSOR_PAGE.md.
+  Wire: type snake_case, envelope fields camelCase; replies only on error.
+  No new frame-variable keys - the merged level flows through the EXISTING
+  receiver lanes: sense_light_level, internal_light_background /
+  internal_light_delta / internal_light_is_pulse, internal_received_word /
+  internal_word_distance. Per-sensor sense_signal glyph lanes stay geometric.
+  Binding fields (variables.externalSensors): unit, channel (light|sound),
+  mode (sum|replace), gain, offset, stalenessTicks (defaults in
+  EXTERNAL_SENSE_DEFAULTS). Auth: sensor_input rides the canControl operator
+  capability. null fails back to GEOMETRY, never to zero.
+endlegend
+
+@enduml

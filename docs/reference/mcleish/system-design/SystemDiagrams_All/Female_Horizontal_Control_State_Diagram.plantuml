@@ -1,2 +1,41 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Female_Horizontal_Control_State_Diagram.plantuml
+' Diagram Type: State Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/behavior/state-machine-female.ts
+' (bodyStopRequest = phase != "satisfaction-search") + src/simulation/oscillator-step.ts
+' (stepOscillator hold/release). The Female horizontal control oscillator (her "body")
+' HOLDS at the reinforcement position during satisfied-and-indifferent and engaging-partner,
+' and only RELEASES to search (sweep) during satisfaction-search.
+
+[*] --> Hold
+
+state "Hold - stopped at reinforcementPosition" as Hold {
+  ' bodyStopRequest = true  ->  requestMode "hold"  (lane act_stop_request_body)
+  ' active during satisfied-and-indifferent, engaging-partner, and satisfaction display
+  [*] --> MoveToReinforcementGoal
+  MoveToReinforcementGoal --> AtReinforcementGoal : |pos - reinforcementPosition| <= tolerance
+  MoveToReinforcementGoal --> MoveToReinforcementGoal : trapezoidal step toward reinforcementPosition
+  AtReinforcementGoal --> MoveToReinforcementGoal : held at reinforcementPosition every tick
+}
+
+state "Release - oscillating (searching)" as Release {
+  ' bodyStopRequest = false  ->  requestMode "release"  (search tier)
+  ' active ONLY during satisfaction-search; sweeps motionProfile.min <-> max
+  [*] --> SeedLeg
+  SeedLeg --> MoveToGoal : first leg from mid-span heads toward max
+  MoveToGoal --> MoveToGoal : not yet at goal (accelerate / cruise / decelerate)
+  MoveToGoal --> FlipDirection : |pos - goal| <= tolerance
+  FlipDirection --> MoveToGoal : goal = opposite stop (min <-> max)
+}
+
+Hold --> Release : phase -> satisfaction-search
+Release --> Hold : phase -> engaging-partner\nor satisfied-and-indifferent\nor satisfaction animation
+
+legend right
+  Sources: src/simulation/behavior/state-machine-female.ts, src/simulation/oscillator-step.ts.
+  The engine emits one bit (bodyStopRequest, lane act_stop_request_body); the harness maps
+  it onto the child oscillator's requestMode at the agent boundary (stop -> "hold").
+  reinforcementPosition is a fixed scene-config value (typically 0 deg / center).
+endlegend
+
+@enduml

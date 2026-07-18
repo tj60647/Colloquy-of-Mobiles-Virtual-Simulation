@@ -1,2 +1,73 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Male_Horizontal_Sub_System_Activity_Diagram.plantuml
+' Diagram Type: Activity Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/oscillator-step.ts (stepOscillator).
+' One pass = one call to stepOscillator (one tick) for the Male's horizontal joint.
+
+start
+
+:Read config: min, max, maxVelocity, maxAccel,
+reinforcementPosition, tolerance, engaging;
+:tier = engaging AND config.engaging present
+? config.engaging (faster) : base search limits;
+
+if (requestMode?) then (hold)
+  ' Hold to reinforcement position (bodyStopRequest = true).
+  :goal = Number.isFinite(holdTarget)
+  ? holdTarget : reinforcementPosition;
+  :goal = clamp(goal, min, max);
+else (release)
+  ' Oscillate between the mechanical limits (bodyStopRequest = false).
+  :goal = state.goalValue;
+  if (goal invalid OR prevMode != release?) then (transition / unseeded)
+    :goal = initialReleaseGoal(pos, min, max, tolerance)
+    (from a stop -> head to the opposite stop; from mid-span -> max);
+  else (continuing a leg)
+    :keep the stored goal;
+  endif
+endif
+
+:delta = goal - pos;  distance = |delta|;
+
+if (distance <= tolerance?) then (already at goal)
+  if (requestMode == release?) then (yes)
+    :flip: at min -> next goal = max; at max -> next goal = min;
+  else (hold)
+    :stay at goal (velocity 0);
+  endif
+  :return position = goal, velocity = 0;
+  stop
+else (must move)
+endif
+
+:stoppingDistance = vel^2 / (2 * maxAccel);
+if (stoppingDistance >= distance?) then (decelerate)
+  :commandedVelocity = 0;
+else (cruise/accelerate)
+  :commandedVelocity = sign(delta) * maxVelocity;
+endif
+:apply accel limit: velocityDelta clamped to +/- maxAccel*dt
+nextVel = vel + velocityDelta;
+:nextPos = clamp(pos + nextVel*dt, min, max);
+
+if (crossed or reached goal this step?) then (yes)
+  if (requestMode == release?) then (yes)
+    :seed next leg (flip toward the opposite limit);
+  else (hold)
+  endif
+  :return position = goal, velocity = 0;
+else (still in transit)
+  :return position = nextPos, velocity = nextVel, accel = dv/dt;
+endif
+
+stop
+
+legend right
+  Source: src/simulation/oscillator-step.ts (stepOscillator, initialReleaseGoal).
+  requestMode "hold" = drive to reinforcementPosition (or dynamic holdTarget);
+  "release" = sweep min <-> max. Parent sets it from act_stop_request_body
+  (stop -> hold). Bang-bang (trapezoidal) velocity profile; accel is a
+  first-class output (-maxAccel / 0 / +maxAccel).
+endlegend
+
+@enduml

@@ -14,12 +14,20 @@ its source headers. But the set is **incomplete** (18 of 29 matrix cells are emp
 stubs), has a **duplicate**, and covers **only single-mobile behaviour** — nothing of
 the distributed / holon / phygital layers that are now core to the app.
 
-> **Done in this pass (P1 + P2):** filled the three engagement/drive **state diagrams**
-> (Male, Female, Drive) from the live state machines; annotated the resolved deltas
-> (partner-memory, signal media, beam-bit, windowed tally) as legends on the Male and
-> Female sequence diagrams; and **de-duplicated** `servomotorComponentDiagram.plantuml`
-> (was byte-identical to `componentDiagram.plantuml`) by rewriting it as the current
-> oscillator → servo actuation path. Remaining work is P3–P5 below.
+> **Done 2026-07-18 (P1–P4):** (P1) annotated the resolved deltas (partner-memory,
+> signal media, beam-bit, windowed tally) as legends on the Male/Female sequences and
+> **de-duplicated** `servomotorComponentDiagram.plantuml` (rewritten as the current
+> oscillator → servo actuation path). (P2) filled the three engagement/drive **state
+> diagrams** from the live state machines. (P3) filled **every remaining stub** —
+> Male/Female/Beam activity, Beam + Beam-Motor state/activity, all of Female Horizontal
+> Control, Female Vertical Reflector activity/sequence, Drive sequence — so the
+> subsystem matrix is **complete (30/30 cells)**. (P4, started) authored new
+> system-context diagrams: `OverallSimulation`, `Distributed_Wire_Sequence_Diagram`,
+> `Holon_Agent_Tree_Component_Diagram`, `Sensor_Ingress_Sequence_Diagram`. Each is
+> grounded in specific engine source (cited in its header). Remaining: the rest of P4
+> (signal decode, reflection-geometry, recording, deployment, frame-var data model) and
+> **P5** (populate `implementation-map/`). Diagrams are structurally valid but **not yet
+> rendered** — a PlantUML render pass is the outstanding check.
 
 ---
 

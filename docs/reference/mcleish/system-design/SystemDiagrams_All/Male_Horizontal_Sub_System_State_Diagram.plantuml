@@ -1,2 +1,48 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Male_Horizontal_Sub_System_State_Diagram.plantuml
+' Diagram Type: State Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/oscillator-step.ts
+' (stepOscillator) driven by src/simulation/behavior/state-machine-male.ts (bodyStopRequest).
+'
+' The Male's horizontal control oscillator has two request modes (hold / release)
+' and, while its owner engages a partner, a faster motion tier (engaging). The
+' parent maps its one-bit act_stop_request_body onto requestMode at the agent
+' boundary: stop -> hold, else release.
+
+[*] --> Hold
+
+state "Hold (reinforcement position)" as Hold {
+  ' requestMode = "hold" - bodyStopRequest = true
+  ' goal = holdTarget (null -> config.reinforcementPosition), clamped to [min, max]
+  ' owner phase: satisfied-and-indifferent OR engaging-partner
+}
+
+state "Release (oscillating)" as Release {
+  ' requestMode = "release" - bodyStopRequest = false
+  ' goal alternates min <-> max (initialReleaseGoal seeds the first leg)
+  ' owner phase: satisfaction-search
+  ' motion tier: "search" (base maxVelocity / maxAccel)
+}
+
+state "Engaging tier (hold, faster)" as EngagingHold {
+  ' requestMode = "hold", tier = "engaging"
+  ' config.engaging limits (faster) snap the joint to reinforcementPosition
+  ' owner phase: engaging-partner
+  ' absent config.engaging -> behaviour-identical to search-tier Hold
+}
+
+Hold --> Release : owner enters satisfaction-search\n(bodyStopRequest false -> requestMode release)\nhold->release reseeds the leg
+Release --> Hold : owner leaves satisfaction-search\n(bodyStopRequest true -> requestMode hold)
+Hold --> EngagingHold : owner enters engaging-partner\n(tier = engaging)
+EngagingHold --> Hold : owner reaches satisfaction\n(back to search-tier hold)
+EngagingHold --> Release : owner abandons reinforcement\n(partner lost -> satisfaction-search)
+
+legend right
+  Source: src/simulation/oscillator-step.ts (stepOscillator).
+  requestMode in {"release","hold"}; tier in {"search","engaging"}.
+  Config from joint.motionProfile (min/max/maxVelocity/maxAccel/engaging)
+  + controller.parameters (reinforcementPosition, tolerance).
+  Motion is a bang-bang (trapezoidal) velocity profile clamped to [min, max].
+endlegend
+
+@enduml

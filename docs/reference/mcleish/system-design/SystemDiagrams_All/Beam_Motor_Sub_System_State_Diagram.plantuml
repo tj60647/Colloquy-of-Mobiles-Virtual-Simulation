@@ -1,2 +1,53 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Beam_Motor_Sub_System_State_Diagram.plantuml
+' Diagram Type: State Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/oscillator-step.ts
+' (stepOscillator - the single bounded oscillator primitive that drives the beam
+' motor) and src/simulation/behavior/beam-arbitrator.ts (supplies requestMode
+' beamMotorMode and holdTarget beamTargetAngle each tick).
+'
+' The motor is a bang-bang (trapezoidal) velocity profile toward a goal, clamped
+' to [min, max]. Two request modes: "release" oscillates between the limits;
+' "hold" moves to the arbitration target (mapped into bounds) and rests there.
+
+[*] --> Oscillating
+
+state "Oscillating (release)" as Oscillating {
+  ' requestMode = "release": goal alternates between min and max
+  ' trapezoid: accelerate at maxAccel to maxVelocity, decelerate to arrive
+  ' at the limit with zero velocity, then flip the goal to the other limit
+  ' hold->release transition (or missing goal) reseeds the leg
+}
+
+state "Move to reinforcement position (hold)" as MovingToGoal {
+  ' requestMode = "hold": goal = clamp(holdTarget/beamTargetAngle, min, max)
+  '   (mapAngleIntoBounds picks the representation nearest the current position)
+  ' trapezoidal move toward goal; goal is re-evaluated every tick
+}
+
+state "Holding at reinforcement position" as Holding {
+  ' |goal - position| <= tolerance  ->  velocity = 0, rest on target
+}
+
+' A holding male sets beamMotorMode = "hold".
+Oscillating --> MovingToGoal : requestMode = hold\n(an end holds the beam)
+
+MovingToGoal --> Holding : reached / crossed goal\n(|goal - position| <= tolerance)
+MovingToGoal --> MovingToGoal : not yet at goal\n(step trapezoid toward goal)
+
+' The target tracks the closest Female every tick, so it can shift while held.
+Holding --> MovingToGoal : beamTargetAngle changed\n(goal moved out of tolerance)
+
+' The holding male lets go -> beamMotorMode = "release".
+Holding --> Oscillating : requestMode = release
+MovingToGoal --> Oscillating : requestMode = release
+
+legend right
+  Source: src/simulation/oscillator-step.ts (stepOscillator, mapAngleIntoBounds).
+  requestMode = beamMotorMode from the arbitrator (release | hold);
+  holdTarget = beamTargetAngle (a reinforcement position, or null in release).
+  Motion tier "search" | "engaging" selects the velocity/accel limits
+  (engaging = faster, when authored); behaviour-identical if none authored.
+endlegend
+
+@enduml

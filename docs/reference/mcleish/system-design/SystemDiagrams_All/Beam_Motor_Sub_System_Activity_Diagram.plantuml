@@ -1,2 +1,66 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Beam_Motor_Sub_System_Activity_Diagram.plantuml
+' Diagram Type: Activity Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/oscillator-step.ts
+' (stepOscillator). One motor step of the bang-bang (trapezoidal) velocity
+' profile: pick this tick's goal from the request mode, then take one bounded
+' step toward it, snapping and flipping/holding when the goal is reached.
+
+start
+
+:read requestMode (release/hold), current { position, velocity, goalValue },
+holdTarget (beamTargetAngle), dtSec, motion tier;
+:select limits: tier "engaging" -> config.engaging (faster), else search
+ maxVelocity, maxAccel, [min, max], tolerance;
+
+' --- Determine this tick's goal ---
+if (requestMode = hold?) then (hold)
+  :goal = clamp(holdTarget ?? reinforcementPosition, min, max);
+else (release)
+  :goal = stored goalValue;
+  if (goal invalid OR prevMode != release?) then (yes)
+    :reseed leg (from a limit -> the other limit; from mid-span -> max);
+  endif
+endif
+
+:delta = goal - position;  distance = |delta|;
+
+if (distance <= tolerance?) then (already at goal)
+  if (requestMode = release?) then (yes)
+    :nextGoal = opposite limit (flip direction);
+  else (no)
+    :nextGoal = goal (hold);
+  endif
+  :position = goal; velocity = 0;
+  stop
+else (not at goal)
+  :sign = delta >= 0 ? +1 : -1;
+  :stoppingDistance = velocity^2 / (2 * maxAccel);
+  if (stoppingDistance >= distance?) then (yes)
+    :commandedVelocity = 0  (start decelerating to arrive at rest);
+  else (no)
+    :commandedVelocity = sign * maxVelocity;
+  endif
+  :velocityDelta = clamp(commandedVelocity - velocity, -maxAccel*dt, +maxAccel*dt);
+  :nextVel = velocity + velocityDelta;
+  :nextPos = clamp(position + nextVel*dt, min, max);
+  if (crossed OR reached goal this step?) then (yes)
+    :snap position = goal; velocity = 0;
+    if (requestMode = release?) then (yes)
+      :goalValue = opposite limit (flip);
+    endif
+  else (no)
+    :position = nextPos; velocity = nextVel; goalValue = goal;
+  endif
+  stop
+endif
+
+legend right
+  Source: src/simulation/oscillator-step.ts (stepOscillator).
+  Pure trapezoidal step: accelerate at maxAccel to maxVelocity, decelerate
+  to arrive at goal with zero velocity, clamp to [min, max]. accel is a
+  first-class output (Delta-velocity / Delta-t). Driven per tick by the
+  Beam arbitrator's beamMotorMode (release | hold) and beamTargetAngle.
+endlegend
+
+@enduml

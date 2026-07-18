@@ -1,2 +1,94 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Male_System_Activity_Diagram.plantuml
+' Diagram Type: Activity Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/behavior/state-machine-male.ts
+' (stepMaleEngagement). Firmware lineage: Logic_male.ino. One pass = one simulation tick.
+
+start
+
+:Get drive phase + drive search from evaluateDriveState()
+(input.drivePhase, input.driveSearch);
+:Display drive state + drive levels
+(mobile diagram / NeoPixel ring);
+
+if (satisfactionAnimationActive?) then (yes)
+  ' Firmware runLogic_male: while the celebration plays the WHOLE unit pauses.
+  :Advance satisfaction animation one segment
+  (play SATISFACTION_TONE_HZ[segmentIndex]);
+  :bodyStopRequest = true; all transmit OFF;
+  stop
+else (no)
+endif
+
+if (current phase?) then (satisfied-and-indifferent)
+  :horizontal oscillator: HOLD (bodyStopRequest = true)
+  Intermittent Signal OFF - Energetic Beam OFF;
+  if (drivePhase != satisfied-and-indifferent?) then (a drive rose)
+    :phase -> satisfaction-search
+    driveSearch = input.driveSearch;
+  else (still satisfied)
+  endif
+
+elseif (satisfaction-search) then
+  :sync driveSearch = input.driveSearch
+  horizontal oscillator: RELEASE (searchCycleActive = true)
+  broadcast Intermittent Signal (light, 40-segment word);
+  if (drivePhase == satisfied-and-indifferent?) then (drives dropped)
+    :phase -> satisfied-and-indifferent
+    driveSearch = Neither;
+  else (still searching)
+    :listen for Identifying Signal (sound);
+    if (identifyingSignalReceived?) then (yes)
+      :offered = input.matchedSharedDrive
+      (fallback: own driveSearch);
+      if (receptive to offered drive?\n(driveSearch == OP or == offered)) then (yes)
+        :phase -> engaging-partner
+        sharedDrive = offered; reset window + sum + word;
+      else (not receptive)
+        :stay in satisfaction-search;
+      endif
+    else (identify timeout)
+      :stay in satisfaction-search (keep broadcasting);
+    endif
+  endif
+
+else (engaging-partner)
+  :horizontal oscillator: HOLD - beamStopRequest = true
+  Energetic Beam ON - light sensors ON (only this phase);
+  :advance window: reinforceWindowElapsedSamples += 1
+  lightReinforceSum += reflectedLightChannels (0..2);
+  if (sharedDriveSatisfied?\n(reinforcement_testSatisfaction)) then (yes)
+    :phase -> satisfied-and-indifferent; sharedDrive = null
+    start satisfaction animation (audio tones);
+  elseif (window closed?\n(elapsed >= 80 samples)) then (yes)
+    if (lightReinforceSum > trigger (20)?) then (enough light)
+      :triggerDriveDecrement = true
+      driveDecrementAmount = sum x reinforcementScale (10)
+      speak whole reinforcement word (40 segments)
+      open next window - KEEP ENGAGING;
+    else (not enough light)
+      :phase -> satisfaction-search; sharedDrive = null
+      (partner lost);
+    endif
+  else (window still open)
+    :continue collecting reflected light;
+  endif
+endif
+
+:Emit outputs
+bodyStopRequest / beamStopRequest / searchCycleActive
+transmittingEnergeticBeam / transmittingWordSound
+satisfactionAnimationActive / satisfactionSegmentIndex;
+
+stop
+
+legend right
+  Source: src/simulation/behavior/state-machine-male.ts (stepMaleEngagement).
+  Canonical lanes: act_stop_request_body (bodyStopRequest),
+  act_transmitting_energetic_beam, internal_transmitting_word_sound,
+  internal_shared_drive, timer_reinforce_window.
+  Media: Intermittent Signal = light; Identifying + Reinforcement = sound.
+  Window tally climbs 0..2/tick (two light channels): full 80-sample window -> 160.
+endlegend
+
+@enduml

@@ -1,0 +1,106 @@
+@startuml
+' Filename: Distributed_Wire_Sequence_Diagram.plantuml
+' Diagram Type: Sequence Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/client.ts (SimulationClient),
+' src/simulation/frame-delta.ts (encode/apply), docs/infrastructure/DISTRIBUTED_SIMULATION_DESIGN.md,
+' docs/infrastructure/FRAME_DELTA_TRANSMISSION_PLAN.md.
+'
+' The WebSocket wire between the authoritative simulation server and a visualization
+' client: connect handshake, keyframe snapshot (scene graph + full behavioral frame),
+' per-tick keyframe/delta frames carrying only changed frame-vars, client-side merge +
+' re-emission of a FULL behavioral.frame, backpressure skip, presentation:'latest'
+' coalescing, and a full-snapshot re-broadcast on scene change (stamped sceneEpoch).
+
+box "Visualization Client" #e4fcfa
+    participant "SimulationClient" as Client
+    participant "Projection\n(3D display / console / servo)" as Projection
+end box
+
+box "Simulation Server" #e6fcc1
+    participant "simulation-server" as Server
+end box
+
+box "Operator" #fcf6c1
+    actor "Operator\n(Scene Studio)" as Operator
+end box
+
+== Connect handshake ==
+
+Client -> Server : WS handshake (connect url)
+Server -> Client : hello { serverVersion, tickRate, schemaVersion,\nsceneConfig, telemetryCatalog, canControl }
+note over Client : status = connected; clear any stale\nframe baseline, aux cache, pending patch
+Client -> Server : announce { clientId, role,\ncapabilities.frameDelta = true }
+Client -> Projection : connect event
+
+== Keyframe snapshot (baseline) ==
+
+Server -> Client : snapshot { tick, sceneGraph, sceneEpoch,\nbehavioral.frame.values (FULL), keyframe: true }
+note over Client : normalize sceneGraph -> local document;\nseed _frameBaseline (path -> value),\n_baselineTick = tick; cache males/females/beam/env
+Client -> Projection : snapshot { tick, document } -> build Three.js scene
+
+== Per-tick frames ==
+
+loop every tick (server tick loop, ~20 Hz absolute-deadline)
+    alt keyframe tick (every SIM_KEYFRAME_TICKS, ~100) or resync
+        Server -> Client : patch { tick, keyframe: true,\nbehavioral.frame.values (FULL) }
+        note over Client : refresh baseline + aux cache from the full frame
+    else delta tick (frameDelta capable)
+        note over Server : encodeFrameDelta(lastFrame, nextFrame):\nchanged vars only (path -> changed keys),\nremoved paths; males/females/beam/env only if changed
+        Server -> Client : patch { tick, baseTick,\nframeDelta { changed[], removed[] },\npartial behavioral }
+        alt baseTick == _baselineTick
+            note over Client : applyFrameDelta(baseline, frameDelta);\n_baselineTick = tick; fill aux gaps from cache;\nrebuild FULL behavioral.frame.values
+        else baseTick gap
+            Client -> Server : resync
+            note over Client : drop this delta (no behavioral emitted);\nserver re-keyframes this socket next
+        end
+    end
+
+    alt presentation = "every-tick" (default; console strip chart)
+        Client -> Projection : patch { tick, document,\nbehavioral (FULL, re-emitted) }
+    else presentation = "latest" (display / servo)
+        note over Client : every message DECODED in order (baseline needs it);\nretain newest pending patch, schedule flush\n(requestAnimationFrame / setTimeout 0)
+        Client -> Projection : patch (coalesced, newest state only)
+    end
+end
+
+== Backpressure (per socket, latest-wins) ==
+
+note over Server : before writing a tick patch, check socket.writableLength
+alt writableLength > SIM_WS_MAX_BUFFER (default 256 KiB)
+    note over Server : SKIP this patch; flag needsKeyframe;\ncount patchesSkipped (surfaced on /status)
+    ... socket drains ...
+    Server -> Client : patch { keyframe: true, FULL frame }
+    note over Client : resumes at CURRENT state, never replays stale ticks
+end
+
+== Heartbeat ==
+
+Server -> Client : ping { seq, timestamp }
+Client -> Server : pong { seq, clientTimestamp }
+
+== Scene change (re-broadcast, no reconnect) ==
+
+Operator -> Server : load_scene_key / load_simulation_package / set_scene_graph
+note over Server : validate before swap; pause at tick 0; re-init ABM;\nsceneEpoch = sceneConfig.loadedAt
+Server -> Client : scene_graph_updated { sceneConfig }
+Server -> Client : snapshot { new sceneGraph, new sceneEpoch,\nFULL behavioral, keyframe: true }
+note over Client : a patch stamped with a DIFFERENT sceneEpoch\nis skipped (belongs to a scene not rebuilt yet)
+Client -> Projection : snapshot -> rebuild geometry for the new scene
+
+legend right
+  <b>Wire contract (as-built 2026-07-18):</b>
+  - Capability handshake: announce capabilities.frameDelta=true opts into keyframe+delta;
+    servers/clients that omit it fall back to a FULL behavioral every tick (byte-identical
+    to the pre-delta wire).
+  - Keyframe = FULL behavioral.frame.values baseline (snapshot on connect + every
+    SIM_KEYFRAME_TICKS + on resync). Delta = changed frame-var keys only, stamped baseTick.
+  - The client ALWAYS re-emits a FULL behavioral.frame after merge - every downstream
+    projection is untouched (one-canonical-frame contract).
+  - Flags: SIM_WIRE_DELTA (on), SIM_KEYFRAME_TICKS (100), SIM_WIRE_QUANT (off),
+    SIM_WS_MAX_BUFFER (256 KiB). Measured: ~10.3 KB full frame -> ~1.5 KB delta (~85% saved).
+  - sceneEpoch (= sceneConfig.loadedAt) fences patches to the scene the client has rebuilt for.
+  Sources: src/simulation/client.ts, src/simulation/frame-delta.ts,
+  docs/infrastructure/DISTRIBUTED_SIMULATION_DESIGN.md, FRAME_DELTA_TRANSMISSION_PLAN.md.
+endlegend
+
+@enduml

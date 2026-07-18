@@ -1,2 +1,35 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Female_Vertical_Reflector_Sequence_Diagram.plantuml
+' Diagram Type: Sequence Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/behavior/state-machine-female.ts
+' (stepFemaleEngagement -> mirrorStopRequest) + src/simulation/oscillator-step.ts (stepOscillator).
+' One loop iteration = one simulation tick driving the Female vertical reflector (her mirror).
+' Consistent with Female_Vertical_Reflector_State_Diagram.plantuml.
+
+participant "Female Engagement Machine" as FSM
+participant "Harness (agent boundary)" as Harness
+participant "Vertical Reflector Oscillator (mirror)" as VOsc
+
+loop each tick
+  FSM -> FSM : stepFemaleEngagement(state, input)
+  FSM -> Harness : mirrorStopRequest\n(lane act_stop_request_mirror)
+
+  alt phase == engaging-partner
+    Harness -> VOsc : requestMode = "release", tier = "engaging"
+    VOsc -> VOsc : stepOscillator -> mirror wiggles min <-> max (faster)
+  else phase == satisfied-and-indifferent / satisfaction-search / animation
+    Harness -> VOsc : requestMode = "hold"
+    VOsc -> VOsc : stepOscillator -> drive to reinforcementPosition and hold
+  end
+
+  VOsc --> FSM : position / velocity / accel
+end
+
+legend right
+  Sources: src/simulation/behavior/state-machine-female.ts, src/simulation/oscillator-step.ts.
+  mirrorStopRequest is one bit (true = stop = hold); false only while engaging-partner, so
+  the mirror wiggles for the whole engagement (polarity de-inverted from firmware
+  act_reflect_stop_val). The engaging tier is faster than the search tier when authored.
+endlegend
+
+@enduml

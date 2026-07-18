@@ -1,2 +1,46 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Female_Vertical_Reflector_Activity_Diagram.plantuml
+' Diagram Type: Activity Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/behavior/state-machine-female.ts
+' (mirrorStopRequest = phase != "engaging-partner") + src/simulation/oscillator-step.ts
+' (stepOscillator). One pass = one tick of the Female vertical reflector (her mirror): it
+' HOLDS everywhere except engaging-partner, where it RELEASES and wiggles for the whole
+' engagement. Consistent with Female_Vertical_Reflector_State_Diagram.plantuml.
+
+start
+:read Female phase + mirrorStopRequest;
+
+if (phase == engaging-partner?) then (yes)
+  :mirrorStopRequest = false\nrequestMode = "release", tier = "engaging" (faster wiggle);
+else (no)
+  :mirrorStopRequest = true\nrequestMode = "hold", tier = "search";
+endif
+
+if (requestMode == "hold"?) then (yes)
+  :goal = clamp(reinforcementPosition, min, max);
+else (no)
+  :goal = stored leg goal\n(reseed to a stop on hold->release or invalid goal);
+endif
+
+if (|goal - pos| <= tolerance?) then (yes)
+  :velocity = 0;
+  if (releasing?) then (yes)
+    :flip goal to the opposite stop (min <-> max);
+  else (no)
+  endif
+else (no)
+  :trapezoidal step toward goal\n(accelerate / cruise / decelerate at the selected tier);
+  :clamp position to [min, max];
+endif
+
+:write position / velocity / accel;
+stop
+
+legend right
+  Sources: src/simulation/behavior/state-machine-female.ts, src/simulation/oscillator-step.ts.
+  Lane: act_stop_request_mirror (true = stop = hold); false only while engaging-partner, so
+  the mirror wiggles for the whole engagement. The engaging tier (config.engaging, when
+  authored) sweeps faster than the search tier; absent -> behaviour-identical.
+endlegend
+
+@enduml

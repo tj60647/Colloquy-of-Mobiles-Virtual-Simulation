@@ -1,0 +1,112 @@
+@startuml
+' Filename: Holon_Agent_Tree_Component_Diagram.plantuml
+' Diagram Type: Component Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/agent-registry.ts (the holon
+' as data: AGENT_CLASSES, MOBILE_CHILDREN, buildAgentInstances, sceneAgentTopology),
+' drive-agent.ts, oscillator-controller-agent.ts, transmitter-agent.ts, receiver-agent.ts,
+' behavior/beam-arbitrator.ts (layer-3 coupling), and docs/infrastructure/SIM_HARNESS_MODERNIZATION_PLAN.md
+' (kit-of-parts / holon-generative model). This is the AGENT view; componentDiagram.plantuml
+' is the physical armature snapshot.
+
+skinparam componentStyle rectangle
+skinparam defaultTextAlignment center
+skinparam component {
+  BackgroundColor<<composite>> #e6f2ff
+  BackgroundColor<<primitive>> #f4f4f4
+  BackgroundColor<<runtime>> #fbeede
+  BackgroundColor<<coupling>> #f9c6e8
+}
+
+' The scene-graph hierarchy (layer 1 = space) is the assembly. It is parsed into a
+' topology, and one holon is GENERATED per unit (buildAgentInstances). The holon
+' (layer 2 = logical structure) carries only part-of / member-of edges - it is
+' attachment-agnostic (no scene-graph placement).
+component "Scene Graph\n(authored kit-of-parts assembly)" as SceneGraph
+
+' member-of children are grounded in the environment; part-of children are the
+' composition INSIDE a composite (shown by nesting).
+component "environment\n<<class environment>>\nentity: environment" as Environment <<composite>> {
+
+  ' ------- one Mobile holon generated per male unit -------
+  component "mobile  <<class mobile>>\nentity: male" as MaleMobile <<composite>> {
+    component "drive\n<<primitive>>" as MaleDrive <<primitive>>
+    component "horizontal-motion\n<<oscillator>>" as MaleBody <<primitive>>
+    component "transmitter\n<<primitive>>" as MaleTx <<primitive>>
+    component "receiver\n<<primitive>>" as MaleRx <<primitive>> {
+      ' runtime-dynamic children: instantiated per scene node / per resolved bounce;
+      ' their class-level variables attach to this hosting receiver (RUNTIME_HOSTED_CLASSES).
+      component "sensor\n(per scene sensor node)" as MaleSensor <<runtime>>
+      component "reflection\n(per resolved bounce)" as MaleReflection <<runtime>>
+    }
+  }
+
+  ' ------- one Mobile holon generated per female unit -------
+  component "mobile  <<class mobile>>\nentity: female" as FemaleMobile <<composite>> {
+    component "drive\n<<primitive>>" as FemaleDrive <<primitive>>
+    component "horizontal-motion\n<<oscillator>>" as FemaleBody <<primitive>>
+    component "vertical-reflector\n<<oscillator>>\n(female-only, optional)" as FemaleMirror <<primitive>>
+    component "transmitter\n<<primitive>>" as FemaleTx <<primitive>>
+    component "receiver\n<<primitive>>" as FemaleRx <<primitive>> {
+      component "sensor\n(per scene sensor node)" as FemaleSensor <<runtime>>
+      component "reflection\n(per resolved bounce)" as FemaleReflection <<runtime>>
+    }
+  }
+
+  ' ------- the drive-less mediator; present iff the scene authors the beam joint -------
+  component "beam  <<class beam>>\nentity: bar" as Beam <<composite>> {
+    component "motor\n<<oscillator>>" as BeamMotor <<primitive>>
+  }
+
+  ' The environment is the shared medium every signal passes through. Transmitters
+  ' write onto it and receivers read from it through class-agnostic ports, so an
+  ' agent depends on the port, not the concrete environment (no import cycle).
+  interface "TransmitChannel\n(broadcastLight / broadcastSound)" as TransmitChannel
+  interface "SenseChannel\n(lightPulseInput / soundPulseInput /\nsenseReflectedLightChannels)" as SenseChannel
+}
+
+' ---- generation ----
+SceneGraph ..> Environment : sceneAgentTopology()\nthen buildAgentInstances():\none holon per male/female,\nbeam iff bar authored
+
+' ---- member-of edges (composition root grounds its members) ----
+Environment --> MaleMobile : member-of
+Environment --> FemaleMobile : member-of
+Environment --> Beam : member-of
+
+' ---- coupling through the signal medium ----
+MaleTx ..> TransmitChannel : emit (light IS + sound reinforcement)
+FemaleTx ..> TransmitChannel : emit (sound repeat-back)
+SenseChannel ..> MaleRx : decode (sound echo + reflected beam)
+SenseChannel ..> FemaleRx : decode (light IS + sound reinforcement)
+
+' ---- layer-3 interaction / coupling (NOT a holon edge; future interaction graph) ----
+component "Beam Arbitrator\nstepBeamArbitrator()\n<<layer-3 coupling>>" as Arbitrator <<coupling>>
+MaleDrive ..> Arbitrator : driveI / driveII\n+ stopRequestI / stopRequestII
+Arbitrator ..> BeamMotor : holdingAddress ->\nbeamMotorMode (hold/release)\n+ beamTargetAngle
+
+legend right
+  Source: src/simulation/agent-registry.ts (AGENT_CLASSES, MOBILE_CHILDREN,
+  buildAgentInstances, sceneAgentTopology, RUNTIME_HOSTED_CLASSES); drive-agent.ts;
+  oscillator-controller-agent.ts; transmitter-agent.ts; receiver-agent.ts;
+  behavior/beam-arbitrator.ts; SIM_HARNESS_MODERNIZATION_PLAN.md (Phases B-E).
+
+  Edges: <b>nesting = part-of</b> (composition inside a composite);
+  labelled <b>member-of</b> = environment grounding. Both are holon (layer-2) edges;
+  physical attachment/placement is the scene graph (layer 1); who-acts-on-whom coupling
+  (the arbitrator, transmitter<->receiver) is the interaction graph (layer 3).
+
+  Agent classes: composite = environment | mobile | beam;
+  primitive = drive | oscillator | transmitter | receiver | sensor | reflection.
+  A 12-mobile / nested-bar scene invents ZERO new agent names - it instantiates the
+  same class templates, addressed by agent-path.
+
+  Canonical per-agent frame-variable keys (class, role, agent-path):
+  - drive: internal_level_O / internal_level_P, act_drive_level, internal_drive_state
+  - oscillator: position, velocity, internal_target_angle
+  - transmitter: act_transmitting_light_pulse, listening
+  - receiver: internal_received_word, internal_nearest_word / internal_word_distance
+  - sensor: signal   ·   reflection: emitter/mirror/receiver_node_id, gain
+  - beam arbitrator: internal_dominant_address, internal_holding_address,
+    internal_goal_position_I / _II
+endlegend
+
+@enduml

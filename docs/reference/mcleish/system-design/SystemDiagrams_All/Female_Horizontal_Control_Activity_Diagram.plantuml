@@ -1,2 +1,45 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Female_Horizontal_Control_Activity_Diagram.plantuml
+' Diagram Type: Activity Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/behavior/state-machine-female.ts
+' (bodyStopRequest) + src/simulation/oscillator-step.ts (stepOscillator). One pass = one tick
+' of the Female horizontal control oscillator: pick hold/release from her phase, then run the
+' trapezoidal step. The horizontal control always uses the search tier.
+
+start
+:read Female phase + bodyStopRequest;
+
+if (phase == satisfaction-search?) then (yes)
+  :bodyStopRequest = false\nrequestMode = "release";
+else (no)
+  :bodyStopRequest = true\nrequestMode = "hold";
+endif
+
+if (requestMode == "hold"?) then (yes)
+  :goal = clamp(reinforcementPosition, min, max);
+else (no)
+  :goal = stored leg goal\n(reseed to a stop on hold->release or invalid goal);
+endif
+
+if (|goal - pos| <= tolerance?) then (yes)
+  :velocity = 0;
+  if (releasing?) then (yes)
+    :flip goal to the opposite stop (min <-> max);
+  else (no)
+  endif
+else (no)
+  :trapezoidal step toward goal\n(accelerate / cruise / decelerate at maxAccel, search tier);
+  :clamp position to [min, max];
+endif
+
+:write position / velocity / accel;
+stop
+
+legend right
+  Sources: src/simulation/behavior/state-machine-female.ts, src/simulation/oscillator-step.ts.
+  requestMode "hold" -> drive to reinforcementPosition (typ. 0 deg); "release" -> sweep
+  motionProfile.min <-> max. Lane: act_stop_request_body. accel is a first-class output
+  of stepOscillator (Delta velocity / Delta t).
+endlegend
+
+@enduml

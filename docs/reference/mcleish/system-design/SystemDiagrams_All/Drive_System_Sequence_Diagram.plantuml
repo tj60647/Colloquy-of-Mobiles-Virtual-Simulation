@@ -1,2 +1,65 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Drive_System_Sequence_Diagram.plantuml
+' Diagram Type: Sequence Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/drive-agent.ts
+' (DriveAgent.step / internalDriveState / driveSearchAt / driveLevel / decrement,
+' evaluateFirmwareInternalDriveState codes 1..4, ACT_DRIVE_OUT_MAX = 168) and
+' src/simulation/behavior/drive-decay.ts (stepDriveManagement, evaluateDriveState,
+' decrementDrive four-outcome logic).
+
+box "Mobile Unit (Male or Female)" #e4fcfa
+    participant "Main System" as Unit
+    participant "Drive Sub-system" as Drive
+end box
+
+' Each mobile HOLDS one drive child (DriveAgent). Both O and P increment every
+' tick; the dominant drive decrements only on a successful reinforcement.
+loop Every Tick
+    Unit -> Drive : step()
+    Drive -> Drive : Increment O and P by\nDRIVE_INCREMENT_PER_SAMPLE\n(clamped at DRIVE_MAX)
+
+    Unit -> Drive : internalDriveState(lowerLimit, upperLimit)
+    Drive -> Drive : evaluate code 1..4 from (levelO, levelP)
+    Drive -> Unit : internal_drive_state (1..4)
+
+    Unit -> Drive : driveSearchAt(lowerLimit, upperLimit)
+    Drive -> Unit : internal_drive_search\n(1=Neither, 2=O, 3=P, 4=OP)
+
+    Unit -> Drive : levelO / levelP / activeDrive
+    Drive -> Unit : Drive Values (O, P samples)
+
+    Unit -> Drive : driveLevel(maxLevel)
+    Drive -> Unit : act_drive_level (0..168)
+
+    Unit -> Unit : Report drive state + values\n(snapshot, indicator lamps, beam weight)
+
+    alt Reinforcement Signal received (successful partner exchange)
+        Unit -> Drive : decrement(driveType, amount)
+        Drive -> Drive : subtract amount from dominant drive;\nzero it if it lands below lowerLimit (snapSatisfied)
+        Drive -> Drive : re-evaluate (levelO, levelP)
+        Drive -> Unit : internal_drive_decrement_amount (resolved request)
+
+        alt outcome = satisfied-and-indifferent
+            Unit -> Unit : both drives below lowerLimit -> Satisfaction Display
+        else outcome = this-search
+            Unit -> Unit : decremented drive still dominant -> continue engaging
+        else outcome = either-search
+            Unit -> Unit : both still elevated (OP) -> continue engaging
+        else outcome = other-search
+            Unit -> Unit : other drive now dominant -> disengage, new search
+        end
+    end
+end
+
+legend right
+  Source: src/simulation/drive-agent.ts + src/simulation/behavior/drive-decay.ts.
+  Firmware internal_drive_state codes: 4 = both desperate / tied, 1 = both
+  satisfied, 2 = O dominant, 3 = P dominant. The dominant drive level (max of
+  O, P) maps to act_drive_level (0..168, ACT_DRIVE_OUT_MAX) - the beam's
+  arbitration weight. Canonical frame-variable keys: internal_drive_state,
+  internal_drive_search, act_drive_level, internal_drive_decrement_amount.
+  decrementDrive four outcomes: satisfied-and-indifferent, this-search,
+  either-search, other-search.
+endlegend
+
+@enduml

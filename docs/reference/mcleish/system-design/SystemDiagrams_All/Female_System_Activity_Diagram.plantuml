@@ -1,2 +1,62 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Female_System_Activity_Diagram.plantuml
+' Diagram Type: Activity Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/behavior/state-machine-female.ts
+' (stepFemaleEngagement). One pass through this diagram = one simulation tick of the
+' Female two-phase engagement loop. The satisfaction animation is a top-level branch that
+' pauses the whole unit until its 15-segment display completes.
+
+start
+:clear triggerDriveDecrement;
+
+if (satisfactionAnimationActive?) then (yes)
+  :advance the 15-segment satisfaction display\n(whole unit pauses while it plays);
+  :bodyStopRequest = true\nmirrorStopRequest = true;
+  stop
+else (no)
+endif
+
+if (current phase?) then (satisfied-and-indifferent)
+  if (drivePhase != satisfied-and-indifferent?) then (yes)
+    :-> satisfaction-search\nlatch driveSearch, clear partner + reinforce timer;
+  else (no)
+  endif
+
+elseif (satisfaction-search) then (search)
+  :sync driveSearch with drive evaluation;
+  if (drivePhase == satisfied-and-indifferent?) then (yes)
+    :-> satisfied-and-indifferent\ndriveSearch = Neither;
+  else (no)
+    :reply = femaleReplyWord(intermittentSignal, driveSearch);
+    if (reply != null? -- matching search word heard) then (yes)
+      :-> engaging-partner\nlock currentPartnerId + sharedDrive;\nvoice reply once for 40 samples;
+    else (no)
+    endif
+  endif
+
+else (engaging-partner)
+  :reinforceWindowElapsedSamples += 1\nreplyWordRemainingSamples -= 1;
+  if (sharedDriveSatisfied? -- reinforcement_testSatisfaction) then (yes)
+    :-> satisfied-and-indifferent\nstart satisfaction animation;
+  elseif (matching reinforcement word, rising edge?) then (yes)
+    :triggerDriveDecrement = true\nreset silence timer (keep engaging);
+  elseif (silence >= reinforceWindowLimitSamples?) then (yes)
+    :-> satisfaction-search (partner lost);
+  else (no)
+    :latch reinforcementHeardLastTick;
+  endif
+endif
+
+:bodyStopRequest = (phase != satisfaction-search);
+:mirrorStopRequest = (phase != engaging-partner);
+stop
+
+legend right
+  Source: src/simulation/behavior/state-machine-female.ts (stepFemaleEngagement).
+  Output lanes: act_stop_request_body (bodyStopRequest), act_stop_request_mirror (mirrorStopRequest);
+  triggerDriveDecrement -> caller decrementDrive. Reinforcement window default = 205 samples
+  (FEMALE_REINFORCE_WINDOW_SAMPLES = PATTERN_LEN * 5 + 5), reset on every reinforcement word.
+  Signal media: Intermittent = light (heard); Identifying + Reinforcement = sound.
+endlegend
+
+@enduml

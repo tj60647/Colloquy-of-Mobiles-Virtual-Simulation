@@ -1,2 +1,78 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Beam_System_Activity_Diagram.plantuml
+' Diagram Type: Activity Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/behavior/beam-arbitrator.ts
+' (stepBeamArbitrator). One arbitrator tick: read both Males' drive + stop-request,
+' pick the dominant end for priority, update the per-end latch, then emit the motor
+' command (release = oscillate, hold = move to that end's reinforcement position).
+
+start
+
+:read sense_drive_level_I (driveI), sense_drive_level_II (driveII);
+:read sense_stop_request_I (askingI), sense_stop_request_II (askingII);
+:read currentBeamAngle (from the motor subsystem last tick);
+
+' --- Dynamic reinforcement positions, re-evaluated every tick ---
+:maleIWorldAngle  = normalize(beamAngle + maleIOffset)      [offset 0]
+maleIIWorldAngle = normalize(beamAngle + maleIIOffset)     [offset 180];
+:goalPositionI  = closest Female to maleIWorldAngle   (of 0/120/240)
+goalPositionII = closest Female to maleIIWorldAngle;
+:reinforcementPositionI  = normalize(goalPositionI  - maleIOffset)
+reinforcementPositionII = normalize(goalPositionII - maleIIOffset);
+
+' --- Priority: who MAY take the beam this tick ---
+if (driveI >= driveII?) then (yes, tie -> I)
+  :internal_dominant_address = "I"  (iHasPriority = true);
+else (no)
+  :internal_dominant_address = "II" (iHasPriority = false);
+endif
+
+' --- Latch end I (release beats acquire; hold ignores priority) ---
+if (askingI?) then (no)
+  :latchedI = false;
+else (yes)
+  if (not latchedI AND iHasPriority AND end II not latched?) then (yes)
+    :latchedI = true  (end I acquires);
+  else (no)
+    :latchedI unchanged;
+  endif
+endif
+
+' --- Latch end II (reads end I's JUST-UPDATED latch) ---
+if (askingII?) then (no)
+  :latchedII = false;
+else (yes)
+  if (not latchedII AND NOT iHasPriority AND end I not latched?) then (yes)
+    :latchedII = true (end II acquires);
+  else (no)
+    :latchedII unchanged;
+  endif
+endif
+
+' --- The motor obeys the LATCH, not the priority ---
+if (latchedI?) then (yes)
+  :holdingAddress = "I"; beamMotorMode = "hold"
+  beamTargetAngle = reinforcementPositionI;
+elseif (latchedII?) then (yes)
+  :holdingAddress = "II"; beamMotorMode = "hold"
+  beamTargetAngle = reinforcementPositionII;
+else (neither)
+  :holdingAddress = null; beamMotorMode = "release"
+  beamTargetAngle = null (motor oscillates freely);
+endif
+
+:emit motor command to Beam Motor Sub-system
++ latch { latchedI, latchedII } threaded into next tick;
+
+stop
+
+legend right
+  Source: src/simulation/behavior/beam-arbitrator.ts (stepBeamArbitrator).
+  Runs as a parallel loop alongside the Beam Motor Sub-system movement loop.
+  Canonical keys: sense_drive_level_I/II, sense_stop_request_I/II,
+  internal_dominant_address, internal_holding_address,
+  internal_goal_position_I/II. Females fixed at 0/120/240 deg;
+  Male I offset 0 deg, Male II offset 180 deg from the beam reference.
+endlegend
+
+@enduml

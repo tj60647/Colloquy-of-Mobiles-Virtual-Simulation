@@ -1,2 +1,62 @@
-@startuml 
-@enduml 
+@startuml
+' Filename: Beam_System_State_Diagram.plantuml
+' Diagram Type: State Diagram
+' Authored 2026-07-18 from the live engine: src/simulation/behavior/beam-arbitrator.ts
+' (stepBeamArbitrator) and src/simulation/oscillator-step.ts (stepOscillator, the motor).
+'
+' The Beam arbitrates between the two Male units mounted at either end of the
+' rotating bar, then drives its single motor. Priority (internal_dominant_address)
+' decides who MAY take the beam; a per-end LATCH (internal_holding_address, firmware
+' I_barStopRequest / II_barStopRequest) decides who actually HOLDS it. The motor
+' obeys the latch, not the priority - a rising drive cannot steal the beam
+' mid-exchange. Transitions are re-evaluated every tick.
+
+[*] --> Released
+
+state "Released (oscillate)" as Released {
+  ' holdingAddress = null   ->   beamMotorMode = "release"
+  ' neither end asking, or the asking end lacks priority AND has no latch yet
+  ' motor: free oscillation between the beam's left / right limits
+}
+
+state "Holding end I" as HoldingI {
+  ' latchedI = true   ->   holdingAddress = "I", beamMotorMode = "hold"
+  ' motor goal beamTargetAngle = reinforcementPositionI
+  '   = normalize(closestFemale(maleIWorldAngle) - maleIOffset)
+  ' re-evaluated every tick as the beam approaches the target
+}
+
+state "Holding end II" as HoldingII {
+  ' latchedII = true   ->   holdingAddress = "II", beamMotorMode = "hold"
+  ' motor goal beamTargetAngle = reinforcementPositionII
+  '   = normalize(closestFemale(maleIIWorldAngle) - maleIIOffset)
+}
+
+' Acquire needs ALL of: this end is asking (stop_request), this end has priority
+' (driveI >= driveII -> I; tie -> I), AND the other end holds no latch.
+Released --> HoldingI : stopRequestI AND driveI >= driveII\nAND end II not latched
+Released --> HoldingII : stopRequestII AND driveII > driveI\nAND end I not latched
+
+' Release beats acquire: a latch drops the instant its own male stops asking.
+' Hold ignores priority - the beam is held until its own male lets go.
+HoldingI --> Released : stopRequestI = false\n(end I lets go)
+HoldingII --> Released : stopRequestII = false\n(end II lets go)
+
+' Handover cannot be direct: end II must wait one tick after end I releases
+' (firmware evaluation order - end I's block updates the latch end II then reads).
+HoldingI --> HoldingII : end I released last tick, then\nstopRequestII AND end II gains priority
+HoldingII --> HoldingI : end II released last tick, then\nstopRequestI AND end I gains priority
+
+legend right
+  Source: src/simulation/behavior/beam-arbitrator.ts (stepBeamArbitrator).
+  Canonical frame-variable keys:
+  - sense_drive_level_I / sense_drive_level_II   (each Male's dominant drive)
+  - sense_stop_request_I / sense_stop_request_II (the "stop" the bar senses)
+  - internal_dominant_address  (priority: who MAY take the beam; tie -> "I")
+  - internal_holding_address   (the latch: who actually HOLDS it)
+  - internal_goal_position_I / _II  (closest-Female world angle per end)
+  Motor mode = release (oscillate) | hold (move to reinforcement position).
+  RAW drives by design - the averaging existed only for hardware noise.
+endlegend
+
+@enduml

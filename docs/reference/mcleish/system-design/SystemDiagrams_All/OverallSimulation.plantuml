@@ -1,0 +1,97 @@
+@startuml
+' Filename: OverallSimulation.plantuml
+' Diagram Type: Component Diagram (top-level system context)
+' Authored 2026-07-18 from the live engine:
+'   scripts/simulation-server.mjs (tick loop + broadcast + client registry),
+'   docs/infrastructure/DISTRIBUTED_SIMULATION_DESIGN.md (wire protocol),
+'   docs/colloquy/AUTONOMOUS_AGENTS_ARCHITECTURE.md (unit taxonomy + per-tick server loop).
+'
+' One authoritative Simulation Server runs the Agent-Based Model at 20 Hz over
+' N Units (Males on the shared Beam, floor-fixed Females) coupled through the
+' Environment's light + sound channels. Each tick it broadcasts ONE canonical
+' state frame (behavioral) over WebSocket to a read-only fan-out of clients.
+
+skinparam componentStyle rectangle
+skinparam defaultTextAlignment center
+
+' ===== The single authority ==================================================
+package "Simulation Server (authoritative) — scripts/simulation-server.mjs" #e6fcc1 {
+
+    ' The tick loop: sim.step(1) -> sim.getSnapshot() every TICK_MS (50 ms, 20 Hz).
+    ' Ordered per-tick stages, from AUTONOMOUS_AGENTS_ARCHITECTURE.md section 6.
+    component "Tick Loop @ 20 Hz\n(absolute-deadline scheduler)" as TickLoop #e6fcc1
+
+    component "ABM Engine\n(sim-harness.ts)" as ABM #e6fcc1 {
+        ' N Units resolved from the active scene graph topology.
+        component "Males (x2)\non the shared Beam" as Males
+        component "Females (x3)\nfloor / plinth-fixed" as Females
+        component "Beam (x1)\narbitrated by dominant-drive Male" as Beam
+    }
+
+    ' Coupling medium: FOV intersection tests carry signal between units.
+    component "Environment\nlight channel + sound channel" as Environment
+
+    ' Canonical per-tick output: ONE state frame (behavioral) — the single
+    ' source of truth every client projects.
+    component "Canonical State Frame\n(behavioral: males / females / beam / env)" as Frame #e6fcc1
+
+    component "Client Registry\n(clientId, role, canControl)" as Registry
+    component "HTTP /status\n(health + per-client transport counters)" as Status
+}
+
+' Per-tick stages inside the loop (labels are the section-6 stage names).
+TickLoop --> ABM : 1 advance physics (oscillators)\n2 world transforms
+ABM --> Environment : 3 FOV intersection tests\n(microphone<->speaker, light_sensor<->light_source/beam)
+Environment --> ABM : received signal per sensor
+TickLoop --> ABM : 4 decode signals  5 drive model\n6 engagement FSMs  7 actuator outputs\n8 indicator states
+Males --> Beam : Motion Request (Stop / Release) + drive level
+ABM --> Frame : 9 collect changed frame vars
+TickLoop --> Frame : reads snapshot each tick
+
+' ===== The wire ==============================================================
+interface "WebSocket /simulation\nhello / snapshot / patch\nping <-> pong / registry-status\n(frameDelta: keyframe + delta)" as Wire
+
+Frame --> Wire : 10 broadcast
+Registry -up-> Wire : registry-status
+Status ..> Registry : reads
+
+' ===== Read-only client fan-out =============================================
+package "Read-only clients (many; no impact on sim fidelity)" #e4fcfa {
+    component "Display Client\n(role viewer, Three.js projection)" as Display #e4fcfa
+    component "Simulation Console\n(/simulation-console/ — registry, health, event log)" as Console #e4fcfa
+    component "Actuator / Servo Client\n(phygital: drives Dynamixel from the frame)" as Actuator #e4fcfa
+    component "Sensor Client\n(phygital: webcam / torch)" as Sensor #e4fcfa
+    component "Transmitter Client\n(phygital)" as Transmitter #e4fcfa
+}
+
+Wire --> Display : snapshot + patch\n(announce role=viewer)
+Wire --> Console : patch + registry-status
+Wire --> Actuator : patch (latest-wins presentation)
+Wire --> Transmitter : patch
+
+' Sensor ingress: external samples feed the shared authority (operator-gated).
+Sensor ..> Wire : sensor_input (external sense ingress)
+
+' ===== The operator (mutating, gated) =======================================
+actor "Operator\n(Scene Studio admin)" as Operator
+Operator ..> Wire : set_scene_graph / load_scene_key /\nload_simulation_package / simulation_control\n(requires SIM_OPERATOR_TOKEN -> canControl)
+
+legend right
+  <b>Top-level system context (2026-07-18).</b>
+  - ONE authority: the server owns physics, sensing, drives, engagement FSMs,
+    actuation; clients only read + render. Any number of read-only clients
+    connect with no effect on simulation fidelity.
+  - The per-tick output is ONE canonical state frame carried on the wire as
+    `behavioral` (males / females / beam / env). Delta-capable clients receive
+    keyframe + frameDelta (approx 85-89% smaller); others get the full frame.
+  - Tick rate: TICK_RATE 20 Hz (TICK_MS 50), absolute-deadline scheduler.
+  - Mutating messages (set_scene_graph, load_scene_key,
+    load_simulation_package, simulation_control, sensor_input) require the
+    operator capability (SIM_OPERATOR_TOKEN -> canControl); every other socket
+    is read-only.
+  Sources: scripts/simulation-server.mjs;
+  docs/infrastructure/DISTRIBUTED_SIMULATION_DESIGN.md;
+  docs/colloquy/AUTONOMOUS_AGENTS_ARCHITECTURE.md.
+endlegend
+
+@enduml
