@@ -1,0 +1,67 @@
+@startuml
+' Filename: Unit_Satisfaction_State_Diagram.plantuml
+' Diagram Type: State Diagram (finite state machine: states, events, actions)
+' Authored 2026-07-21 from the McLeish "How it Works" FSM sketch (in progress 10/12/22)
+' and verified against the live engine:
+'   src/simulation/behavior/state-machine-male.ts   (Male 3-state engagement machine)
+'   src/simulation/behavior/state-machine-female.ts (Female 3-state engagement machine)
+'   src/simulation/behavior/drive-decay.ts          (drive levels + four-outcome logic)
+'
+' The unit-generic lifecycle every Mobile shares — the plain-language "what happens"
+' view of the Male and Female engagement machines. "Drive" is the unit's dominant
+' desire level (O or P; both rise every tick — entropy, no decay); the satisfaction
+' threshold is the drive lower limit. "have partner" means the unit heard a message
+' about a conversation for which it has desire.
+
+title Each of the Mobile Units Seeks Satisfaction\nFinite State Machine: States, Events, and Actions
+
+[*] --> Satisfied : units start satisfied\n(drives begin at zero)
+
+state "Satisfied" as Satisfied {
+  ' engine: satisfied-and-indifferent — the unit holds still
+  ' drives rise a step every tick, so satisfaction is always temporary
+}
+
+state "Searching for a partner" as Searching {
+  ' engine: satisfaction-search — the unit sweeps, broadcasting / watching
+  ' drives keep rising: the longer unsatisfied, the hungrier
+}
+
+state "Engaging with a partner" as Engaging {
+  ' engine: engaging-partner — the pair converse
+  ' each successful exchange lowers the shared drive
+}
+
+Satisfied --> Satisfied : [Drive <= satisfaction threshold]\nmy desire is not strong enough\nto cause dissatisfaction\nI continue to be satisfied
+
+Satisfied --> Searching : [Drive > satisfaction threshold]\nmy desire is strong enough\nto cause dissatisfaction\nI begin my search
+
+Searching --> Searching : [Drive > satisfaction threshold\n&& have partner == false]\nI did not receive a message about a\nconversation for which I have desire\nI continue my search
+
+Searching --> Engaging : [Drive > satisfaction threshold\n&& have partner == true]\nI did receive a message about a\nconversation for which I have desire\nI engage with this partner
+
+Engaging --> Engaging : [Drive > satisfaction threshold\n&& have partner == true]\nmy desire is still strong enough\nto cause dissatisfaction\nI continue engaging with this partner
+
+Engaging --> Searching : [Drive > satisfaction threshold\n&& have partner == false]\nI did not receive a message\nto continue the engagement\nI continue my search
+
+Engaging --> Satisfied : [Drive <= satisfaction threshold]\nmy desire is not strong enough\nto cause dissatisfaction\nI am satisfied
+
+legend right
+  <b>System variables</b> (per unit): <b>O Drive</b> and <b>P Drive</b> both rise every
+  tick; "Drive" above is the dominant one. <b>have partner</b> — heard a message
+  about a conversation for which I have desire (Male: the Female's addressed
+  Identifying reply, then enough reflected light each exchange window; Female: a
+  matching Intermittent search word, then Reinforcement heard before her timeout).
+
+  Verified against the engine (state-machine-male.ts / state-machine-female.ts):
+  - Satisfied = satisfied-and-indifferent, Searching = satisfaction-search,
+    Engaging = engaging-partner; the satisfaction threshold is the drive lower limit.
+  - Drives only fall through engagement exchanges, so Searching never reaches
+    Satisfied directly (the engine re-evaluates the guard each tick, but in
+    practice it cannot fire — drives only rise while searching).
+  - Switching desires mid-engagement ("other-search") also returns to Searching.
+  - On Engaging -> Satisfied the drive is zeroed and the unit plays its
+    Satisfaction Display, pausing all activity, then rests.
+endlegend
+
+@enduml
