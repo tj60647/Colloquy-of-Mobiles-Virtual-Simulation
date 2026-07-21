@@ -44,7 +44,7 @@ Engaging --> Engaging : [Drive > satisfaction threshold\n&& have partner == true
 
 Engaging --> Searching : [Drive > satisfaction threshold\n&& have partner == false]\nI did not receive a message\nto continue the engagement\nI continue my search
 
-Engaging --> Satisfied : [Drive <= satisfaction threshold]\nmy desire is not strong enough\nto cause dissatisfaction\nI am satisfied
+Engaging --> Satisfied : [Drive <= satisfaction threshold]\nmy desire is not strong enough\nto cause dissatisfaction\nI play my Satisfaction Display\nI am satisfied
 
 legend right
   <b>System variables</b> (per unit): <b>O Drive</b> and <b>P Drive</b> both rise every
